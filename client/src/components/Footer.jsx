@@ -2,18 +2,16 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-pine-950 text-linen-200 mt-16">
-      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="font-display font-bold text-linen-50">
-          MyTime<span className="text-sun-400">Booked</span>
+    <footer className="mt-16 border-t-4 border-double border-ink-900 bg-paper-100">
+      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-ink-500">
+          MyTimeBooked · Form MTB-01 · Household work orders
         </p>
-        <p className="text-sm text-linen-300/80">
-          Trusted local help for your home & family.
-        </p>
-        <div className="flex gap-5 text-sm">
-          <Link to="/browse" className="hover:text-sun-300 transition">Find help</Link>
-          <Link to="/become-a-pro" className="hover:text-sun-300 transition">Become a pro</Link>
+        <div className="flex gap-6 font-mono text-xs uppercase tracking-wider">
+          <Link to="/browse" className="text-ink-700 hover:underline decoration-dotted underline-offset-4">Find a pro</Link>
+          <Link to="/become-a-pro" className="text-ink-700 hover:underline decoration-dotted underline-offset-4">Carry the pad</Link>
         </div>
+        <p className="font-mono text-[11px] text-ink-400">★ press hard — three copies ★</p>
       </div>
     </footer>
   );

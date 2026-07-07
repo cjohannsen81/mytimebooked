@@ -11,7 +11,7 @@ function ServiceForm({ initial = EMPTY_SERVICE, onSave, onCancel, busy }) {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   return (
-    <div className="rounded-xl border border-linen-300 bg-linen-50 p-4 space-y-3">
+    <div className="rounded-[4px] border-2 border-dashed border-ink-400 bg-paper-100/60 p-4 space-y-3">
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
           <label className="label">Category</label>
@@ -21,13 +21,13 @@ function ServiceForm({ initial = EMPTY_SERVICE, onSave, onCancel, busy }) {
         </div>
         <div>
           <label className="label">Title</label>
-          <input className="input" placeholder="e.g. Standard home cleaning"
+          <input className="input" placeholder="e.g. standard home cleaning"
             value={form.title} onChange={e => set('title', e.target.value)} />
         </div>
       </div>
       <div>
         <label className="label">Description</label>
-        <textarea className="input" rows="2" placeholder="What's included?"
+        <textarea className="input" rows="2" placeholder="what's included?"
           value={form.description} onChange={e => set('description', e.target.value)} />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -125,28 +125,29 @@ export default function ProviderProfileEdit() {
   };
 
   if (profile === undefined && !error) {
-    return <p className="max-w-3xl mx-auto px-4 py-16 text-ink-500">Loading…</p>;
+    return <p className="max-w-3xl mx-auto px-4 py-16 font-mono text-sm text-ink-500 animate-pulse">Pulling your file…</p>;
   }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-pine-900">My pro profile</h1>
+      <p className="section-tag">Personnel file</p>
+      <h1 className="mt-2 text-4xl font-bold text-ink-900">My pro file</h1>
       {!profile && (
         <p className="mt-2 text-ink-500">
-          This is what customers see. Fill it in, add at least one service, then set your{' '}
-          <Link to="/pro/availability" className="text-pine-700 font-semibold hover:underline">availability</Link>.
+          This is what customers see. Fill it in, add at least one service, then post your{' '}
+          <Link to="/pro/availability" className="font-bold text-ink-900 underline decoration-dotted underline-offset-4">hours</Link>.
         </p>
       )}
 
-      <form onSubmit={saveProfile} className="card p-6 mt-6 space-y-4">
+      <form onSubmit={saveProfile} className="slip p-6 mt-6 space-y-4">
         <div>
           <label className="label">Headline</label>
-          <input className="input" placeholder="e.g. Meticulous housekeeping with a personal touch"
+          <input className="input" placeholder="e.g. meticulous housekeeping with a personal touch"
             value={form.headline} onChange={e => set('headline', e.target.value)} required />
         </div>
         <div>
           <label className="label">About you</label>
-          <textarea className="input" rows="4" placeholder="Experience, approach, what customers can expect…"
+          <textarea className="input" rows="4" placeholder="experience, approach, what customers can expect…"
             value={form.bio} onChange={e => set('bio', e.target.value)} required />
         </div>
         <div className="grid grid-cols-3 gap-3">
@@ -164,15 +165,17 @@ export default function ProviderProfileEdit() {
           <input className="input" type="number" min="0" max="60"
             value={form.yearsExperience} onChange={e => set('yearsExperience', e.target.value)} />
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {saved && <p className="text-sm text-pine-700 font-semibold">✓ Profile saved</p>}
-        <button className="btn-primary" disabled={busy}>{busy ? 'Saving…' : profile ? 'Save profile' : 'Create profile'}</button>
+        {error && <p className="font-mono text-sm text-stamp-red">{error}</p>}
+        {saved && <span className="stamp-confirmed !text-[10px]">FILED ✓</span>}
+        <div>
+          <button className="btn-primary" disabled={busy}>{busy ? 'Saving…' : profile ? 'Save file' : 'Create file'}</button>
+        </div>
       </form>
 
       {profile && (
-        <div className="card p-6 mt-6">
+        <div className="slip p-6 mt-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-lg text-ink-900">Services</h2>
+            <p className="section-tag">Rate card</p>
             {editing !== 'new' && (
               <button onClick={() => setEditing('new')} className="btn-accent !py-2">+ Add service</button>
             )}
@@ -186,7 +189,7 @@ export default function ProviderProfileEdit() {
 
           <div className="mt-4 space-y-3">
             {profile.services.length === 0 && editing !== 'new' && (
-              <p className="text-sm text-ink-500">No services yet — add one so customers can book you.</p>
+              <p className="font-mono text-sm text-ink-500">No services on the rate card yet — add one so customers can book you.</p>
             )}
             {profile.services.map(s => (
               editing === s.id ? (
@@ -199,17 +202,17 @@ export default function ProviderProfileEdit() {
                   onCancel={() => setEditing(null)}
                   busy={busy} />
               ) : (
-                <div key={s.id} className="flex items-start justify-between gap-3 rounded-xl border border-linen-200 p-4">
+                <div key={s.id} className="flex items-start justify-between gap-3 border-b-2 border-dotted border-paper-300 last:border-0 pb-3">
                   <div>
-                    <p className="font-semibold text-ink-900">{categoryIcon(s.category)} {s.title}</p>
+                    <p className="font-display font-bold text-ink-900">{categoryIcon(s.category)} {s.title}</p>
                     <p className="text-sm text-ink-500 mt-0.5">{s.description}</p>
-                    <p className="text-sm text-pine-800 font-bold mt-1">
+                    <p className="font-mono text-xs font-bold text-ink-900 mt-1">
                       {money(s.hourlyRateCents)}/hr · {s.minHours}h min
                     </p>
                   </div>
                   <div className="flex gap-2 shrink-0">
-                    <button onClick={() => setEditing(s.id)} className="btn-ghost !py-1.5 !px-3 !text-xs">Edit</button>
-                    <button onClick={() => deleteService(s.id)} className="btn-danger !py-1.5 !px-3 !text-xs">Delete</button>
+                    <button onClick={() => setEditing(s.id)} className="btn-ghost !py-1.5 !px-3 !text-[10px]">Edit</button>
+                    <button onClick={() => deleteService(s.id)} className="btn-danger !py-1.5 !px-3 !text-[10px]">Delete</button>
                   </div>
                 </div>
               )

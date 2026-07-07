@@ -23,18 +23,19 @@ function ReviewForm({ booking, onDone }) {
   };
 
   return (
-    <form onSubmit={submit} className="mt-4 pt-4 border-t border-linen-200 space-y-3">
+    <form onSubmit={submit} className="mt-2 pt-4 border-t-2 border-dashed border-ink-400 space-y-3">
+      <p className="section-tag">Customer testimony</p>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map(n => (
           <button type="button" key={n} onClick={() => setRating(n)}
-            className={`text-2xl transition ${n <= rating ? 'text-sun-500' : 'text-linen-300'}`}
+            className={`text-2xl transition ${n <= rating ? 'text-stamp-amber' : 'text-paper-300'}`}
             aria-label={`${n} stars`}>★</button>
         ))}
       </div>
-      <textarea className="input" rows="2" placeholder="How did it go?"
+      <textarea className="input" rows="2" placeholder="how did it go?"
         value={comment} onChange={e => setComment(e.target.value)} required />
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button className="btn-primary !py-2" disabled={busy}>{busy ? 'Posting…' : 'Post review'}</button>
+      {error && <p className="font-mono text-sm text-stamp-red">{error}</p>}
+      <button className="btn-primary !py-2" disabled={busy}>{busy ? 'Filing…' : 'File review'}</button>
     </form>
   );
 }
@@ -52,7 +53,7 @@ export default function CustomerDashboard() {
   useEffect(load, []);
 
   const cancel = async (id) => {
-    if (!confirm('Cancel this booking?')) return;
+    if (!confirm('Void this work order?')) return;
     try {
       await api(`/bookings/${id}/status`, { method: 'PATCH', body: { status: 'CANCELLED' } });
       load();
@@ -67,29 +68,32 @@ export default function CustomerDashboard() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-pine-900">My bookings</h1>
-        <Link to="/browse" className="btn-primary">Book more help</Link>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="section-tag">Your side of the pad</p>
+          <h1 className="mt-2 text-4xl font-bold text-ink-900">My orders</h1>
+        </div>
+        <Link to="/browse" className="btn-primary">+ New work order</Link>
       </div>
-      {error && <p className="mt-6 text-red-600">{error}</p>}
-      {!bookings && !error && <p className="mt-6 text-ink-500">Loading…</p>}
+      {error && <p className="mt-6 font-mono text-sm text-stamp-red">{error}</p>}
+      {!bookings && !error && <p className="mt-6 font-mono text-sm text-ink-500 animate-pulse">Flipping the pad…</p>}
 
       {bookings && bookings.length === 0 && (
-        <div className="card p-10 mt-6 text-center">
-          <span className="text-4xl">🗓️</span>
-          <p className="mt-3 font-bold text-lg">Nothing booked yet</p>
-          <p className="text-ink-500 mt-1">Find a trusted pro and get that first job off your list.</p>
-          <Link to="/browse" className="btn-accent mt-5">Browse pros</Link>
+        <div className="slip p-10 mt-8 text-center max-w-md mx-auto">
+          <span className="stamp-pending">PAD EMPTY</span>
+          <p className="mt-4 font-display font-bold text-xl">Nothing filed yet</p>
+          <p className="mt-1 text-sm text-ink-500">Write your first work order and get that job off your list.</p>
+          <Link to="/browse" className="btn-accent mt-6">Browse pros</Link>
         </div>
       )}
 
       {upcoming.length > 0 && (
         <>
-          <h2 className="mt-8 mb-3 font-bold text-lg text-ink-900">Upcoming</h2>
-          <div className="space-y-4">
+          <h2 className="mt-10 mb-3 section-tag">— Open orders —</h2>
+          <div className="space-y-5">
             {upcoming.map(b => (
               <BookingCard key={b.id} booking={b} viewer="CUSTOMER"
-                actions={<button onClick={() => cancel(b.id)} className="btn-danger !py-1.5 !px-3 !text-xs">Cancel</button>} />
+                actions={<button onClick={() => cancel(b.id)} className="btn-stamp-red !text-[10px]">VOID</button>} />
             ))}
           </div>
         </>
@@ -97,18 +101,18 @@ export default function CustomerDashboard() {
 
       {past.length > 0 && (
         <>
-          <h2 className="mt-10 mb-3 font-bold text-lg text-ink-900">Past & closed</h2>
-          <div className="space-y-4">
+          <h2 className="mt-12 mb-3 section-tag">— Filed away —</h2>
+          <div className="space-y-5">
             {past.map(b => (
               <BookingCard key={b.id} booking={b} viewer="CUSTOMER"
                 actions={
                   b.status === 'COMPLETED' && !b.review ? (
                     <button onClick={() => setReviewing(reviewing === b.id ? null : b.id)}
-                      className="btn-ghost !py-1.5 !px-3 !text-xs">
-                      {reviewing === b.id ? 'Close' : 'Leave a review'}
+                      className="btn-stamp-blue !text-[10px]">
+                      {reviewing === b.id ? 'CLOSE' : 'RATE ★'}
                     </button>
                   ) : b.review ? (
-                    <span className="text-xs text-ink-400">Reviewed ★{b.review.rating}</span>
+                    <span className="font-mono text-[11px] text-ink-400 uppercase">rated ★{b.review.rating}</span>
                   ) : null
                 }>
                 {reviewing === b.id && (

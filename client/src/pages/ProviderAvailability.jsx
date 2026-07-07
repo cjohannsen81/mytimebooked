@@ -59,7 +59,9 @@ export default function ProviderAvailability() {
   if (profile === null) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <p className="text-ink-500">Create your <Link to="/pro/profile" className="text-pine-700 font-semibold hover:underline">pro profile</Link> first, then set your availability.</p>
+        <p className="font-mono text-sm text-ink-500">
+          Create your <Link to="/pro/profile" className="font-bold text-ink-900 underline decoration-dotted underline-offset-4">pro file</Link> first, then post your hours.
+        </p>
       </div>
     );
   }
@@ -72,10 +74,11 @@ export default function ProviderAvailability() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-pine-900">Availability</h1>
-      <p className="mt-1 text-ink-500">Customers can only book times inside these windows.</p>
+      <p className="section-tag">Posted hours</p>
+      <h1 className="mt-2 text-4xl font-bold text-ink-900">When you work</h1>
+      <p className="mt-1 text-ink-500">Customers can only file orders inside these windows.</p>
 
-      <form onSubmit={add} className="card p-6 mt-6 grid sm:grid-cols-[1fr,auto,auto,auto] gap-3 items-end">
+      <form onSubmit={add} className="slip p-6 mt-6 grid sm:grid-cols-[1fr,auto,auto,auto] gap-3 items-end">
         <div>
           <label className="label">Date</label>
           <input className="input" type="date" value={date} onChange={e => setDate(e.target.value)} required />
@@ -88,22 +91,22 @@ export default function ProviderAvailability() {
           <label className="label">To</label>
           <input className="input" type="time" value={to} onChange={e => setTo(e.target.value)} required />
         </div>
-        <button className="btn-accent !py-3" disabled={busy}>{busy ? 'Adding…' : 'Add window'}</button>
-        {error && <p className="text-sm text-red-600 sm:col-span-4">{error}</p>}
+        <button className="btn-accent !py-3" disabled={busy}>{busy ? 'Posting…' : 'Post hours'}</button>
+        {error && <p className="font-mono text-sm text-stamp-red sm:col-span-4">{error}</p>}
       </form>
 
-      <div className="mt-8 space-y-5">
+      <div className="mt-8 space-y-6">
         {slots.length === 0 && (
-          <p className="text-ink-500">No upcoming windows. Add some so customers can book you.</p>
+          <p className="font-mono text-sm text-ink-500">No upcoming hours on the board. Post some so customers can book you.</p>
         )}
         {Object.entries(byDay).map(([day, daySlots]) => (
           <div key={day}>
-            <h2 className="font-bold text-ink-900">{day}</h2>
+            <h2 className="section-tag">— {day} —</h2>
             <div className="mt-2 flex flex-wrap gap-2">
               {daySlots.map(s => (
-                <span key={s.id} className="inline-flex items-center gap-2 rounded-xl bg-white border border-linen-300 px-3.5 py-2 text-sm font-semibold">
+                <span key={s.id} className="inline-flex items-center gap-2 slip !shadow-press-sm px-3.5 py-2 font-mono text-xs font-bold">
                   {fmtTime(s.start)} – {fmtTime(s.end)}
-                  <button onClick={() => remove(s.id)} className="text-ink-400 hover:text-red-600 transition" aria-label="Remove window">✕</button>
+                  <button onClick={() => remove(s.id)} className="text-ink-400 hover:text-stamp-red transition" aria-label="Remove window">✕</button>
                 </span>
               ))}
             </div>

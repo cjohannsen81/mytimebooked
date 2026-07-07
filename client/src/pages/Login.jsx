@@ -26,9 +26,9 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold text-pine-900">Welcome back</h1>
-      <p className="mt-1 text-ink-500">Log in to manage your bookings.</p>
-      <form onSubmit={submit} className="card p-6 mt-6 space-y-4">
+      <p className="section-tag">Clock in</p>
+      <h1 className="mt-2 text-4xl font-bold text-ink-900">Welcome back</h1>
+      <form onSubmit={submit} className="slip p-6 mt-6 space-y-4">
         <div>
           <label className="label">Email</label>
           <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus />
@@ -37,12 +37,12 @@ export default function Login() {
           <label className="label">Password</label>
           <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="font-mono text-sm text-stamp-red">{error}</p>}
         <button className="btn-primary w-full !py-3" disabled={busy}>
-          {busy ? 'Logging in…' : 'Log in'}
+          {busy ? 'Checking…' : 'Log in'}
         </button>
-        <p className="text-sm text-ink-500 text-center">
-          New here? <Link to="/register" className="font-semibold text-pine-700 hover:underline">Create an account</Link>
+        <p className="font-mono text-xs text-ink-500 text-center pt-1">
+          new here? <Link to="/register" className="font-bold text-ink-900 underline decoration-dotted underline-offset-4">open an account</Link>
         </p>
       </form>
     </div>

@@ -30,19 +30,19 @@ export default function Register() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold text-pine-900">Create your account</h1>
-      <p className="mt-1 text-ink-500">Book help — or get booked.</p>
-      <form onSubmit={submit} className="card p-6 mt-6 space-y-4">
+      <p className="section-tag">New account form</p>
+      <h1 className="mt-2 text-4xl font-bold text-ink-900">Sign here</h1>
+      <form onSubmit={submit} className="slip p-6 mt-6 space-y-4">
         <div className="grid grid-cols-2 gap-2">
           {[
             { key: 'CUSTOMER', label: 'I need help', icon: '🏡' },
             { key: 'PROVIDER', label: "I'm a pro", icon: '🧰' },
           ].map(r => (
             <button type="button" key={r.key} onClick={() => setRole(r.key)}
-              className={`rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${
+              className={`rounded-[4px] border-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition ${
                 role === r.key
-                  ? 'border-pine-700 bg-pine-50 text-pine-800'
-                  : 'border-linen-200 text-ink-500 hover:border-linen-300'
+                  ? 'border-ink-900 bg-carbon-canary text-ink-900 shadow-press-sm'
+                  : 'border-paper-300 text-ink-500 hover:border-ink-900'
               }`}>
               <span className="text-xl block mb-1">{r.icon}</span>
               {r.label}
@@ -66,12 +66,12 @@ export default function Register() {
           <input className="input" type="password" minLength={8} value={password}
             onChange={e => setPassword(e.target.value)} required />
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="font-mono text-sm text-stamp-red">{error}</p>}
         <button className="btn-primary w-full !py-3" disabled={busy}>
-          {busy ? 'Creating…' : role === 'PROVIDER' ? 'Sign up as a pro' : 'Sign up'}
+          {busy ? 'Filing…' : role === 'PROVIDER' ? 'Sign up as a pro' : 'Sign up'}
         </button>
-        <p className="text-sm text-ink-500 text-center">
-          Already have an account? <Link to="/login" className="font-semibold text-pine-700 hover:underline">Log in</Link>
+        <p className="font-mono text-xs text-ink-500 text-center pt-1">
+          already filed? <Link to="/login" className="font-bold text-ink-900 underline decoration-dotted underline-offset-4">log in</Link>
         </p>
       </form>
     </div>

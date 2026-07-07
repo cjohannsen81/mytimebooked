@@ -39,29 +39,36 @@ export default function Browse() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-pine-900">Find help</h1>
+      <p className="section-tag">The file drawer</p>
+      <h1 className="mt-2 text-4xl font-bold text-ink-900">Find a pro</h1>
 
-      <form onSubmit={submitSearch} className="mt-5 flex gap-2 max-w-md">
-        <input className="input" placeholder="Search by name, service, or city…"
-          value={search} onChange={e => setSearch(e.target.value)} />
-        <button className="btn-primary shrink-0">Search</button>
+      <form onSubmit={submitSearch} className="mt-6 max-w-md">
+        <label className="label">Look up</label>
+        <div className="flex gap-2">
+          <input className="input" placeholder="name, service, or city…"
+            value={search} onChange={e => setSearch(e.target.value)} />
+          <button className="btn-primary shrink-0">Search</button>
+        </div>
       </form>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap gap-2">
         {CATEGORIES.map(c => (
           <button key={c.key} onClick={() => setCategory(c.key)}
             className={`chip ${category === c.key
-              ? 'bg-pine-800 border-pine-800 text-linen-50'
-              : 'bg-white border-linen-300 text-ink-700 hover:border-pine-400'}`}>
+              ? 'bg-ink-900 border-ink-900 text-paper-50'
+              : 'bg-paper-50 border-ink-900 text-ink-900 hover:bg-carbon-canary'}`}>
             {c.icon} {c.label}
           </button>
         ))}
       </div>
 
-      {error && <p className="mt-8 text-red-600">{error}</p>}
-      {!providers && !error && <p className="mt-8 text-ink-500">Loading pros…</p>}
+      {error && <p className="mt-8 font-mono text-sm text-stamp-red">{error}</p>}
+      {!providers && !error && <p className="mt-8 font-mono text-sm text-ink-500 animate-pulse">Riffling the drawer…</p>}
       {providers && providers.length === 0 && (
-        <p className="mt-8 text-ink-500">No pros match that search yet — try a different category.</p>
+        <div className="slip p-8 mt-8 max-w-md text-center">
+          <span className="stamp-void">NO MATCH</span>
+          <p className="mt-4 font-mono text-sm text-ink-500">Nothing filed under that yet — try another category.</p>
+        </div>
       )}
       {providers && providers.length > 0 && (
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
