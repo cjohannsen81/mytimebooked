@@ -90,7 +90,9 @@ npx prisma generate
 npx prisma migrate deploy
 # Seed only on a fresh DB. seed.js itself also bails out if users exist
 # (set FORCE_RESEED=1 to override), so this is belt-and-suspenders.
-USER_COUNT=$(sudo docker exec -i mytimebooked-pg psql -U postgres -d mytimebooked -tAc "SELECT COUNT(*) FROM \"User\";" 2>/dev/null || echo 0)
+# No -i here: when this script is run via `curl | bash`, an interactive
+# docker exec would swallow the rest of the script from stdin.
+USER_COUNT=$(sudo docker exec mytimebooked-pg psql -U postgres -d mytimebooked -tAc "SELECT COUNT(*) FROM \"User\";" 2>/dev/null || echo 0)
 if [ "${USER_COUNT:-0}" = "0" ]; then
   npm run seed
 else
