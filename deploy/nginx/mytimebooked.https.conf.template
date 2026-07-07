@@ -19,8 +19,9 @@ server {
 }
 
 server {
-    listen 443 ssl default_server;
-    http2 on;
+    # `http2 on;` needs nginx >= 1.25.1; Ubuntu 24.04 ships 1.24, so use
+    # the listen-flag syntax.
+    listen 443 ssl http2 default_server;
     server_name mytimebooked.com www.mytimebooked.com;
 
     ssl_certificate     /etc/letsencrypt/live/mytimebooked.com/fullchain.pem;
