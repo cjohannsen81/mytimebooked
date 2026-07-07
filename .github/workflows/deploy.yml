@@ -1,0 +1,121 @@
+name: Deploy to VM
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Don't let two deploys race; queue them.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install client deps
+        working-directory: client
+        run: npm ci
+
+      - name: Build client
+        working-directory: client
+        env:
+          VITE_API_URL: /api
+        run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: client/dist
+          retention-days: 7
+
+  deploy:
+    name: Deploy to VM
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VM_USER: ${{ secrets.VM_USER }}
+      VM_HOST: ${{ secrets.VM_HOST }}
+      APP_DIR: /home/${{ secrets.VM_USER }}/mytimebooked
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: client-dist
+          path: client-dist
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts
+
+      - name: Render nginx configs
+        run: |
+          sed "s|__APP_DIR__|$APP_DIR|g" \
+            deploy/nginx/mytimebooked.http.conf.template  > /tmp/mytimebooked.http.conf
+          sed "s|__APP_DIR__|$APP_DIR|g" \
+            deploy/nginx/mytimebooked.https.conf.template > /tmp/mytimebooked.https.conf
+
+      # 1. Pull server source on the VM (client/dist is gitignored, so rsync after this is safe).
+      - name: Update server source on VM
+        run: |
+          ssh "$VM_USER@$VM_HOST" bash <<'EOF'
+          set -euo pipefail
+          cd ~/mytimebooked
+          git fetch --quiet origin main
+          git reset --hard origin/main
+          EOF
+
+      # 2. Rsync the pre-built client.
+      - name: Rsync client build
+        run: |
+          rsync -az --delete client-dist/ \
+            "$VM_USER@$VM_HOST:$APP_DIR/client/dist/"
+
+      # 3. Stage both rendered nginx configs in /tmp; VM picks based on cert presence.
+      - name: Rsync nginx configs
+        run: |
+          rsync -az /tmp/mytimebooked.http.conf /tmp/mytimebooked.https.conf \
+            "$VM_USER@$VM_HOST:/tmp/"
+
+      # 4. Install server deps, migrate, pick + validate nginx config, reload, restart api.
+      - name: Apply on VM
+        run: |
+          ssh "$VM_USER@$VM_HOST" bash <<'EOF'
+          set -euo pipefail
+          cd ~/mytimebooked/server
+          npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+
+          if [ -f /etc/letsencrypt/live/mytimebooked.com/fullchain.pem ]; then
+            cp /tmp/mytimebooked.https.conf /tmp/mytimebooked.conf
+          else
+            cp /tmp/mytimebooked.http.conf /tmp/mytimebooked.conf
+          fi
+          sudo /usr/bin/install -m 644 -o root -g root /tmp/mytimebooked.conf /etc/nginx/sites-available/mytimebooked
+          sudo /usr/sbin/nginx -t
+          sudo /usr/bin/systemctl reload nginx
+
+          pm2 restart mytimebooked-api --update-env
+          EOF
+
+      - name: Health check
+        run: |
+          ssh "$VM_USER@$VM_HOST" \
+            'for i in {1..15}; do curl -fsS http://127.0.0.1:4000/api/health && exit 0; sleep 1; done; exit 1'

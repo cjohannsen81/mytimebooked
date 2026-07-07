@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-linen-50 text-ink-900 font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-semibold rounded-xl
+           text-sm transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-pine-800 text-linen-50 hover:bg-pine-700 shadow-sm;
+  }
+  .btn-accent {
+    @apply btn bg-sun-400 text-pine-950 hover:bg-sun-300 shadow-sm;
+  }
+  .btn-ghost {
+    @apply btn border border-linen-300 bg-white text-ink-900 hover:border-pine-400 hover:text-pine-700;
+  }
+  .btn-danger {
+    @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-linen-200 shadow-sm;
+  }
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-linen-300 bg-white text-sm
+           focus:outline-none focus:ring-2 focus:ring-pine-400 focus:border-pine-400 transition;
+  }
+  .label {
+    @apply block text-xs font-bold text-ink-500 mb-1.5 uppercase tracking-wider;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold
+           border transition-colors cursor-pointer select-none;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold;
+  }
+}

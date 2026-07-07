@@ -1,0 +1,9 @@
+# Grant the deploy user passwordless sudo for ONLY the commands the
+# GitHub Actions deploy workflow needs. Installed automatically by
+# bootstrap.sh; placeholder __DEPLOY_USER__ is substituted.
+#
+# Manual install:
+#   sudo install -m 440 -o root -g root \
+#     /tmp/sudoers-mytimebooked-deploy /etc/sudoers.d/mytimebooked-deploy
+#   sudo visudo -c   # validate
+__DEPLOY_USER__ ALL=(root) NOPASSWD: /usr/bin/install -m 644 -o root -g root /tmp/mytimebooked.conf /etc/nginx/sites-available/mytimebooked, /usr/sbin/nginx -t, /usr/bin/systemctl reload nginx

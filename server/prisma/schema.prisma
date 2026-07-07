@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  PROVIDER
+}
+
+enum ServiceCategory {
+  HOUSEKEEPING
+  BABYSITTING
+  DOG_WALKING
+  PET_SITTING
+  LAWN_GARDEN
+  HANDYMAN
+  SENIOR_CARE
+  TUTORING
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  DECLINED
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  passwordHash    String
+  name            String
+  phone           String?
+  role            Role             @default(CUSTOMER)
+  createdAt       DateTime         @default(now())
+  providerProfile ProviderProfile?
+  bookings        Booking[]        @relation("CustomerBookings")
+  reviews         Review[]
+}
+
+model ProviderProfile {
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline          String
+  bio               String
+  city              String
+  zip               String
+  photoUrl          String?
+  yearsExperience   Int                @default(0)
+  backgroundChecked Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  services          Service[]
+  slots             AvailabilitySlot[]
+  bookings          Booking[]
+  reviews           Review[]
+}
+
+model Service {
+  id              String          @id @default(cuid())
+  providerId      String
+  provider        ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category        ServiceCategory
+  title           String
+  description     String
+  hourlyRateCents Int
+  minHours        Int             @default(1)
+  bookings        Booking[]
+
+  @@index([category])
+}
+
+model AvailabilitySlot {
+  id         String          @id @default(cuid())
+  providerId String
+  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  start      DateTime
+  end        DateTime
+
+  @@index([providerId, start])
+}
+
+model Booking {
+  id         String          @id @default(cuid())
+  customerId String
+  customer   User            @relation("CustomerBookings", fields: [customerId], references: [id])
+  providerId String
+  provider   ProviderProfile @relation(fields: [providerId], references: [id])
+  serviceId  String
+  service    Service         @relation(fields: [serviceId], references: [id])
+  start      DateTime
+  end        DateTime
+  hours      Float
+  totalCents Int
+  address    String
+  notes      String?
+  status     BookingStatus   @default(PENDING)
+  createdAt  DateTime        @default(now())
+  review     Review?
+
+  @@index([providerId, start])
+  @@index([customerId, start])
+}
+
+model Review {
+  id         String          @id @default(cuid())
+  bookingId  String          @unique
+  booking    Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   User            @relation(fields: [customerId], references: [id])
+  providerId String
+  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  rating     Int
+  comment    String
+  createdAt  DateTime        @default(now())
+}

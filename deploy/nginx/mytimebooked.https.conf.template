@@ -1,0 +1,49 @@
+# MyTimeBooked nginx config — TLS enabled.
+# Used automatically once /etc/letsencrypt/live/mytimebooked.com/fullchain.pem
+# exists. The HTTP block 301-redirects everything except the ACME challenge.
+#
+# Placeholders: __APP_DIR__ replaced at install time.
+
+server {
+    listen 80 default_server;
+    server_name mytimebooked.com www.mytimebooked.com;
+
+    # ACME http-01 challenge for renewals
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl default_server;
+    http2 on;
+    server_name mytimebooked.com www.mytimebooked.com;
+
+    ssl_certificate     /etc/letsencrypt/live/mytimebooked.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mytimebooked.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    root __APP_DIR__/client/dist;
+    index index.html;
+
+    location /api/ {
+        client_max_body_size 6m;
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
