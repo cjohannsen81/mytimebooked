@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Block — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f2eee5; --card:#fdfbf5; --ink:#2e2a22; --soft:#8b8172; --rule:#e2d9c6; --terra:#c05f3c; --moss:#6f7f58; --gold:#c99b3f; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:760px; margin:0 auto; text-align:center; padding:14px 24px 0; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .street { max-width:860px; margin:24px auto 0; padding:0 20px; }
+  .scene { background:linear-gradient(180deg,#e9e3d2 0%,#efe9d9 70%,#d8cdb2 70%,#cfc3a6 100%); border:1px solid var(--rule); border-radius:18px; overflow:hidden; }
+  svg { display:block; width:100%; height:auto; }
+  .houselab { font-family:"IBM Plex Sans"; font-size:10px; fill:var(--soft); }
+  .youtag { font-family:Caveat,cursive; font-size:17px; fill:var(--terra); }
+  .jointag { font-family:Caveat,cursive; font-size:15px; fill:var(--moss); opacity:0; }
+  .jointag.show { opacity:1; transition:opacity .5s; }
+  .house { transition:opacity .5s; }
+  .house .body { transition:fill .6s; }
+
+  .controls { display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .controls select { background:#fff; border:1.5px solid var(--rule); border-radius:999px; padding:10px 16px; font-family:Lora,serif; font-size:14px; color:var(--ink); }
+  .knock { background:var(--terra); border:none; color:#fff; border-radius:999px; padding:12px 26px; font-size:14px; font-weight:600; cursor:pointer; }
+  .knock:hover { filter:brightness(1.07); }
+  .knock:disabled { opacity:.5; cursor:default; }
+
+  .board { max-width:860px; margin:18px auto 0; padding:0 20px; display:grid; grid-template-columns:1.1fr .9fr; gap:14px; align-items:start; }
+  @media (max-width:760px) { .board { grid-template-columns:1fr; } }
+  .panel { background:var(--card); border:1px solid var(--rule); border-radius:16px; padding:18px 20px; }
+  .panel h3 { font-family:Lora,serif; font-size:16px; font-weight:600; }
+  .nums { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+  .num { border:1px solid var(--rule); border-radius:12px; padding:12px; text-align:center; }
+  .num .k { font-size:10px; text-transform:uppercase; letter-spacing:.15em; color:var(--soft); }
+  .num .v { font-family:Lora,serif; font-size:24px; font-weight:600; margin-top:4px; }
+  .num .v.terra { color:var(--terra); } .num .v.moss { color:var(--moss); }
+  .num .d { font-size:11px; color:var(--soft); margin-top:2px; }
+  .strike { text-decoration:line-through; color:var(--soft); font-size:14px; margin-right:5px; font-weight:400; }
+  .feed { margin-top:6px; }
+  .feed .f { display:flex; gap:10px; align-items:baseline; padding:9px 0; border-bottom:1px dashed var(--rule); font-size:13px; animation:fade .5s both; }
+  @keyframes fade { from { opacity:0; transform:translateY(6px); } }
+  .feed .f .who { font-family:Lora,serif; font-weight:600; white-space:nowrap; }
+  .feed .f .say { font-family:Caveat,cursive; font-size:18px; color:var(--soft); }
+  .probar { margin-top:12px; }
+  .probar .lab { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); letter-spacing:.08em; margin-bottom:5px; }
+  .probar .bar { height:10px; border-radius:999px; background:var(--rule); overflow:hidden; }
+  .probar .fill { height:100%; width:8%; background:linear-gradient(90deg,var(--moss),var(--gold)); border-radius:999px; transition:width .8s cubic-bezier(.2,.8,.2,1); }
+  .whyline { margin-top:12px; font-size:13px; color:var(--soft); line-height:1.65; }
+  .whyline b { color:var(--ink); }
+  .ctas { max-width:860px; margin:20px auto 70px; padding:0 20px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .ctas a { text-align:center; padding:14px 26px; border-radius:999px; font-weight:600; text-decoration:none; font-size:14px; }
+  .ctas a.c { background:var(--terra); color:#fff; }
+  .ctas a.p { border:1.5px solid var(--ink); color:var(--ink); }
+  .ctas a.p:hover { background:var(--ink); color:var(--card); }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b7ab92;letter-spacing:.2em">EXPERIMENT 11 &middot; THE BLOCK</span>
+</header>
+<div class="hero">
+  <h1>Your street is a route.<br><em>Split it.</em></h1>
+  <p>Six houses on one street each pay a pro to drive out separately. That's <b>six drives, six minimum fees, one street</b>. When neighbors book the same pro the same morning, the drive disappears — everyone pays less, and the pro earns more anyway. The math has always been there. Nobody built the button.</p>
+</div>
+
+<div class="street">
+  <div class="scene">
+    <svg viewBox="0 0 860 240" id="scene"></svg>
+  </div>
+  <div class="controls">
+    <select id="svc">
+      <option value="LAWN_GARDEN">Lawn day on your street</option>
+      <option value="HOUSEKEEPING">Cleaning day</option>
+      <option value="HANDYMAN">Fix-it day</option>
+    </select>
+    <button class="knock" id="knock">Knock on the block</button>
+  </div>
+</div>
+
+<div class="board">
+  <div class="panel">
+    <h3>The math, live</h3>
+    <div class="nums">
+      <div class="num"><div class="k">You pay</div><div class="v terra" id="you">$—</div><div class="d" id="youd">solo price</div></div>
+      <div class="num"><div class="k">Block saves</div><div class="v moss" id="saves">$0</div><div class="d">per visit, together</div></div>
+      <div class="num"><div class="k" id="proname">The pro earns</div><div class="v" id="pro">$—</div><div class="d" id="prod">for the morning</div></div>
+    </div>
+    <div class="probar">
+      <div class="lab"><span id="probarlab">THE PRO'S SATURDAY MORNING</span><span id="probarpct">empty</span></div>
+      <div class="bar"><div class="fill" id="profill"></div></div>
+    </div>
+    <p class="whyline" id="whyline">One booking means one drive for one job. <b>Watch what happens when the street joins in.</b></p>
+  </div>
+  <div class="panel">
+    <h3>Word travels down the street</h3>
+    <div class="feed" id="feed">
+      <div class="f"><span class="who">You</span><span class="say">"anyone else's yard a jungle right now?"</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="ctas">
+  <a class="c" href="/browse">Start a block on your street</a>
+  <a class="p" href="/register?role=PROVIDER">Pros: claim whole streets, not single stops</a>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
+
+const NEIGHBORS = [
+  { no:'2107', name:'Rosa', say:'"been meaning to do this for months"' },
+  { no:'2111', name:'The Kims', say:'"if it\'s the same morning, we\'re in"' },
+  { no:'2112', name:'Marcus', say:'"my hedge is basically a fence now"' },
+  { no:'2115', name:'Priya & Dev', say:'"splitting the drive fee? obviously"' },
+  { no:'2116', name:'Old Mr. Feld', say:'"my grandson set this up for me"' },
+];
+const PALETTE = ['#cdb9a0','#b9c0a8','#c8aa9b','#b3b8c0','#c9bd96','#b6a9b4'];
+const JOIN_FILL = '#6f7f58';
+
+// draw the street: 6 simple houses + road
+const S = $('scene');
+const mk = (tag, attrs, parent=S) => { const el=document.createElementNS('http://www.w3.org/2000/svg',tag); for (const k in attrs) el.setAttribute(k,attrs[k]); parent.appendChild(el); return el; };
+mk('rect',{x:0,y:196,width:860,height:44,fill:'#a79a7d'});
+mk('rect',{x:0,y:214,width:860,height:3,fill:'#efe9d9',opacity:.7});
+const houses = [];
+for (let i=0;i<6;i++) {
+  const x = 40 + i*140, isYou = i===2;
+  const g = mk('g',{class:'house','data-i':i});
+  mk('rect',{x, y:110, width:92, height:86, rx:3, fill:PALETTE[i], class:'body'},g);
+  mk('path',{d:`M ${x-8} 112 L ${x+46} 66 L ${x+100} 112 Z`, fill:'#8a7a63', class:'roof'},g);
+  mk('rect',{x:x+36, y:150, width:22, height:46, rx:2, fill:'#4f4636'},g);
+  mk('rect',{x:x+12, y:128, width:18, height:16, rx:2, fill:'#efe9d9'},g);
+  mk('rect',{x:x+64, y:128, width:18, height:16, rx:2, fill:'#efe9d9'},g);
+  const lab = mk('text',{x:x+46, y:232, 'text-anchor':'middle', class: isYou?'youtag':'houselab'},g);
+  lab.textContent = isYou ? 'you' : 'No. '+(NEIGHBORS[i<2?i:i-1]?.no || '2119');
+  const tag = mk('text',{x:x+46, y:56, 'text-anchor':'middle', class:'jointag'},g);
+  tag.textContent = 'in!';
+  houses.push({ g, body:g.querySelector('.body'), tag, isYou });
+}
+houses[2].body.setAttribute('fill','#c05f3c');
+
+let rate = 55, proName = 'the pro';
+fetch(API+'/providers').then(r=>r.json()).then(({providers}) => { window._pros = providers; syncRate(); }).catch(()=>{});
+function syncRate() {
+  const k = $('svc').value;
+  const p = (window._pros||[]).find(x=>x.services.some(s=>s.category===k));
+  if (p) { rate = p.services.find(s=>s.category===k).hourlyRateCents/100; proName = p.user.name.split(' ')[0]; }
+  reset();
+}
+$('svc').onchange = syncRate;
+
+const DRIVE_FEE = 25, HOURS = 1.5;
+let joined = 0, timers = [];
+function priceFor(n) {
+  // drive+setup fee split across the block, small volume discount on labor
+  const labor = rate * HOURS * (1 - Math.min(.15, (n-1)*.04));
+  return Math.round(labor + DRIVE_FEE / n);
+}
+function reset() {
+  joined = 0; timers.forEach(clearTimeout); timers = [];
+  houses.forEach((h,i) => { if (!h.isYou) { h.body.setAttribute('fill', PALETTE[i]); h.tag.classList.remove('show'); } });
+  [...document.querySelectorAll('#feed .f')].slice(1).forEach(f=>f.remove());
+  $('knock').disabled = false;
+  paint();
+}
+function paint() {
+  const n = joined + 1;
+  const solo = priceFor(1);
+  $('you').innerHTML = (n>1 ? '<span class="strike">$'+solo+'</span>' : '') + '$' + priceFor(n);
+  $('youd').textContent = n>1 ? 'with '+joined+' neighbor'+(joined>1?'s':'')+' in' : 'solo price';
+  $('saves').textContent = '$' + (n>1 ? (solo - priceFor(n)) * n : 0);
+  $('proname').textContent = proName === 'the pro' ? 'The pro earns' : proName + ' earns';
+  $('pro').textContent = '$' + priceFor(n) * n;
+  $('prod').textContent = n>1 ? 'one street, zero re-drives' : 'for one stop + the drive';
+  const pct = Math.min(100, Math.round(n * HOURS / 5 * 100));
+  $('profill').style.width = Math.max(8,pct) + '%';
+  $('probarpct').textContent = n>1 ? (n*HOURS)+'h booked, back to back' : 'one stop';
+  if (n >= 5) $('whyline').innerHTML = 'Full street: everyone pays less, <b>'+ (proName==='the pro'?'the pro':proName) +' earns more per hour than any solo visit</b>, and five drives became zero. This is the whole trick.';
+}
+$('knock').onclick = () => {
+  $('knock').disabled = true;
+  const order = [0,1,3,4,5];
+  order.forEach((hi,idx) => {
+    timers.push(setTimeout(() => {
+      joined++;
+      houses[hi].body.setAttribute('fill', JOIN_FILL);
+      houses[hi].tag.classList.add('show');
+      const nb = NEIGHBORS[idx];
+      const f = document.createElement('div'); f.className='f';
+      f.innerHTML = '<span class="who">No. '+nb.no+' · '+nb.name+'</span><span class="say">'+nb.say+'</span>';
+      $('feed').appendChild(f);
+      paint();
+    }, 900 + idx*1500));
+  });
+};
+paint();
+</script>
+</body>
+</html>

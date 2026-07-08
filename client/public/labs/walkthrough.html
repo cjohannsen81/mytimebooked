@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Walkthrough — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f3efe8; --card:#fdfbf6; --ink:#2e2823; --soft:#8b8072; --rule:#e3dbca; --plum:#7d4a5c; --moss:#71805c; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--plum); }
+  .hero { max-width:740px; margin:0 auto; text-align:center; padding:16px 24px 4px; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--plum); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .stage { max-width:620px; margin:26px auto 70px; padding:0 20px; }
+  .steplab { font-size:11px; text-transform:uppercase; letter-spacing:.22em; color:var(--soft); margin:22px 0 10px; }
+  .jobs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:560px) { .jobs { grid-template-columns:1fr; } }
+  .job { border:1.5px solid var(--rule); background:var(--card); border-radius:14px; padding:14px 16px; cursor:pointer; transition:.15s; }
+  .job:hover { border-color:var(--plum); }
+  .job.on { border-color:var(--plum); background:#f6ebef; }
+  .job b { font-family:Lora,serif; font-size:15px; display:block; }
+  .job span { font-size:12px; color:var(--soft); }
+
+  .clip { margin-top:14px; border-radius:16px; overflow:hidden; position:relative; height:230px; display:none; box-shadow:0 6px 24px rgba(46,40,35,.15); }
+  .clip.show { display:block; animation:fade .4s both; }
+  @keyframes fade { from { opacity:0; transform:translateY(8px); } }
+  .clip .film { position:absolute; inset:0; }
+  .clip .grain { position:absolute; inset:0; background:radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.18), transparent 50%); }
+  .clip .rec { position:absolute; top:12px; left:14px; color:#fff; font-size:11px; letter-spacing:.2em; display:flex; gap:7px; align-items:center; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+  .clip .rec i { width:9px; height:9px; border-radius:50%; background:#e5484d; animation:blink 1.2s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:.25; } }
+  .clip .len { position:absolute; bottom:12px; right:14px; color:#fff; font-size:12px; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+  .clip .cap { position:absolute; bottom:12px; left:14px; color:#fff; font-family:Caveat,cursive; font-size:20px; text-shadow:0 1px 4px rgba(0,0,0,.5); }
+  .sendrow { display:none; margin-top:12px; }
+  .sendrow.show { display:block; animation:fade .4s both; }
+  .send { width:100%; padding:14px; border:none; border-radius:999px; background:var(--ink); color:var(--card); font-size:14px; font-weight:600; cursor:pointer; }
+  .send:hover { background:var(--plum); }
+  .send:disabled { opacity:.55; cursor:default; }
+
+  .quotes { margin-top:8px; }
+  .qhead { display:none; font-size:12px; color:var(--moss); font-weight:600; margin:18px 0 4px; letter-spacing:.05em; }
+  .qhead.show { display:block; }
+  .quote { background:var(--card); border:1.5px solid var(--rule); border-radius:16px; padding:16px 18px; margin-top:12px; animation:fade .45s both; }
+  .quote .top { display:flex; align-items:center; gap:12px; }
+  .quote .av { width:42px; height:42px; border-radius:50%; background:var(--plum); color:#fff; display:flex; align-items:center; justify-content:center; font-family:Lora,serif; font-weight:600; flex-shrink:0; }
+  .quote .nm { font-family:Lora,serif; font-weight:600; font-size:15px; }
+  .quote .meta { font-size:12px; color:var(--soft); }
+  .quote .price { margin-left:auto; text-align:right; }
+  .quote .price b { font-family:Lora,serif; font-size:20px; }
+  .quote .price span { display:block; font-size:11px; color:var(--soft); }
+  .voice { display:flex; align-items:center; gap:10px; margin-top:13px; background:#f4eee2; border-radius:999px; padding:8px 14px; }
+  .voice .play { width:30px; height:30px; border-radius:50%; border:none; background:var(--ink); color:#fff; cursor:pointer; font-size:11px; flex-shrink:0; }
+  .voice .wave { display:flex; align-items:center; gap:2px; flex:1; height:22px; overflow:hidden; }
+  .voice .wave i { width:3px; border-radius:2px; background:#c9bda3; height:30%; }
+  .voice.playing .wave i { background:var(--plum); animation:bounce .7s ease-in-out infinite alternate; }
+  @keyframes bounce { to { transform:scaleY(1.9); } }
+  .voice .t { font-size:11px; color:var(--soft); }
+  .transcript { font-family:Caveat,cursive; font-size:20px; line-height:1.4; margin-top:12px; color:var(--ink); }
+  .quote .actions { display:flex; gap:8px; margin-top:13px; }
+  .quote .actions a, .quote .actions button { flex:1; text-align:center; padding:10px; border-radius:999px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; }
+  .quote .actions a { background:var(--ink); color:var(--card); border:none; }
+  .quote .actions a:hover { background:var(--plum); }
+  .quote .actions button { background:transparent; border:1.5px solid var(--rule); color:var(--soft); }
+  .why { margin-top:26px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:560px){ .why { grid-template-columns:1fr; } }
+  .why .w { background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:15px; font-size:13px; line-height:1.65; color:var(--soft); }
+  .why .w b { display:block; font-family:Lora,serif; color:var(--ink); font-size:15px; margin-bottom:5px; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b7ab92;letter-spacing:.2em">EXPERIMENT 10 &middot; THE WALKTHROUGH</span>
+</header>
+<div class="hero">
+  <h1>Nobody can describe a lawn.<br>So <em>show</em> them.</h1>
+  <p>"How big is the yard? How bad is the garage?" — you don't know, that's why you're calling. And the pro? They drive across town to look at a job they might not get. <b>Film 47 seconds. Get quotes in a human voice by dinner.</b> No forms, no stranger visits just to look.</p>
+</div>
+
+<div class="stage">
+  <p class="steplab">1 · What are we looking at?</p>
+  <div class="jobs" id="jobs"></div>
+
+  <div class="clip" id="clip">
+    <div class="film" id="film"></div>
+    <div class="grain"></div>
+    <div class="rec"><i></i>REC</div>
+    <div class="cap" id="cap"></div>
+    <div class="len" id="len">0:47</div>
+  </div>
+  <div class="sendrow" id="sendrow">
+    <button class="send" id="send">Send my walkthrough to nearby pros</button>
+  </div>
+
+  <div class="quotes" id="quotes">
+    <p class="qhead" id="qhead"></p>
+  </div>
+
+  <div class="why">
+    <div class="w"><b>For you</b>No measurements, no guessing, no "we'll send someone to take a look." The price you hear is the price — it was quoted off your actual mess, not a category average.</div>
+    <div class="w"><b>For the pro</b>Quote five jobs from the couch instead of driving to one. A voice note takes 40 seconds and wins more work than a number in a text box — people hire the voice they trust.</div>
+  </div>
+</div>
+
+<script>
+const grad = (a,b) => 'linear-gradient(135deg,'+a+','+b+')';
+const JOBS = [
+  { k:'LAWN_GARDEN', t:'The lawn got away from me', s:'overgrown yard, hedges, edges', film:grad('#77855b','#4f5d38'), cap:'"…and it’s worse behind the shed."', len:'0:47',
+    notes:['I can see the hedge line from here — half a day with cleanup and haul-away. The beds are salvageable.','That’s a solid morning of work. I’d bring the big mower and do the edges by hand.'] },
+  { k:'HOUSEKEEPING', t:'Move-out deep clean', s:'empty apartment, oven, windows', film:grad('#b0a289','#847761'), cap:'"…the oven is the scary part."', len:'0:38',
+    notes:['Oven’s not scary, I’ve seen far worse. Full deposit-back clean, I’d block four hours.','I’d do kitchen and baths first, then floors last so you walk out on shine.'] },
+  { k:'HANDYMAN', t:'The garage door + a list', s:'sticking door, shelves, TV mount', film:grad('#8d8578','#5f594e'), cap:'"…it sticks right about here."', len:'0:52',
+    notes:['That stick is the track, not the door — an hour, parts included. The rest of your list fits the same visit.','Bring me that list and I’ll clear the whole thing in an afternoon.'] },
+  { k:'PET_SITTING', t:'Two dogs, one long weekend', s:'feeding, walks, meds for the old one', film:grad('#9a8e70','#6e6448'), cap:'"…she needs her pill hidden in cheese."', len:'0:33',
+    notes:['Pill-in-cheese is my specialty. Three visits a day and photo updates every one.','The old girl will get her slow walk. I’ve done seniors for years.'] },
+];
+const $ = id => document.getElementById(id);
+const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
+let pros = [], job = null;
+
+fetch(API+'/providers').then(r=>r.json()).then(({providers}) => { pros = providers; }).catch(()=>{});
+
+JOBS.forEach(j => {
+  const d = document.createElement('div'); d.className='job';
+  d.innerHTML = '<b>'+j.t+'</b><span>'+j.s+'</span>';
+  d.onclick = () => {
+    job = j;
+    document.querySelectorAll('.job').forEach(x=>x.classList.remove('on')); d.classList.add('on');
+    $('film').style.background = j.film; $('cap').textContent = j.cap; $('len').textContent = j.len;
+    $('clip').classList.add('show'); $('sendrow').classList.add('show');
+    $('send').disabled = false; $('send').textContent = 'Send my walkthrough to nearby pros';
+    document.querySelectorAll('.quote').forEach(q=>q.remove()); $('qhead').classList.remove('show');
+  };
+  $('jobs').appendChild(d);
+});
+
+const wave = () => { let s=''; for (let i=0;i<38;i++) s += '<i style="height:'+(18+((i*37)%62))+'%"></i>'; return s; };
+
+$('send').onclick = () => {
+  if (!job) return;
+  $('send').disabled = true; $('send').textContent = 'Walkthrough sent — pros are watching it now…';
+  const cands = pros.filter(p=>p.services.some(s=>s.category===job.k)).slice(0,2);
+  const fallback = [{ user:{name:'Sam Rivera'}, city:'Austin', avgRating:4.9, services:[{category:job.k, hourlyRateCents:5500}] }];
+  const list = cands.length ? cands : fallback;
+  list.forEach((p,i) => {
+    setTimeout(() => {
+      $('qhead').classList.add('show');
+      $('qhead').textContent = (i+1) + (i ? ' voice quotes on your job' : ' voice quote on your job') + ' — listen, then pick a person, not a number';
+      const svc = p.services.find(s=>s.category===job.k);
+      const hours = 2 + (i?1:2);
+      const q = document.createElement('div'); q.className='quote';
+      q.innerHTML =
+        '<div class="top"><div class="av">'+p.user.name.split(' ').map(w=>w[0]).slice(0,2).join('')+'</div>' +
+        '<div><div class="nm">'+p.user.name+'</div><div class="meta">'+(p.avgRating?'rated '+p.avgRating:'new pro')+' · '+p.city+' · watched your video '+(i?'11':'4')+' min ago</div></div>' +
+        '<div class="price"><b>$'+Math.round(svc.hourlyRateCents/100*hours)+'</b><span>'+hours+'h · can start '+(i?'Saturday':'tomorrow')+'</span></div></div>' +
+        '<div class="voice"><button class="play" aria-label="play">&#9654;</button><div class="wave">'+wave()+'</div><span class="t">0:'+(31+i*9)+'</span></div>' +
+        '<p class="transcript">“'+job.notes[i % job.notes.length]+'”</p>' +
+        '<div class="actions"><a href="/browse">Hire '+p.user.name.split(' ')[0]+' at this price</a><button>ask a question</button></div>';
+      q.querySelector('.play').onclick = e => {
+        const v = q.querySelector('.voice'); v.classList.toggle('playing');
+        e.target.innerHTML = v.classList.contains('playing') ? '&#10073;&#10073;' : '&#9654;';
+      };
+      $('quotes').appendChild(q);
+    }, 1400 + i*2600);
+  });
+};
+</script>
+</body>
+</html>

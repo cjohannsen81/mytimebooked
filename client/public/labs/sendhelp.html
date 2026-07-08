@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Send Help — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f5f0e8; --card:#fdfbf6; --ink:#312a22; --soft:#8b8072; --rule:#e4dbc9; --terra:#bc5b3d; --moss:#71805c; --gold:#c99b3f; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:740px; margin:0 auto; text-align:center; padding:14px 24px 0; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .flow { max-width:600px; margin:24px auto 70px; padding:0 20px; }
+  .steplab { font-size:11px; text-transform:uppercase; letter-spacing:.22em; color:var(--soft); margin:24px 0 10px; }
+  .whos { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:560px){ .whos { grid-template-columns:1fr; } }
+  .who { border:1.5px solid var(--rule); background:var(--card); border-radius:14px; padding:14px 16px; cursor:pointer; transition:.15s; }
+  .who:hover { border-color:var(--terra); }
+  .who.on { border-color:var(--terra); background:#f9ece5; }
+  .who b { font-family:Lora,serif; font-size:15px; display:block; }
+  .who span { font-size:12px; color:var(--soft); line-height:1.5; display:block; margin-top:2px; }
+
+  .gifts { display:grid; gap:10px; }
+  .gift { border:1.5px solid var(--rule); background:var(--card); border-radius:14px; padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px; transition:.15s; }
+  .gift:hover { border-color:var(--moss); }
+  .gift.on { border-color:var(--moss); background:#eef0e7; }
+  .gift b { font-family:Lora,serif; font-size:15px; display:block; }
+  .gift span { font-size:12px; color:var(--soft); }
+  .gift .pr { font-family:Lora,serif; font-size:19px; font-weight:600; white-space:nowrap; }
+
+  .notecard { background:var(--card); border:1.5px solid var(--rule); border-radius:14px; padding:16px; }
+  .notecard textarea { width:100%; border:none; background:transparent; resize:none; font-family:Caveat,cursive; font-size:22px; line-height:1.45; color:var(--ink); min-height:86px; }
+  .notecard textarea:focus { outline:none; }
+
+  .split { background:var(--card); border:1.5px solid var(--rule); border-radius:14px; padding:16px; }
+  .split .srow { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--rule); font-size:14px; }
+  .split .srow:last-child { border-bottom:none; }
+  .split .srow .nm { font-family:Lora,serif; font-weight:600; }
+  .split .srow .amt { font-family:Lora,serif; }
+  .split .add { margin-top:8px; background:none; border:1.5px dashed var(--rule); width:100%; border-radius:10px; padding:10px; color:var(--soft); font-size:13px; cursor:pointer; }
+  .split .add:hover { border-color:var(--moss); color:var(--moss); }
+
+  .dignity { background:#eef0e7; border:1.5px solid #d5dcc6; border-radius:14px; padding:16px 18px; font-size:13px; line-height:1.7; color:#5a6a49; }
+  .dignity b { display:block; font-family:Lora,serif; font-size:15px; color:var(--ink); margin-bottom:6px; }
+
+  .sendbtn { margin-top:22px; width:100%; padding:15px; border:none; border-radius:999px; background:var(--terra); color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+  .sendbtn:hover { filter:brightness(1.07); }
+
+  /* preview */
+  #preview { position:fixed; inset:0; background:rgba(49,42,34,.5); display:none; z-index:50; overflow:auto; }
+  #preview .card { max-width:440px; margin:7vh auto; background:var(--card); border-radius:16px; padding:26px; transform:rotate(-.5deg); box-shadow:0 24px 70px rgba(49,42,34,.4); }
+  #preview .from { font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--soft); }
+  #preview h3 { font-family:Lora,serif; font-size:22px; margin-top:6px; }
+  #preview .note { font-family:Caveat,cursive; font-size:22px; line-height:1.45; margin-top:14px; border-left:3px solid var(--gold); padding-left:14px; }
+  #preview .what { margin-top:16px; border-top:1px dashed var(--rule); padding-top:12px; font-size:14px; }
+  #preview .what b { font-family:Lora,serif; }
+  #preview .accept { margin-top:16px; background:#eef0e7; border-radius:12px; padding:13px 15px; font-size:12px; color:#5a6a49; line-height:1.6; }
+  #preview .close { margin-top:14px; width:100%; padding:12px; border:1px solid var(--rule); background:#fff; border-radius:999px; cursor:pointer; font-size:13px; color:var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b7ab92;letter-spacing:.2em">EXPERIMENT 12 &middot; SEND HELP</span>
+</header>
+<div class="hero">
+  <h1>Send help,<br><em>not flowers.</em></h1>
+  <p>Your mom will never ask. The new parents say "we're fine." The friend after surgery insists on managing. Flowers wilt on the counter of a house that <b>actually needs a cleaner, a lawn mowed, dinner-hour babysitting</b>. Help is the gift everyone needs and nobody requests — so we made it sendable. With their dignity doing the steering.</p>
+</div>
+
+<div class="flow">
+  <p class="steplab">1 · Who needs a hand?</p>
+  <div class="whos" id="whos"></div>
+
+  <p class="steplab">2 · What do you send?</p>
+  <div class="gifts" id="gifts"></div>
+
+  <p class="steplab">3 · Say it in your own hand</p>
+  <div class="notecard"><textarea id="note"></textarea></div>
+
+  <p class="steplab">4 · Split it with the family — one tap each</p>
+  <div class="split" id="split"></div>
+
+  <p class="steplab" style="margin-top:26px">The part that makes it work</p>
+  <div class="dignity">
+    <b>They stay in charge. Always.</b>
+    Your gift arrives as an invitation, not an appointment. They accept it (or quietly decline), pick the times, meet the pro first if they like, and can convert it to any service they prefer. Nobody gets a surprise stranger, and nobody feels managed. It reads as love, not as a verdict on their housekeeping.
+  </div>
+
+  <button class="sendbtn" id="send">Preview what they receive</button>
+</div>
+
+<div id="preview"><div class="card"></div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
+
+const WHOS = [
+  { k:'mom', t:'Mom, across town', s:'the house is getting to be a lot, and she\'ll never say so', note:'Mom — you take care of everyone. Let someone take care of the house for once. Love you.' },
+  { k:'newborn', t:'Friends with a newborn', s:'they said "we\'re fine." they are not fine', note:'You just made a whole person. The dishes are not your job this month — we\'ve got it.' },
+  { k:'surgery', t:'Neighbor after surgery', s:'six weeks of no lifting, one very stubborn patient', note:'Doctor said rest. We heard you arguing with the lawn. It\'s handled — just heal.' },
+  { k:'grief', t:'A family in a hard season', s:'when words don\'t help, a quiet clean house does', note:'No need to reply to this. The house is looked after. We\'re thinking of you.' },
+];
+const GIFTS = [
+  { cat:'HOUSEKEEPING', t:'A month of light housekeeping', s:'2 visits · their schedule, their pro', hours:6 },
+  { cat:'LAWN_GARDEN', t:'The yard, handled for a season', s:'3 visits · mow, edges, cleanup', hours:5 },
+  { cat:'BABYSITTING', t:'Four dinner-hour rescues', s:'4 x 3h · evenings they pick', hours:12 },
+  { cat:'SENIOR_CARE', t:'Weekly check-in companion', s:'4 visits · errands, meals, company', hours:8 },
+];
+const SIBS = ['You', 'Katie (sister)', 'Ben (brother)'];
+
+let who = WHOS[0], gift = GIFTS[0], rates = {};
+
+fetch(API+'/providers').then(r=>r.json()).then(({providers}) => {
+  GIFTS.forEach(g => {
+    const rs = providers.flatMap(p=>p.services.filter(s=>s.category===g.cat).map(s=>s.hourlyRateCents));
+    rates[g.cat] = rs.length ? rs.reduce((a,b)=>a+b,0)/rs.length/100 : 45;
+  });
+  paintGifts(); paintSplit();
+}).catch(()=>{ GIFTS.forEach(g=>rates[g.cat]=45); paintGifts(); paintSplit(); });
+
+const price = g => Math.round((rates[g.cat]||45) * g.hours);
+
+WHOS.forEach(w => {
+  const d = document.createElement('div'); d.className='who' + (w===who?' on':'');
+  d.innerHTML = '<b>'+w.t+'</b><span>'+w.s+'</span>';
+  d.onclick = () => { who=w; document.querySelectorAll('.who').forEach(x=>x.classList.remove('on')); d.classList.add('on'); $('note').value = w.note; };
+  $('whos').appendChild(d);
+});
+$('note').value = who.note;
+
+function paintGifts() {
+  $('gifts').innerHTML = '';
+  GIFTS.forEach(g => {
+    const d = document.createElement('div'); d.className='gift' + (g===gift?' on':'');
+    d.innerHTML = '<div><b>'+g.t+'</b><span>'+g.s+'</span></div><span class="pr">$'+price(g)+'</span>';
+    d.onclick = () => { gift=g; paintGifts(); paintSplit(); };
+    $('gifts').appendChild(d);
+  });
+}
+let sibs = 1;
+function paintSplit() {
+  const total = price(gift), each = Math.ceil(total/sibs);
+  let html = '';
+  for (let i=0;i<sibs;i++) {
+    html += '<div class="srow"><span class="nm">'+SIBS[i]+'</span><span class="amt">$'+each+(i>0?' · invite sent':'')+'</span></div>';
+  }
+  html += sibs < SIBS.length ? '<button class="add">+ add '+SIBS[sibs].split(' ')[0]+' — everyone\'s share drops</button>' : '';
+  $('split').innerHTML = html;
+  const add = $('split').querySelector('.add');
+  if (add) add.onclick = () => { sibs++; paintSplit(); };
+}
+
+$('send').onclick = () => {
+  const total = price(gift);
+  $('preview').style.display = 'block';
+  $('preview').querySelector('.card').innerHTML =
+    '<p class="from">A gift, from people who love you</p>' +
+    '<h3>'+gift.t+'</h3>' +
+    '<p class="note">“'+($('note').value || who.note)+'”</p>' +
+    '<div class="what"><b>What this is:</b> '+gift.s+', with a well-reviewed local pro — $'+total+' already covered'+(sibs>1?' by '+sibs+' of you together':'')+'.</div>' +
+    '<div class="accept"><b>You\'re in charge:</b> accept when you\'re ready, pick your own times, meet the pro first if you like — or swap this for any help you\'d rather have. Nothing happens until you say so.</div>' +
+    '<button class="close">Back</button>';
+  $('preview').querySelector('.close').onclick = () => $('preview').style.display='none';
+};
+</script>
+</body>
+</html>
