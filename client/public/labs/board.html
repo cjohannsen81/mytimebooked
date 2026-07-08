@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Board — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0a0a; --panel:#111; --cell:#181818; --txt:#e8e6df; --amber:#ffb63d; --mut:#5c5a52; --green:#69d58c; --line:#242424; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--txt); font-family:"IBM Plex Mono",monospace; min-height:100vh; }
+  header { padding:20px 28px; display:flex; justify-content:space-between; }
+  header a { color:var(--mut); text-decoration:none; font-size:11px; text-transform:uppercase; letter-spacing:.2em; }
+  header a:hover { color:var(--amber); }
+  .wrap { max-width:1060px; margin:0 auto; padding:10px 20px 80px; }
+  h1 { font-family:Archivo,sans-serif; font-weight:900; font-size:clamp(28px,4.4vw,50px); letter-spacing:-.01em; text-transform:uppercase; line-height:1.03; color:#fff; }
+  h1 span { color:var(--amber); }
+  .lead { color:var(--mut); font-size:13px; margin-top:12px; max-width:600px; line-height:1.7; }
+  .lead b { color:var(--txt); font-weight:500; }
+
+  .topbar { display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:12px; flex-wrap:wrap; }
+  .live { font-size:10px; letter-spacing:.25em; color:var(--green); }
+  .live::before { content:'●'; margin-right:8px; animation:blink 1.4s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:.2; } }
+  select { background:var(--panel); color:var(--txt); border:1px solid var(--line); padding:9px 12px; font-family:"IBM Plex Mono",monospace; font-size:12px; }
+
+  .board { margin-top:14px; border:1px solid var(--line); background:var(--panel); border-radius:6px; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; min-width:760px; }
+  th { font-size:9px; letter-spacing:.3em; color:var(--mut); text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); text-transform:uppercase; }
+  th:last-child, td:last-child { text-align:right; }
+  tr.row { border-bottom:1px solid var(--line); cursor:pointer; transition:background .15s; }
+  tr.row:hover { background:#161616; }
+  tr.row.claimed { opacity:.45; cursor:default; }
+  td { padding:11px 14px; white-space:nowrap; }
+  .flap { display:inline-block; }
+  .flap span { display:inline-block; background:var(--cell); border-radius:2px; padding:3px 1px; margin-right:1.5px; min-width:13px; text-align:center; font-size:13px; font-weight:600; color:var(--txt); border-bottom:1px solid #000; }
+  .flap span.flip { animation:flip .12s linear; }
+  @keyframes flip { 0% { transform:rotateX(0); } 49% { transform:rotateX(90deg); } 51% { transform:rotateX(-90deg); } 100% { transform:rotateX(0); } }
+  td .pay span { color:var(--amber); }
+  td .st-open span { color:var(--green); }
+  td .st-claimed span { color:var(--mut); }
+
+  /* claim panel */
+  #panel { position:fixed; inset:0; background:rgba(0,0,0,.82); display:none; z-index:50; }
+  #panel .card { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(92vw,460px); background:var(--panel); border:1px solid var(--amber); border-radius:8px; padding:26px; }
+  #panel h3 { font-family:Archivo,sans-serif; font-weight:900; text-transform:uppercase; font-size:20px; color:#fff; letter-spacing:.02em; }
+  #panel .row2 { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dotted var(--line); font-size:12px; }
+  #panel .row2 .k { color:var(--mut); text-transform:uppercase; font-size:10px; letter-spacing:.2em; }
+  #panel .yr { text-align:right; padding:16px 0 4px; }
+  #panel .yr b { font-size:30px; color:var(--amber); font-weight:700; }
+  #panel .yr small { display:block; color:var(--mut); font-size:9px; letter-spacing:.25em; margin-top:4px; }
+  #panel button, #panel a.claim { display:block; width:100%; margin-top:14px; padding:14px; border-radius:4px; text-align:center; font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.15em; cursor:pointer; text-transform:uppercase; text-decoration:none; }
+  #panel a.claim { background:var(--amber); color:#0a0a0a; border:none; }
+  #panel button.x { background:transparent; color:var(--mut); border:1px solid var(--line); }
+  #panel .note { margin-top:14px; font-size:10px; color:var(--mut); line-height:1.7; letter-spacing:.05em; text-align:center; }
+  .foot { margin-top:16px; font-size:10px; color:var(--mut); letter-spacing:.1em; line-height:1.8; text-align:center; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:10px;color:#3a3831;letter-spacing:.2em">EXPERIMENT 06 &middot; THE BOARD &middot; FOR PROS</span>
+</header>
+<div class="wrap">
+  <h1>Same houses.<br>Same hours. <span>Every week.</span></h1>
+  <p class="lead">Gig platforms hand you scraps and make you fight for them. This board lists <b>standing contracts</b> — households that want the same pro on the same slot, every single week. Claim a route once and it's <b>your recurring income</b>. First pick goes to signed pros.</p>
+
+  <div class="topbar">
+    <span class="live">CONTRACTS POSTING LIVE</span>
+    <select id="trade"><option value="">ALL TRADES</option></select>
+  </div>
+
+  <div class="board">
+    <table>
+      <thead><tr><th>Day</th><th>Slot</th><th>Area</th><th>Service</th><th>Weekly</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="foot">EVERY ROW = ONE HOUSEHOLD, 52 WEEKS A YEAR &middot; RATES FROM LIVE PLATFORM DATA &middot; PROTOTYPE</p>
+</div>
+
+<div id="panel"><div class="card"></div></div>
+
+<script>
+const TRADES = [
+  { k:'HOUSEKEEPING', l:'HOUSEKEEPING' }, { k:'BABYSITTING', l:'BABYSITTING' },
+  { k:'DOG_WALKING', l:'DOG WALKING' }, { k:'PET_SITTING', l:'PET SITTING' },
+  { k:'LAWN_GARDEN', l:'LAWN + GARDEN' }, { k:'HANDYMAN', l:'HANDYMAN' },
+  { k:'SENIOR_CARE', l:'SENIOR CARE' }, { k:'TUTORING', l:'TUTORING' },
+];
+const DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+const AREAS = ['TRAVIS HTS','ZILKER','HYDE PARK','MUELLER','CRESTVIEW','ALLANDALE','E CESAR CHVZ','BARTON HLS','ROSEDALE','WINDSOR PK'];
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-$ ';
+const hash = s => { let h=0; for (const ch of s) h=(h*31+ch.charCodeAt(0))>>>0; return h; };
+// avalanche mix — plain string hashes of consecutive seeds barely differ
+const rnd = s => { let h=hash(s); h^=h>>>15; h=Math.imul(h,2246822519); h^=h>>>13; h=Math.imul(h,3266489917); h^=h>>>16; return h>>>0; };
+const $ = s => document.querySelector(s);
+
+let marketRates = {}, contracts = [], filter = '';
+
+async function load() {
+  try {
+    const { providers } = await fetch('/api/providers').then(r=>r.json());
+    TRADES.forEach(t => {
+      const rates = providers.flatMap(p=>p.services.filter(s=>s.category===t.k).map(s=>s.hourlyRateCents));
+      marketRates[t.k] = rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length/100 : 45;
+    });
+  } catch(e) { TRADES.forEach(t=>marketRates[t.k]=45); }
+}
+
+function mkContract(i) {
+  const trade = TRADES[rnd('trade'+i) % TRADES.length];
+  const day = DAYS[rnd('day'+i) % 7];
+  const start = 8 + (rnd('start'+i) % 9);
+  const dur = 1 + (rnd('dur'+i) % 3);
+  const rate = marketRates[trade.k] || 45;
+  const weekly = Math.round(rate * dur);
+  return {
+    id:i, trade, day,
+    slot: String(start).padStart(2,'0')+':00-'+String(start+dur).padStart(2,'0')+':00',
+    area: AREAS[rnd('area'+i) % AREAS.length],
+    dur, weekly, yearly: weekly*52,
+    ref: 'HH-'+(100 + (rnd('ref'+i) % 900)),
+    claimed:false,
+  };
+}
+
+// ---- split-flap text ----
+function flapText(el, text) {
+  el.innerHTML = '';
+  [...text].forEach((ch,i) => {
+    const s = document.createElement('span');
+    s.textContent = ' ';
+    el.appendChild(s);
+    let steps = 2 + (i % 3);
+    const iv = setInterval(() => {
+      s.classList.remove('flip'); void s.offsetWidth; s.classList.add('flip');
+      if (steps-- <= 0) { clearInterval(iv); s.textContent = ch; }
+      else s.textContent = GLYPHS[(hash(text+i+steps)) % GLYPHS.length];
+    }, 90 + i*18);
+  });
+}
+
+function addRow(c, instant) {
+  const tr = document.createElement('tr');
+  tr.className = 'row'; tr.dataset.id = c.id;
+  tr.innerHTML =
+    '<td><div class="flap fday"></div></td>' +
+    '<td><div class="flap fslot"></div></td>' +
+    '<td><div class="flap farea"></div></td>' +
+    '<td><div class="flap ftrade"></div></td>' +
+    '<td><div class="flap pay fpay"></div></td>' +
+    '<td><div class="flap st-open fst"></div></td>';
+  $('#rows').prepend(tr);
+  const set = (sel, txt) => instant
+    ? tr.querySelector(sel).innerHTML = [...txt].map(ch=>'<span>'+ch+'</span>').join('')
+    : flapText(tr.querySelector(sel), txt);
+  set('.fday', c.day); set('.fslot', c.slot); set('.farea', c.area);
+  set('.ftrade', c.trade.l); set('.fpay', '$'+c.weekly+'/WK'); set('.fst', 'OPEN');
+  tr.onclick = () => !c.claimed && openPanel(c, tr);
+}
+
+function openPanel(c, tr) {
+  const p = $('#panel'), card = p.querySelector('.card');
+  card.innerHTML =
+    '<h3>Standing contract</h3>' +
+    '<div class="row2"><span class="k">Household</span><span>'+c.ref+' &middot; '+c.area+'</span></div>' +
+    '<div class="row2"><span class="k">Route</span><span>EVERY '+c.day+' &middot; '+c.slot+'</span></div>' +
+    '<div class="row2"><span class="k">Service</span><span>'+c.trade.l+' &middot; '+c.dur+'.0 HRS</span></div>' +
+    '<div class="row2"><span class="k">Weekly</span><span style="color:var(--amber)">$'+c.weekly+'</span></div>' +
+    '<div class="yr"><b>$'+c.yearly.toLocaleString('en-US')+'</b><small>PER YEAR &middot; ONE CLAIM &middot; YOURS UNTIL YOU RELEASE IT</small></div>' +
+    '<a class="claim" href="/register?role=PROVIDER">Claim this route &mdash; sign up as a pro</a>' +
+    '<button class="x">Keep watching the board</button>' +
+    '<p class="note">Standing contracts are offered to signed pros in order of rating and reliability. This one stays marked for you for 48 hours after signup. Prototype — recurring contracts are simulated on live rates.</p>';
+  p.style.display = 'block';
+  card.querySelector('.x').onclick = () => {
+    p.style.display = 'none';
+    // dramatize scarcity: the row flips to CLAIMED by someone else later
+    setTimeout(() => {
+      if (c.claimed) return;
+      c.claimed = true; tr.classList.add('claimed');
+      const st = tr.querySelector('.fst'); st.className = 'flap st-claimed fst';
+      flapText(st, 'CLAIMED');
+    }, 9000 + (hash('c'+c.id) % 9000));
+  };
+}
+
+async function boot() {
+  await load();
+  const sel = $('#trade');
+  TRADES.forEach(t => { const o=document.createElement('option'); o.value=t.k; o.textContent=t.l; sel.appendChild(o); });
+  sel.onchange = () => { filter = sel.value; renderAll(); };
+  contracts = Array.from({length:22}, (_,i) => mkContract(i));
+  renderAll(true);
+  // new contracts flap in over time
+  let next = 22;
+  setInterval(() => {
+    if (document.hidden) return;
+    const c = mkContract(next++);
+    if (!filter || c.trade.k === filter) { contracts.unshift(c); addRow(c, false); trim(); }
+    else contracts.unshift(c);
+  }, 7000);
+}
+function trim() {
+  const rows = $('#rows').children;
+  while (rows.length > 14) rows[rows.length-1].remove();
+}
+function renderAll(first) {
+  $('#rows').innerHTML = '';
+  const visible = contracts.filter(c => !filter || c.trade.k === filter).slice(0,12).reverse();
+  const lastIdx = visible.length - 1;
+  // on first paint, the freshest few rows flap in for effect; the rest are instant
+  visible.forEach((c,i) => addRow(c, !(first && i >= lastIdx - 3)));
+}
+boot();
+</script>
+</body>
+</html>

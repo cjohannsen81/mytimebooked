@@ -37,6 +37,19 @@
   .card.orbit:hover { box-shadow:0 18px 50px -18px rgba(167,139,250,.45); border-color:#a78bfa; }
   .card.orbit h2, .card.orbit .go { color:#a78bfa; }
   .art { font-size:34px; margin-top:14px; letter-spacing:6px; }
+  .art.mono { font-family:"IBM Plex Mono",monospace; font-size:22px; letter-spacing:2px; opacity:.85; }
+  .divider { max-width:1060px; margin:30px auto 0; padding:0 28px; display:flex; align-items:center; gap:18px; }
+  .divider hr { flex:1; border:none; border-top:1px solid #23242d; }
+  .divider span { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.3em; color:#6b6e7c; text-transform:uppercase; white-space:nowrap; }
+  .card.ledger { background:linear-gradient(160deg,#181510,#0d0e12 70%); }
+  .card.ledger:hover { box-shadow:0 18px 50px -18px rgba(201,169,97,.45); border-color:#c9a961; }
+  .card.ledger h2, .card.ledger .go { color:#c9a961; }
+  .card.daysheet { background:linear-gradient(160deg,#0c1826,#0d0e12 70%); }
+  .card.daysheet:hover { box-shadow:0 18px 50px -18px rgba(111,195,255,.4); border-color:#6fc3ff; }
+  .card.daysheet h2, .card.daysheet .go { color:#6fc3ff; }
+  .card.board { background:linear-gradient(160deg,#171308,#0d0e12 70%); }
+  .card.board:hover { box-shadow:0 18px 50px -18px rgba(255,182,61,.4); border-color:#ffb63d; }
+  .card.board h2, .card.board .go { color:#ffb63d; }
   footer { text-align:center; padding:0 28px 50px; color:#585b66; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; line-height:1.8; }
   footer a { color:#9a9dab; }
 </style>
@@ -48,8 +61,8 @@
 </header>
 <div class="hero">
   <p class="tag">MyTimeBooked Labs</p>
-  <h1>Three ways booking<br><span>should have worked</span> all along.</h1>
-  <p>Every booking site makes you browse profiles and fill forms. These three working experiments each replace that with a different behavior — same real pros, same live data, new physics.</p>
+  <h1>Six ways this platform<br><span>should have worked</span> all along.</h1>
+  <p>Working experiments, live data. Three rethink how households book. Three rethink how pros join and earn — because without the pros, there is no platform.</p>
 </div>
 <div class="grid">
   <a class="card paint" href="/labs/paint.html">
@@ -77,8 +90,37 @@
     <span class="go">BUILD MY ORBIT →</span>
   </a>
 </div>
+<div class="divider">
+  <hr><span>For the pros — the supply side is the product</span><hr>
+</div>
+<div class="grid">
+  <a class="card ledger" href="/labs/ledger.html">
+    <span class="num">EXPERIMENT — 04</span>
+    <h2>The Ledger</h2>
+    <p class="beh">Signup in reverse · see the money first</p>
+    <div class="art mono">$1,240/WK ▁▂▄▆█</div>
+    <p>Onboarding as an earnings statement. A pro sets trade, rate, and hours — and a private-banking-grade projection builds live from real platform rates and demand. The pitch is the paycheck.</p>
+    <span class="go">OPEN THE BOOK →</span>
+  </a>
+  <a class="card daysheet" href="/labs/daysheet.html">
+    <span class="num">EXPERIMENT — 05</span>
+    <h2>The Day Sheet</h2>
+    <p class="beh">Dispatch · we pack your day</p>
+    <div class="art mono">09:00 ▮▮▮ 12 MIN ▮▮</div>
+    <p>Freelancing means dead hours between scattered jobs. Watch a dispatcher pack a pro's day — jobs clustered by neighborhood, drive time engineered out — next to the gappy solo day it replaces.</p>
+    <span class="go">PACK A DAY →</span>
+  </a>
+  <a class="card board" href="/labs/board.html">
+    <span class="num">EXPERIMENT — 06</span>
+    <h2>The Board</h2>
+    <p class="beh">Standing contracts · recurring income</p>
+    <div class="art mono">TUE 09:00 · $96/WK · OPEN</div>
+    <p>A split-flap departures board of weekly household contracts. Same house, same slot, 52 weeks a year — claim a route and it's yours. Predictable income is what actually recruits supply.</p>
+    <span class="go">WATCH THE BOARD →</span>
+  </a>
+</div>
 <footer>
-  These prototypes run on live mytimebooked.com data — the pros are real, and every path ends in a real booking.<br>
+  These prototypes run on live mytimebooked.com data — the pros are real, and every path ends in a real booking or signup.<br>
   Which behavior should become the product? <a href="/">Back to the current site</a>
 </footer>
 </body>
