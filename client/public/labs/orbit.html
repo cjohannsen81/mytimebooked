@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b0b1e; --line:#26264d; --vio:#a78bfa; --pink:#f472b6; --txt:#e6e4f5; --mut:#7d7aa8; }
+  * { box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+  body { background:radial-gradient(120% 100% at 50% 0%, #14143a 0%, var(--bg) 60%); color:var(--txt); font-family:Sora,system-ui,sans-serif; min-height:100vh; overflow-x:hidden; }
+  .mono { font-family:"IBM Plex Mono",monospace; }
+  header { padding:20px 24px; display:flex; justify-content:space-between; }
+  header a { color:var(--mut); text-decoration:none; font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--vio); }
+  .hero { text-align:center; padding:4px 24px 10px; }
+  .hero h1 { font-size:clamp(28px,4.6vw,46px); font-weight:800; letter-spacing:-.03em; color:#fff; }
+  .hero h1 em { font-style:normal; background:linear-gradient(120deg,var(--vio),var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero p { color:var(--mut); font-size:14px; margin-top:8px; }
+
+  .stage { position:relative; width:min(92vw,560px); height:min(92vw,560px); margin:10px auto 0; touch-action:none; }
+  svg { position:absolute; inset:0; width:100%; height:100%; }
+  .arc { fill:none; stroke:var(--line); stroke-width:26; stroke-linecap:round; transition:stroke .2s; }
+  .arc.hot { stroke:#3d3d7a; }
+  .daylab { font-family:"IBM Plex Mono",monospace; font-size:11px; fill:var(--mut); text-transform:uppercase; letter-spacing:.15em; }
+  .home { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; z-index:1; }
+  .home .h { font-size:38px; filter:drop-shadow(0 0 18px rgba(167,139,250,.8)); animation:breathe 4s ease-in-out infinite; }
+  @keyframes breathe { 50% { transform:scale(1.06); } }
+  .home .t { font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--mut); letter-spacing:.2em; text-transform:uppercase; margin-top:2px; }
+
+  .moon { position:absolute; z-index:2; transform:translate(-50%,-50%); text-align:center; cursor:pointer; animation:arrive .35s cubic-bezier(.2,1.5,.4,1) both; }
+  @keyframes arrive { from { transform:translate(-50%,-50%) scale(.2); opacity:0; } }
+  .moon .orb { width:44px; height:44px; margin:0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px;
+    background:radial-gradient(circle at 32% 30%, #4a4a8f, #1c1c46); border:2px solid var(--vio); box-shadow:0 0 18px rgba(167,139,250,.55); }
+  .moon .who { font-family:"IBM Plex Mono",monospace; font-size:9px; color:var(--vio); margin-top:3px; white-space:nowrap; text-shadow:0 1px 4px #000; }
+  .moon.float { animation:arrive .35s both, bob 5s 0.4s ease-in-out infinite; }
+  @keyframes bob { 50% { margin-top:-5px; } }
+
+  .tray { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:22px 16px 8px; }
+  .tok { border:1.5px solid var(--line); background:#15153500; color:var(--txt); border-radius:14px; padding:10px 14px; font-family:"IBM Plex Mono",monospace; font-size:12px; cursor:grab; user-select:none; transition:.15s; background:rgba(30,30,70,.5); }
+  .tok:hover { border-color:var(--vio); box-shadow:0 0 14px rgba(167,139,250,.3); }
+  .tok.drag { opacity:.35; }
+  .ghost { position:fixed; z-index:50; pointer-events:none; transform:translate(-50%,-50%); font-size:30px; filter:drop-shadow(0 0 12px rgba(167,139,250,.9)); }
+  .trayhint { text-align:center; font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--mut); letter-spacing:.1em; }
+
+  .hud { max-width:560px; margin:20px auto 60px; padding:0 20px; }
+  .meter { display:flex; justify-content:space-between; align-items:baseline; border-top:1.5px solid var(--line); padding-top:14px; }
+  .meter .lab { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--mut); }
+  .meter b { font-size:28px; color:#fff; }
+  .meter b small { font-size:12px; color:var(--mut); font-weight:400; }
+  .crew { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .crew .cm { display:flex; align-items:center; gap:7px; border:1.5px solid var(--line); border-radius:999px; padding:5px 12px 5px 6px; font-family:"IBM Plex Mono",monospace; font-size:11px; animation:arrive .3s both; }
+  .crew .cm i { font-style:normal; width:24px; height:24px; border-radius:50%; background:linear-gradient(120deg,var(--vio),var(--pink)); color:#0b0b1e; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:10px; }
+  #auto { display:none; width:100%; margin-top:18px; padding:15px; border:none; border-radius:14px; background:linear-gradient(120deg,var(--vio),var(--pink)); color:#0b0b1e; font-family:Sora; font-weight:800; font-size:15px; cursor:pointer; }
+  #auto.show { display:block; animation:arrive .3s both; }
+
+  /* sheet */
+  .sheet { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); width:min(92vw,420px); background:#171736; border:1.5px solid var(--vio); border-radius:18px; padding:18px; z-index:60; display:none; box-shadow:0 20px 60px rgba(0,0,0,.6); animation:arrive .25s both; }
+  .sheet h3 { font-size:16px; color:#fff; }
+  .sheet .row { display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:10px; }
+  .sheet .lab { font-family:"IBM Plex Mono",monospace; font-size:10px; text-transform:uppercase; letter-spacing:.2em; color:var(--mut); }
+  .sheet select { background:#0b0b1e; color:var(--txt); border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font-family:"IBM Plex Mono",monospace; font-size:12px; }
+  .sheet .pro { font-family:"IBM Plex Mono",monospace; font-size:12px; color:#fff; }
+  .sheet .pro small { color:var(--mut); display:block; }
+  .sheet .btns { display:flex; gap:8px; margin-top:16px; }
+  .sheet button { flex:1; padding:10px; border-radius:10px; font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; cursor:pointer; border:1.5px solid var(--line); background:transparent; color:var(--txt); }
+  .sheet button.swap { border-color:var(--vio); color:var(--vio); }
+  .sheet button.rm { border-color:#f87171; color:#f87171; }
+  .sheet button.ok { background:var(--vio); border-color:var(--vio); color:#0b0b1e; }
+
+  /* plan overlay */
+  #plan { position:fixed; inset:0; background:rgba(8,8,24,.92); backdrop-filter:blur(6px); z-index:80; display:none; overflow:auto; }
+  #plan .inner { max-width:520px; margin:8vh auto; padding:24px; }
+  #plan h2 { color:#fff; font-size:28px; letter-spacing:-.02em; }
+  #plan .pl { border:1.5px solid var(--line); border-radius:12px; padding:12px 16px; margin-top:10px; display:flex; justify-content:space-between; font-family:"IBM Plex Mono",monospace; font-size:12px; }
+  #plan .tot { margin-top:16px; text-align:right; font-size:22px; font-weight:800; color:#fff; }
+  #plan a, #plan button.x { display:block; width:100%; margin-top:14px; padding:14px; border-radius:12px; text-align:center; font-weight:700; text-decoration:none; }
+  #plan a { background:linear-gradient(120deg,var(--vio),var(--pink)); color:#0b0b1e; }
+  #plan button.x { background:transparent; border:1.5px solid var(--line); color:var(--mut); cursor:pointer; font-family:Sora; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">← Labs</a>
+  <span class="mono" style="font-size:11px;color:#3a3a6e">EXPERIMENT 03 · ORBIT</span>
+</header>
+<div class="hero">
+  <h1>Put your week <em>in orbit.</em></h1>
+  <p>Drag a service onto a day. It becomes a recurring moon around your home — auto-staffed with a real pro.</p>
+</div>
+
+<div class="stage" id="stage">
+  <svg viewBox="0 0 560 560" id="svg"></svg>
+  <div class="home"><div class="h">🏡</div><div class="t">your place</div></div>
+</div>
+
+<div class="tray" id="tray"></div>
+<p class="trayhint">↑ drag a chore onto the ring ↑</p>
+
+<div class="hud">
+  <div class="meter">
+    <span class="lab">Weekly crew cost</span>
+    <b id="cost">$0<small>/wk</small></b>
+  </div>
+  <div class="crew" id="crew"></div>
+  <button id="auto">Put my week on autopilot ✦</button>
+</div>
+
+<div class="sheet" id="sheet"></div>
+<div id="plan"><div class="inner"></div></div>
+
+<script>
+const CATS = [
+  { k:'HOUSEKEEPING', l:'Housekeeping', e:'🧹' }, { k:'BABYSITTING', l:'Babysitting', e:'🧸' },
+  { k:'DOG_WALKING', l:'Dog walk', e:'🐕' }, { k:'PET_SITTING', l:'Pet sitting', e:'🐾' },
+  { k:'LAWN_GARDEN', l:'Lawn & garden', e:'🌿' }, { k:'HANDYMAN', l:'Handyman', e:'🔧' },
+  { k:'SENIOR_CARE', l:'Senior care', e:'💛' }, { k:'TUTORING', l:'Tutoring', e:'📚' },
+];
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const TIMES = ['Morning','Afternoon','Evening'];
+const SEG = 360/7, R = 236, CX = 280, CY = 280;
+const money = c => '$' + Math.round(c/100);
+
+let pros = [];   // by category: sorted best-first
+let moons = [];  // {id,cat,day,time,proIdx,hours}
+let seq = 0;
+
+async function load() {
+  try {
+    const { providers } = await fetch('/api/providers').then(r=>r.json());
+    pros = providers.map(p => ({
+      id:p.id, name:p.user.name, rating:p.avgRating, city:p.city,
+      services:p.services.map(s=>({category:s.category, rate:s.hourlyRateCents, minHours:s.minHours})),
+    }));
+  } catch(e) {}
+}
+const prosFor = k => pros.filter(p=>p.services.some(s=>s.category===k)).sort((a,b)=>(b.rating||0)-(a.rating||0));
+const rateFor = (p,k) => p.services.find(s=>s.category===k).rate;
+
+// ---- ring ----
+const svg = document.getElementById('svg');
+const polar = (deg, r) => [CX + r*Math.cos(deg*Math.PI/180), CY + r*Math.sin(deg*Math.PI/180)];
+function arcPath(a1, a2, r) {
+  const [x1,y1] = polar(a1,r), [x2,y2] = polar(a2,r);
+  return `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`;
+}
+const arcs = [];
+DAYS.forEach((d,i) => {
+  const a1 = -90 + i*SEG + 4, a2 = -90 + (i+1)*SEG - 4;
+  const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d', arcPath(a1,a2,R)); p.setAttribute('class','arc'); p.dataset.day = i;
+  svg.appendChild(p); arcs.push(p);
+  const [lx,ly] = polar(-90 + (i+.5)*SEG, R+30);
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',lx); t.setAttribute('y',ly+4); t.setAttribute('text-anchor','middle'); t.setAttribute('class','daylab');
+  t.textContent = d; svg.appendChild(t);
+});
+
+// ---- tray & drag ----
+const tray = document.getElementById('tray');
+const stage = document.getElementById('stage');
+CATS.forEach(c => {
+  const b = document.createElement('div'); b.className='tok'; b.textContent = c.e+' '+c.l;
+  b.addEventListener('pointerdown', e => startDrag(e, c, b));
+  tray.appendChild(b);
+});
+let drag = null;
+function startDrag(e, c, el) {
+  e.preventDefault();
+  const g = document.createElement('div'); g.className='ghost'; g.textContent = c.e;
+  document.body.appendChild(g);
+  drag = { c, el, g }; el.classList.add('drag');
+  moveGhost(e);
+}
+function moveGhost(e) {
+  drag.g.style.left = e.clientX+'px'; drag.g.style.top = e.clientY+'px';
+  const day = dayAt(e.clientX, e.clientY);
+  arcs.forEach((a,i)=>a.classList.toggle('hot', i===day));
+}
+function dayAt(x, y) {
+  const r = stage.getBoundingClientRect();
+  const dx = x - (r.left + r.width/2), dy = y - (r.top + r.height/2);
+  const dist = Math.hypot(dx,dy) / (r.width/2);
+  if (dist < .45 || dist > 1.15) return null;
+  const deg = (Math.atan2(dy,dx)*180/Math.PI + 90 + 360) % 360;
+  return Math.floor(deg / SEG);
+}
+window.addEventListener('pointermove', e => { if (drag) moveGhost(e); });
+window.addEventListener('pointerup', e => {
+  if (!drag) return;
+  const day = dayAt(e.clientX, e.clientY);
+  drag.g.remove(); drag.el.classList.remove('drag');
+  arcs.forEach(a=>a.classList.remove('hot'));
+  const c = drag.c; drag = null;
+  if (day == null) return;
+  if (moons.filter(m=>m.day===day).length >= 3) return;
+  const staff = prosFor(c.k);
+  const m = { id:++seq, cat:c, day, time:0, proIdx:0, hours:2, staff };
+  moons.push(m); renderMoons(); renderHud(); openSheet(m);
+});
+
+// ---- moons ----
+function renderMoons() {
+  document.querySelectorAll('.moon').forEach(x=>x.remove());
+  const byDay = {};
+  moons.forEach(m => { (byDay[m.day] = byDay[m.day]||[]).push(m); });
+  Object.values(byDay).forEach(list => list.forEach((m,idx) => {
+    const ang = -90 + (m.day + .5)*SEG + (idx - (list.length-1)/2) * 13;
+    const rect = stage.getBoundingClientRect();
+    const scale = rect.width / 560;
+    const [x,y] = polar(ang, R);
+    const div = document.createElement('div'); div.className='moon float';
+    div.style.left = (x*scale)+'px'; div.style.top = (y*scale)+'px';
+    const pro = m.staff[m.proIdx];
+    div.innerHTML = '<div class="orb">'+m.cat.e+'</div><div class="who">'+(pro?pro.name.split(' ')[0]:'—')+'</div>';
+    div.onclick = () => openSheet(m);
+    stage.appendChild(div);
+  }));
+}
+
+// ---- sheet ----
+const sheet = document.getElementById('sheet');
+function openSheet(m) {
+  const pro = m.staff[m.proIdx];
+  sheet.style.display = 'block';
+  sheet.innerHTML =
+    '<h3>'+m.cat.e+' '+m.cat.l+' · every '+DAYS[m.day]+'</h3>' +
+    '<div class="row"><span class="lab">Time</span><select id="stime">' +
+      TIMES.map((t,i)=>'<option value="'+i+'"'+(i===m.time?' selected':'')+'>'+t+'</option>').join('') + '</select>' +
+    '<span class="lab">Hours</span><select id="shrs">' +
+      [1,2,3,4].map(h=>'<option'+(h===m.hours?' selected':'')+'>'+h+'</option>').join('') + '</select></div>' +
+    '<div class="row"><span class="lab">Your pro</span><div class="pro" style="text-align:right">' +
+      (pro ? pro.name + ' ' + (pro.rating?'★'+pro.rating:'') + '<small>' + money(rateFor(pro,m.cat.k)) + '/hr · ' + pro.city + '</small>'
+           : 'no pro offers this yet<small>try another chore</small>') + '</div></div>' +
+    '<div class="btns">' +
+      (m.staff.length > 1 ? '<button class="swap">⟳ swap pro</button>' : '') +
+      '<button class="rm">remove</button><button class="ok">keep it</button></div>';
+  sheet.querySelector('#stime').onchange = e => { m.time = +e.target.value; };
+  sheet.querySelector('#shrs').onchange = e => { m.hours = +e.target.value; renderHud(); };
+  const sw = sheet.querySelector('.swap');
+  if (sw) sw.onclick = () => { m.proIdx = (m.proIdx+1) % m.staff.length; openSheet(m); renderMoons(); renderHud(); };
+  sheet.querySelector('.rm').onclick = () => { moons = moons.filter(x=>x!==m); sheet.style.display='none'; renderMoons(); renderHud(); };
+  sheet.querySelector('.ok').onclick = () => { sheet.style.display='none'; };
+}
+
+// ---- hud ----
+function renderHud() {
+  const staffed = moons.filter(m=>m.staff[m.proIdx]);
+  const total = staffed.reduce((a,m)=>a + rateFor(m.staff[m.proIdx], m.cat.k) * m.hours, 0);
+  document.getElementById('cost').innerHTML = money(total) + '<small>/wk</small>';
+  const crew = [...new Map(staffed.map(m=>[m.staff[m.proIdx].id, m.staff[m.proIdx]])).values()];
+  document.getElementById('crew').innerHTML = crew.map(p =>
+    '<span class="cm"><i>'+p.name.split(' ').map(w=>w[0]).slice(0,2).join('')+'</i>'+p.name.split(' ')[0]+'</span>').join('');
+  document.getElementById('auto').classList.toggle('show', staffed.length>0);
+}
+
+document.getElementById('auto').onclick = () => {
+  const staffed = moons.filter(m=>m.staff[m.proIdx]);
+  const total = staffed.reduce((a,m)=>a + rateFor(m.staff[m.proIdx], m.cat.k) * m.hours, 0);
+  const plan = document.getElementById('plan');
+  plan.querySelector('.inner').innerHTML =
+    '<h2>Your standing crew ✦</h2>' +
+    staffed.map(m => '<div class="pl"><span>'+m.cat.e+' '+DAYS[m.day]+' '+TIMES[m.time].toLowerCase()+' · '+m.hours+'h</span>' +
+      '<span>'+m.staff[m.proIdx].name.split(' ')[0]+' · '+money(rateFor(m.staff[m.proIdx],m.cat.k)*m.hours)+'</span></div>').join('') +
+    '<div class="tot">'+money(total)+'/week</div>' +
+    '<a href="/providers/'+staffed[0].staff[staffed[0].proIdx].id+'">Start with the first booking →</a>' +
+    '<button class="x">keep orbiting</button>' +
+    '<p style="margin-top:14px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--mut);text-align:center">prototype — recurring plans aren\'t live yet; each visit books normally</p>';
+  plan.style.display='block';
+  plan.querySelector('.x').onclick = () => plan.style.display='none';
+};
+
+window.addEventListener('resize', renderMoons);
+load().then(()=>{ renderMoons(); renderHud(); });
+</script>
+</body>
+</html>

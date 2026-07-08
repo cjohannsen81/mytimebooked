@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paintbrush — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f6; --ink: #16181a; --mut: #8a8f94; --line: #e8e5dd;
+  }
+  * { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--ink); font-family: Sora, system-ui, sans-serif; }
+  .mono { font-family: "IBM Plex Mono", monospace; }
+  header { padding: 20px 24px 0; display: flex; justify-content: space-between; align-items: center; }
+  header a { color: var(--mut); text-decoration: none; font-family: "IBM Plex Mono", monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .15em; }
+  header a:hover { color: var(--ink); }
+  .hero { padding: 28px 24px 8px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 52px); font-weight: 800; letter-spacing: -.03em; line-height: 1.02; }
+  .hero h1 em { font-style: normal; background: linear-gradient(120deg,#f59e0b,#ec4899,#8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--mut); margin-top: 10px; max-width: 560px; font-size: 15px; }
+  .cats { display: flex; gap: 8px; flex-wrap: wrap; padding: 18px 24px 6px; }
+  .cat { border: 2px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font-family: "IBM Plex Mono", monospace; font-size: 12px; cursor: pointer; transition: .15s; user-select: none; }
+  .cat.on { border-color: var(--c); background: var(--c); color: #fff; }
+  .wrap { display: grid; grid-template-columns: 1fr 340px; gap: 20px; padding: 14px 24px 60px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+
+  /* ---- the canvas ---- */
+  .canvas { background: #fff; border: 2px solid var(--ink); border-radius: 16px; padding: 14px; box-shadow: 6px 6px 0 var(--line); }
+  .grid { display: grid; grid-template-columns: 44px repeat(7, 1fr); gap: 3px; touch-action: none; }
+  .dhead { font-family: "IBM Plex Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; text-align: center; color: var(--mut); padding: 4px 0 8px; }
+  .dhead b { display: block; color: var(--ink); font-size: 14px; }
+  .hlab { font-family: "IBM Plex Mono", monospace; font-size: 9px; color: var(--mut); text-align: right; padding-right: 6px; transform: translateY(-4px); }
+  .cell { height: 26px; border-radius: 5px; background: #f4f2ec; cursor: crosshair; position: relative; transition: background .1s; }
+  .cell:hover { background: #eceadf; }
+  .cell.paint { background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .cell.staffed { background: var(--c); }
+  .cell .tag { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.35); pointer-events: none; }
+  .hint { text-align: center; color: var(--mut); font-family: "IBM Plex Mono", monospace; font-size: 11px; padding-top: 12px; }
+
+  /* ---- match panel ---- */
+  .panel { position: sticky; top: 16px; }
+  .panel h2 { font-size: 13px; font-family: "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .2em; color: var(--mut); margin-bottom: 10px; }
+  .stroke-sum { background: var(--ink); color: #fff; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+  .stroke-sum .big { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+  .stroke-sum .sub { font-family: "IBM Plex Mono", monospace; font-size: 11px; opacity: .7; margin-top: 2px; }
+  .match { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; animation: pop .25s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.94) translateY(6px); } }
+  .ava { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .match .nm { font-weight: 700; font-size: 14px; }
+  .match .meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--mut); }
+  .match .price { margin-left: auto; text-align: right; }
+  .match .price b { font-size: 16px; }
+  .match button { margin-top: 4px; border: 2px solid var(--ink); background: #fff; border-radius: 999px; font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600; padding: 4px 12px; cursor: pointer; }
+  .match button:hover { background: var(--ink); color: #fff; }
+  .match.hired { border-color: var(--ink); background: #f2fbf4; }
+  .empty { color: var(--mut); font-size: 13px; background: #fff; border: 2px dashed var(--line); border-radius: 14px; padding: 22px; text-align: center; }
+  .total { margin-top: 14px; display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--ink); padding-top: 10px; }
+  .total b { font-size: 22px; }
+  .go { display: none; width: 100%; margin-top: 10px; padding: 13px; border: none; border-radius: 12px; background: linear-gradient(120deg,#f59e0b,#ec4899); color: #fff; font-family: Sora; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .go.show { display: block; animation: pop .3s both; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">← Labs</a>
+  <span class="mono" style="font-size:11px;color:#c5c9cc">EXPERIMENT 01 · PAINTBRUSH</span>
+</header>
+<div class="hero">
+  <h1>Don't search for help.<br><em>Paint the time you need.</em></h1>
+  <p>Drag across your week like a brush. Every stroke instantly finds the real pros who can cover exactly those hours — priced for your stroke, not a quote form.</p>
+</div>
+<div class="cats" id="cats"></div>
+<div class="wrap">
+  <div class="canvas">
+    <div class="grid" id="grid"></div>
+    <p class="hint">✦ press &amp; drag vertically on a day to paint a block · tap a painted block to review it</p>
+  </div>
+  <div class="panel">
+    <h2 id="ptitle">Your stroke</h2>
+    <div id="pbody"><div class="empty">Paint a block of time to see who can fill it.</div></div>
+    <div class="total" id="totalrow" style="display:none"><span class="mono" style="font-size:11px;text-transform:uppercase;letter-spacing:.15em">Week staffed for</span><b id="total">$0</b></div>
+    <button class="go" id="go">Make it real →</button>
+  </div>
+</div>
+<script>
+const CATS = [
+  { k:'HOUSEKEEPING', l:'Housekeeping', e:'🧹', c:'#f59e0b' },
+  { k:'BABYSITTING', l:'Babysitting', e:'🧸', c:'#ec4899' },
+  { k:'DOG_WALKING', l:'Dog walking', e:'🐕', c:'#22c55e' },
+  { k:'PET_SITTING', l:'Pet sitting', e:'🐾', c:'#14b8a6' },
+  { k:'LAWN_GARDEN', l:'Lawn & garden', e:'🌿', c:'#84cc16' },
+  { k:'HANDYMAN', l:'Handyman', e:'🔧', c:'#f97316' },
+  { k:'SENIOR_CARE', l:'Senior care', e:'💛', c:'#eab308' },
+  { k:'TUTORING', l:'Tutoring', e:'📚', c:'#8b5cf6' },
+];
+const HOURS = []; for (let h=7; h<=20; h++) HOURS.push(h);
+const DAYS = []; for (let d=1; d<=7; d++) { const t=new Date(); t.setDate(t.getDate()+d); t.setHours(0,0,0,0); DAYS.push(t); }
+const fmtH = h => (h%12||12) + (h<12?'a':'p');
+const money = c => '$' + Math.round(c/100);
+
+let cat = CATS[0];
+let pros = [];            // {id,name,city,rating,services:[{category,rate,minHours,title}],slots:[{s,e}]}
+let strokes = [];         // {day,h1,h2,cat,hired:pro|null}
+let active = null;        // active stroke ref
+
+// ---------- data ----------
+async function load() {
+  try {
+    const r = await fetch('/api/providers'); const { providers } = await r.json();
+    pros = await Promise.all(providers.map(async p => {
+      const av = await fetch('/api/availability/' + p.id).then(x=>x.json()).catch(()=>({slots:[]}));
+      return {
+        id: p.id, name: p.user.name, city: p.city, rating: p.avgRating,
+        services: p.services.map(s=>({category:s.category, rate:s.hourlyRateCents, minHours:s.minHours, title:s.title})),
+        slots: (av.slots||[]).map(s=>({ s:new Date(s.start), e:new Date(s.end) })),
+      };
+    }));
+  } catch (e) { /* offline demo: leave empty */ }
+}
+
+// ---------- category chips ----------
+const catsEl = document.getElementById('cats');
+CATS.forEach(c => {
+  const b = document.createElement('button');
+  b.className = 'cat'; b.style.setProperty('--c', c.c);
+  b.textContent = c.e + ' ' + c.l;
+  b.onclick = () => { cat = c; document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+  if (c === cat) b.classList.add('on');
+  catsEl.appendChild(b);
+});
+
+// ---------- grid ----------
+const grid = document.getElementById('grid');
+grid.appendChild(document.createElement('div'));
+DAYS.forEach(d => {
+  const h = document.createElement('div'); h.className='dhead';
+  h.innerHTML = d.toLocaleDateString(undefined,{weekday:'short'}) + '<b>' + d.getDate() + '</b>';
+  grid.appendChild(h);
+});
+const cellMap = {};
+HOURS.forEach(h => {
+  const lab = document.createElement('div'); lab.className='hlab'; lab.textContent = fmtH(h); grid.appendChild(lab);
+  DAYS.forEach((d,di) => {
+    const c = document.createElement('div'); c.className='cell'; c.dataset.d=di; c.dataset.h=h;
+    grid.appendChild(c); cellMap[di+'-'+h] = c;
+  });
+});
+
+// painting via pointer events
+let painting = null; // {day,h1,h2}
+grid.addEventListener('pointerdown', e => {
+  const c = e.target.closest('.cell'); if (!c) return;
+  e.preventDefault();
+  const day = +c.dataset.d, h = +c.dataset.h;
+  const hit = strokes.find(s => s.day===day && h>=s.h1 && h<=s.h2);
+  if (hit) { setActive(hit); return; }
+  painting = { day, h1:h, h2:h };
+  render();
+});
+grid.addEventListener('pointermove', e => {
+  if (!painting) return;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const c = el && el.closest('.cell'); if (!c || +c.dataset.d !== painting.day) return;
+  const h = +c.dataset.h;
+  painting.h2 = Math.max(painting.h1, h); painting.h1 = Math.min(painting.h1, h);
+  render();
+});
+window.addEventListener('pointerup', () => {
+  if (!painting) return;
+  // don't overlap existing strokes on same day
+  const clash = strokes.some(s => s.day===painting.day && painting.h1 <= s.h2 && painting.h2 >= s.h1);
+  if (!clash) {
+    const st = { ...painting, cat, hired:null };
+    strokes.push(st); setActive(st);
+  }
+  painting = null; render();
+});
+
+function setActive(st) { active = st; renderPanel(); render(); }
+
+function render() {
+  Object.values(cellMap).forEach(c => { c.className='cell'; c.innerHTML=''; c.style.removeProperty('--c'); });
+  const paintCells = (day,h1,h2,color,label) => {
+    for (let h=h1; h<=h2; h++) {
+      const c = cellMap[day+'-'+h]; if (!c) continue;
+      c.classList.add('paint'); c.style.setProperty('--c', color);
+      if (label && h === Math.floor((h1+h2)/2)) c.innerHTML = '<span class="tag">'+label+'</span>';
+    }
+  };
+  strokes.forEach(s => paintCells(s.day, s.h1, s.h2, s.cat.c, s.hired ? '✓ '+s.hired.name.split(' ')[0] : s.cat.e));
+  if (painting) paintCells(painting.day, painting.h1, painting.h2, cat.c);
+}
+
+// ---------- matching ----------
+function matches(st) {
+  const dayStart = new Date(DAYS[st.day]); dayStart.setHours(st.h1,0,0,0);
+  const dayEnd = new Date(DAYS[st.day]); dayEnd.setHours(st.h2+1,0,0,0);
+  const hrs = st.h2 - st.h1 + 1;
+  return pros.map(p => {
+    const svc = p.services.find(s => s.category === st.cat.k);
+    if (!svc) return null;
+    const ok = p.slots.some(sl => sl.s <= dayStart && sl.e >= dayEnd);
+    if (!ok) return null;
+    const billed = Math.max(hrs, svc.minHours);
+    return { p, svc, hrs, billed, price: svc.rate * billed };
+  }).filter(Boolean).sort((a,b) => (b.p.rating||0)-(a.p.rating||0) || a.price-b.price);
+}
+
+function renderPanel() {
+  const body = document.getElementById('pbody');
+  if (!active) return;
+  const st = active, hrs = st.h2-st.h1+1;
+  const d = DAYS[st.day];
+  let html = '<div class="stroke-sum"><div class="big">'+st.cat.e+' '+st.cat.l+'</div>'+
+    '<div class="sub">'+d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})+' · '+fmtH(st.h1)+'–'+fmtH(st.h2+1)+' · '+hrs+'h</div></div>';
+  const ms = matches(st);
+  if (!ms.length) {
+    html += '<div class="empty">No pro covers that exact stroke yet.<br>Try nearby hours or another day.</div>';
+  } else {
+    ms.forEach((m,i) => {
+      const hired = st.hired && st.hired.id === m.p.id;
+      const ini = m.p.name.split(' ').map(w=>w[0]).slice(0,2).join('');
+      html += '<div class="match'+(hired?' hired':'')+'" style="animation-delay:'+(i*40)+'ms">' +
+        '<div class="ava" style="background:'+st.cat.c+'">'+ini+'</div>' +
+        '<div><div class="nm">'+m.p.name+'</div><div class="meta">'+(m.p.rating?'★'+m.p.rating:'new')+' · '+m.p.city+(m.billed>m.hrs?' · '+m.svc.minHours+'h min':'')+'</div></div>' +
+        '<div class="price"><b>'+money(m.price)+'</b><br>' +
+        '<button data-id="'+m.p.id+'">'+(hired?'HIRED ✓':'HIRE')+'</button></div></div>';
+    });
+  }
+  body.innerHTML = html;
+  body.querySelectorAll('button[data-id]').forEach(b => b.onclick = () => {
+    st.hired = ms.find(m=>m.p.id===b.dataset.id)?.p || null;
+    st.price = ms.find(m=>m.p.id===b.dataset.id)?.price || 0;
+    renderPanel(); render(); renderTotal();
+  });
+}
+
+function renderTotal() {
+  const hired = strokes.filter(s=>s.hired);
+  const row = document.getElementById('totalrow'), go = document.getElementById('go');
+  if (!hired.length) { row.style.display='none'; go.classList.remove('show'); return; }
+  row.style.display='flex';
+  document.getElementById('total').textContent = money(hired.reduce((a,s)=>a+(s.price||0),0));
+  go.classList.add('show');
+  go.onclick = () => location.href = '/providers/' + hired[0].hired.id;
+}
+
+load().then(renderPanel);
+</script>
+</body>
+</html>

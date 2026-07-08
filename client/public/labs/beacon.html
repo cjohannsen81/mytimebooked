@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beacon — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#07100c; --grid:#0e2418; --glow:#34f5a1; --amber:#ffb020; --txt:#d9efe4; --mut:#5e8371; }
+  * { box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--txt); font-family:Sora,system-ui,sans-serif; min-height:100vh; }
+  .mono { font-family:"IBM Plex Mono",monospace; }
+  header { padding:20px 24px; display:flex; justify-content:space-between; }
+  header a { color:var(--mut); text-decoration:none; font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--glow); }
+
+  /* compose */
+  #compose { max-width:640px; margin:0 auto; padding:24px; }
+  #compose h1 { font-size:clamp(30px,5vw,52px); font-weight:800; letter-spacing:-.03em; line-height:1.05; color:#fff; }
+  #compose h1 em { font-style:normal; color:var(--glow); text-shadow:0 0 24px rgba(52,245,161,.5); }
+  #compose p.lead { color:var(--mut); margin:12px 0 28px; font-size:15px; }
+  .flabel { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--mut); margin:20px 0 10px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { border:1.5px solid #1d4030; background:transparent; color:var(--txt); border-radius:999px; padding:8px 15px; font-family:"IBM Plex Mono",monospace; font-size:12px; cursor:pointer; transition:.15s; }
+  .chip.on { border-color:var(--glow); color:var(--glow); box-shadow:0 0 14px rgba(52,245,161,.25), inset 0 0 10px rgba(52,245,161,.08); }
+  input[type=range] { width:100%; accent-color:var(--glow); }
+  .rangerow { display:flex; justify-content:space-between; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--mut); }
+  .rangerow b { color:var(--glow); font-size:15px; }
+  #light { margin-top:32px; width:100%; padding:17px; border-radius:14px; border:2px solid var(--glow); background:rgba(52,245,161,.08); color:var(--glow); font-family:Sora; font-weight:800; font-size:16px; letter-spacing:.04em; cursor:pointer; text-transform:uppercase; transition:.2s; }
+  #light:hover { background:var(--glow); color:#04130b; box-shadow:0 0 40px rgba(52,245,161,.5); }
+
+  /* radar */
+  #radar { display:none; }
+  .stage { position:relative; width:min(88vw,520px); height:min(88vw,520px); margin:6px auto 0; }
+  .ring { position:absolute; inset:0; border:1px solid var(--grid); border-radius:50%; }
+  .ring.r2 { inset:16%; } .ring.r3 { inset:33%; } .ring.r4 { inset:42%; }
+  .cross { position:absolute; background:var(--grid); }
+  .cross.h { left:0; right:0; top:50%; height:1px; } .cross.v { top:0; bottom:0; left:50%; width:1px; }
+  .sweep { position:absolute; inset:0; border-radius:50%; overflow:hidden;
+    background:conic-gradient(from 0deg, rgba(52,245,161,.28), rgba(52,245,161,.04) 24%, transparent 30%);
+    animation:spin 3.2s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .home { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:26px; filter:drop-shadow(0 0 12px rgba(52,245,161,.8)); z-index:3; }
+  .blip { position:absolute; z-index:2; transform:translate(-50%,-50%); text-align:center; opacity:0; animation:appear .5s ease-out both; }
+  @keyframes appear { from { opacity:0; transform:translate(-50%,-50%) scale(.3); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
+  .blip .dot { width:12px; height:12px; margin:0 auto; border-radius:50%; background:var(--glow); box-shadow:0 0 14px var(--glow); animation:pulse 1.6s infinite; }
+  @keyframes pulse { 50% { box-shadow:0 0 26px var(--glow); } }
+  .blip .bn { font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--glow); margin-top:4px; white-space:nowrap; }
+  #status { text-align:center; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--mut); padding:16px; letter-spacing:.1em; min-height:44px; }
+  #status .cursor { animation:blink 1s steps(1) infinite; } @keyframes blink { 50% { opacity:0; } }
+
+  /* offers */
+  #offers { max-width:640px; margin:0 auto; padding:0 24px 60px; }
+  .offer { display:flex; gap:14px; align-items:center; border:1.5px solid #1d4030; border-radius:14px; padding:14px 16px; margin-bottom:10px; background:rgba(14,36,24,.5); animation:slide .45s cubic-bezier(.2,1.2,.4,1) both; }
+  @keyframes slide { from { opacity:0; transform:translateX(50px); } }
+  .offer.best { border-color:var(--amber); box-shadow:0 0 22px rgba(255,176,32,.15); }
+  .offer .ava { width:42px; height:42px; border-radius:50%; border:1.5px solid var(--glow); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--glow); flex-shrink:0; }
+  .offer .nm { font-weight:700; color:#fff; font-size:14px; }
+  .offer .meta { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--mut); margin-top:2px; }
+  .offer .note { font-size:12px; color:var(--txt); margin-top:4px; font-style:italic; opacity:.85; }
+  .offer .right { margin-left:auto; text-align:right; flex-shrink:0; }
+  .offer .price { font-size:20px; font-weight:800; color:var(--glow); }
+  .offer .was { font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--mut); text-decoration:line-through; }
+  .offer button { margin-top:6px; border:1.5px solid var(--glow); background:transparent; color:var(--glow); border-radius:999px; padding:5px 14px; font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; cursor:pointer; }
+  .offer button:hover { background:var(--glow); color:#04130b; }
+  .besttag { font-family:"IBM Plex Mono",monospace; font-size:9px; color:var(--amber); letter-spacing:.2em; }
+
+  /* locked */
+  #locked { display:none; max-width:560px; margin:40px auto; padding:0 24px; text-align:center; }
+  #locked .stampbox { display:inline-block; border:3px solid var(--glow); color:var(--glow); border-radius:8px; padding:12px 26px; font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:22px; letter-spacing:.2em; transform:rotate(-4deg); box-shadow:0 0 40px rgba(52,245,161,.3), inset 0 0 0 2px var(--glow); animation:slam .4s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes slam { from { opacity:0; transform:rotate(-14deg) scale(2.2); } }
+  #locked p { color:var(--mut); margin:20px 0; font-size:14px; }
+  #locked a { display:inline-block; padding:14px 28px; border-radius:12px; background:var(--glow); color:#04130b; font-weight:800; text-decoration:none; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">← Labs</a>
+  <span class="mono" style="font-size:11px;color:#2c4a3a">EXPERIMENT 02 · BEACON</span>
+</header>
+
+<section id="compose">
+  <h1>Stop browsing.<br><em>Light a beacon.</em></h1>
+  <p class="lead">Describe the job once. Nearby pros see your beacon and their offers converge on you — live. You pick from offers, not profiles.</p>
+  <p class="flabel">01 · The job</p>
+  <div class="chips" id="catchips"></div>
+  <p class="flabel">02 · The day</p>
+  <div class="chips" id="daychips"></div>
+  <p class="flabel">03 · Hours needed — <span style="color:var(--glow)" id="hval">2h</span></p>
+  <input type="range" id="hours" min="1" max="8" value="2">
+  <p class="flabel">04 · Your ceiling — <span style="color:var(--glow)" id="bval">$60/hr</span></p>
+  <input type="range" id="budget" min="15" max="120" step="5" value="60">
+  <button id="light">⦿ Light the beacon</button>
+</section>
+
+<section id="radar">
+  <div class="stage" id="stage">
+    <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div>
+    <div class="cross h"></div><div class="cross v"></div>
+    <div class="sweep"></div>
+    <div class="home">🏡</div>
+  </div>
+  <div id="status"></div>
+  <div id="offers"></div>
+</section>
+
+<section id="locked">
+  <div class="stampbox">CREW LOCKED ✓</div>
+  <p id="lockedtext"></p>
+  <a id="lockedlink" href="/">Finish booking on MyTimeBooked →</a>
+</section>
+
+<script>
+const CATS = [
+  { k:'HOUSEKEEPING', l:'🧹 Housekeeping' }, { k:'BABYSITTING', l:'🧸 Babysitting' },
+  { k:'DOG_WALKING', l:'🐕 Dog walking' }, { k:'PET_SITTING', l:'🐾 Pet sitting' },
+  { k:'LAWN_GARDEN', l:'🌿 Lawn & garden' }, { k:'HANDYMAN', l:'🔧 Handyman' },
+  { k:'SENIOR_CARE', l:'💛 Senior care' }, { k:'TUTORING', l:'📚 Tutoring' },
+];
+const NOTES = [
+  'I bring my own supplies — you don\'t lift a finger.',
+  'I\'m two streets over that day, can start on the dot.',
+  'Photo updates every half hour, promise.',
+  'Booked solid lately but I\'ll make room for this one.',
+  'Happy to do a quick walkthrough call first.',
+  'Repeat clients get my priority slots after this.',
+];
+const money = c => '$' + Math.round(c/100);
+const hash = s => { let h=0; for (const ch of s) h = (h*31 + ch.charCodeAt(0)) >>> 0; return h; };
+
+let cat = null, day = null;
+const catchips = document.getElementById('catchips');
+CATS.forEach(c => {
+  const b = document.createElement('button'); b.className='chip'; b.textContent=c.l;
+  b.onclick = () => { cat=c; [...catchips.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+  catchips.appendChild(b);
+});
+const daychips = document.getElementById('daychips');
+for (let d=1; d<=7; d++) {
+  const t = new Date(); t.setDate(t.getDate()+d); t.setHours(0,0,0,0);
+  const b = document.createElement('button'); b.className='chip';
+  b.textContent = t.toLocaleDateString(undefined,{weekday:'short', day:'numeric'});
+  b.onclick = () => { day=t; [...daychips.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+  daychips.appendChild(b);
+}
+const hoursEl = document.getElementById('hours'), budgetEl = document.getElementById('budget');
+hoursEl.oninput = () => document.getElementById('hval').textContent = hoursEl.value + 'h';
+budgetEl.oninput = () => document.getElementById('bval').textContent = '$' + budgetEl.value + '/hr';
+
+const statusEl = document.getElementById('status');
+const say = t => statusEl.innerHTML = t + '<span class="cursor">▌</span>';
+
+document.getElementById('light').onclick = async () => {
+  if (!cat) { catchips.scrollIntoView({behavior:'smooth'}); catchips.style.outline='1.5px dashed var(--amber)'; setTimeout(()=>catchips.style.outline='',900); return; }
+  if (!day) { const t=new Date(); t.setDate(t.getDate()+1); t.setHours(0,0,0,0); day=t; daychips.children[0].classList.add('on'); }
+  document.getElementById('compose').style.display='none';
+  document.getElementById('radar').style.display='block';
+  say('BEACON LIT · scanning your neighborhood');
+
+  // real candidates
+  let candidates = [];
+  try {
+    const { providers } = await fetch('/api/providers?category='+cat.k).then(r=>r.json());
+    candidates = (await Promise.all(providers.map(async p => {
+      const av = await fetch('/api/availability/'+p.id).then(x=>x.json()).catch(()=>({slots:[]}));
+      const hrs = +hoursEl.value;
+      const slot = (av.slots||[]).map(s=>({s:new Date(s.start), e:new Date(s.end)}))
+        .find(sl => sl.s.toDateString() === day.toDateString() && (sl.e - sl.s) >= hrs*36e5);
+      if (!slot) return null;
+      const svc = p.services.find(s=>s.category===cat.k);
+      return { p, svc, slot };
+    }))).filter(Boolean);
+  } catch (e) {}
+
+  const budget = +budgetEl.value * 100, hrs = +hoursEl.value;
+  const offers = candidates.map(c => {
+    const h = hash(c.p.id + day.getDate());
+    const discount = c.svc.hourlyRateCents > budget ? Math.min(.2, (c.svc.hourlyRateCents-budget)/c.svc.hourlyRateCents + .05)
+                    : (h % 5 === 0 ? .1 : 0);
+    const rate = Math.round(c.svc.hourlyRateCents * (1-discount));
+    if (rate > budget * 1.15) return null;  // truly out of range: no offer
+    return {
+      name: c.p.user.name, city: c.p.city, rating: c.p.avgRating, id: c.p.id,
+      rate, wasRate: discount ? c.svc.hourlyRateCents : null,
+      total: rate * Math.max(hrs, c.svc.minHours),
+      start: c.slot.s, note: NOTES[h % NOTES.length],
+      angle: (h % 360), dist: 18 + (h % 30),
+      delay: 1200 + (h % 5) * 1400,
+    };
+  }).filter(Boolean).sort((a,b)=>a.delay-b.delay);
+
+  // theater
+  const stage = document.getElementById('stage');
+  const offersEl = document.getElementById('offers');
+  let shown = 0;
+  const lines = ['BEACON LIT · scanning your neighborhood', 'pros in range are reading your job…'];
+  setTimeout(()=>say(lines[1]), 1600);
+
+  if (!offers.length) {
+    setTimeout(()=>say('quiet out there — no '+cat.l.slice(2).toLowerCase()+' pro free that day. try another day or raise your ceiling.'), 3400);
+    setTimeout(()=>{ document.getElementById('radar').style.display='none'; document.getElementById('compose').style.display='block'; }, 6600);
+    return;
+  }
+
+  offers.forEach((o,i) => {
+    setTimeout(() => {
+      // blip on radar
+      const rad = (o.angle) * Math.PI/180, r = o.dist; // % of half-stage
+      const blip = document.createElement('div'); blip.className='blip';
+      blip.style.left = (50 + r*Math.cos(rad)) + '%';
+      blip.style.top = (50 + r*Math.sin(rad)) + '%';
+      blip.innerHTML = '<div class="dot"></div><div class="bn">'+o.name.split(' ')[0]+'</div>';
+      stage.appendChild(blip);
+      say(o.name.split(' ')[0] + ' spotted your beacon…');
+      // offer card lands moments later
+      setTimeout(() => {
+        shown++;
+        const best = o.total === Math.min(...offers.map(x=>x.total));
+        const div = document.createElement('div'); div.className = 'offer' + (best?' best':'');
+        div.innerHTML =
+          '<div class="ava">'+o.name.split(' ').map(w=>w[0]).slice(0,2).join('')+'</div>' +
+          '<div>'+(best?'<div class="besttag">◆ SHARPEST OFFER</div>':'')+
+          '<div class="nm">'+o.name+'</div>' +
+          '<div class="meta">'+(o.rating?'★'+o.rating:'new')+' · '+o.city+' · can start '+o.start.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})+'</div>' +
+          '<div class="note">“'+o.note+'”</div></div>' +
+          '<div class="right">'+(o.wasRate?'<div class="was">'+money(o.wasRate)+'/hr</div>':'')+
+          '<div class="price">'+money(o.rate)+'<span style="font-size:11px">/hr</span></div>' +
+          '<button>ACCEPT · '+money(o.total)+'</button></div>';
+        div.querySelector('button').onclick = () => {
+          document.getElementById('radar').style.display='none';
+          document.getElementById('locked').style.display='block';
+          document.getElementById('lockedtext').textContent =
+            o.name + ' · ' + cat.l.slice(2) + ' · ' + day.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'}) +
+            ' · ' + hrs + 'h · ' + money(o.total) + ' — this beacon is a prototype; seal it with a real booking.';
+          document.getElementById('lockedlink').href = '/providers/' + o.id;
+          window.scrollTo({top:0, behavior:'smooth'});
+        };
+        offersEl.appendChild(div);
+        say(shown + ' offer' + (shown>1?'s':'') + ' on the table · beacon still lit');
+      }, 900);
+    }, o.delay);
+  });
+};
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ export default function Footer() {
         <div className="flex gap-6 font-mono text-xs uppercase tracking-wider">
           <Link to="/browse" className="text-ink-700 hover:underline decoration-dotted underline-offset-4">Find a pro</Link>
           <Link to="/become-a-pro" className="text-ink-700 hover:underline decoration-dotted underline-offset-4">Carry the pad</Link>
+          <a href="/labs/" className="text-stamp-red hover:underline decoration-dotted underline-offset-4">Labs ⚗</a>
         </div>
         <p className="font-mono text-[11px] text-ink-400">★ press hard — three copies ★</p>
       </div>
