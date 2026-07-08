@@ -6,7 +6,7 @@
 <title>MyTimeBooked Labs — three experiments in booking</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&family=Lora:wght@600&family=Caveat:wght@700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing:border-box; margin:0; }
   body { background:#0d0e12; color:#e8e8ee; font-family:Sora,system-ui,sans-serif; min-height:100vh; }
@@ -50,6 +50,15 @@
   .card.board { background:linear-gradient(160deg,#171308,#0d0e12 70%); }
   .card.board:hover { box-shadow:0 18px 50px -18px rgba(255,182,61,.4); border-color:#ffb63d; }
   .card.board h2, .card.board .go { color:#ffb63d; }
+  /* human-layer cards: warm paper on the dark hub */
+  .card.human { background:#f6f1e7; border-color:#e0d5c0; color:#33291f; }
+  .card.human p { opacity:1; color:#6f6353; }
+  .card.human .num { color:#a89878; opacity:1; }
+  .card.human .beh { color:#71805c; opacity:1; }
+  .card.human .art.script { font-family:Caveat,cursive; font-size:30px; letter-spacing:0; color:#bc5b3d; opacity:1; }
+  .card.human:hover { box-shadow:0 18px 50px -18px rgba(188,91,61,.5); border-color:#bc5b3d; }
+  .card.human h2 { color:#33291f; font-family:Lora,serif; }
+  .card.human .go { color:#bc5b3d; }
   footer { text-align:center; padding:0 28px 50px; color:#585b66; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; line-height:1.8; }
   footer a { color:#9a9dab; }
 </style>
@@ -61,8 +70,8 @@
 </header>
 <div class="hero">
   <p class="tag">MyTimeBooked Labs</p>
-  <h1>Six ways this platform<br><span>should have worked</span> all along.</h1>
-  <p>Working experiments, live data. Three rethink how households book. Three rethink how pros join and earn — because without the pros, there is no platform.</p>
+  <h1>Nine ways this platform<br><span>should have worked</span> all along.</h1>
+  <p>Working experiments, live data. Three rethink how households book. Three rethink how pros join and earn. And three are about the part every platform forgets: the people.</p>
 </div>
 <div class="grid">
   <a class="card paint" href="/labs/paint.html">
@@ -117,6 +126,35 @@
     <div class="art mono">TUE 09:00 · $96/WK · OPEN</div>
     <p>A split-flap departures board of weekly household contracts. Same house, same slot, 52 weeks a year — claim a route and it's yours. Predictable income is what actually recruits supply.</p>
     <span class="go">WATCH THE BOARD →</span>
+  </a>
+</div>
+<div class="divider">
+  <hr><span>The human layer — what actually sucks, fixed</span><hr>
+</div>
+<div class="grid">
+  <a class="card human" href="/labs/housebook.html">
+    <span class="num">EXPERIMENT — 07</span>
+    <h2>The House Book</h2>
+    <p class="beh">Your home's memory · briefed to every pro</p>
+    <div class="art script">"side gate sticks — lift, then push"</div>
+    <p>Pros arrive at strange houses blind; you re-text the gate code forever. Write your home's manual once — every pro gets a pocket briefing before they knock, and confirms they read it.</p>
+    <span class="go">WRITE PAGE ONE →</span>
+  </a>
+  <a class="card human" href="/labs/aftercard.html">
+    <span class="num">EXPERIMENT — 08</span>
+    <h2>The After Card</h2>
+    <p class="beh">Invisible work, made visible</p>
+    <div class="art script">"your hydrangeas are coming in —"</div>
+    <p>Great work happens in empty houses and nobody says thank you. Every job ends with a postcard: before/after, a human note, a heads-up flag — and a reply that makes feedback painless.</p>
+    <span class="go">READ THE MAIL →</span>
+  </a>
+  <a class="card human" href="/labs/yourperson.html">
+    <span class="num">EXPERIMENT — 09</span>
+    <h2>Your Person</h2>
+    <p class="beh">The relationship is the product</p>
+    <div class="art script">"visit 22 · knows your home 94%"</div>
+    <p>Every platform sells strangers. This one sells familiarity: a visit history that compounds, vacation stand-ins your pro personally vouches for, and season bridges so your person stays yours all year.</p>
+    <span class="go">MEET YOUR PERSON →</span>
   </a>
 </div>
 <footer>

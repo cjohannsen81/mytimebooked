@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The After Card — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#efe8db; --card:#fdfaf3; --ink:#33291f; --soft:#8a7c6a; --rule:#e0d5c0; --terra:#bc5b3d; --moss:#71805c; --sky:#7d97a8; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  .hand { font-family:Caveat,cursive; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:740px; margin:0 auto; text-align:center; padding:18px 24px 6px; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .deck { max-width:640px; margin:30px auto 0; padding:0 20px; position:relative; }
+  .postcard { background:var(--card); border-radius:6px; box-shadow:0 4px 20px rgba(51,41,31,.14); padding:22px; position:relative; transform:rotate(-.5deg); }
+  .postcard::after { content:''; position:absolute; inset:8px; border:1px solid var(--rule); border-radius:3px; pointer-events:none; }
+  .pc-top { display:flex; justify-content:space-between; align-items:flex-start; padding:0 4px; }
+  .pc-from { font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--soft); }
+  .pc-from b { display:block; font-family:Lora,serif; font-size:16px; color:var(--ink); letter-spacing:0; text-transform:none; margin-top:3px; }
+  .stampbox { width:56px; height:64px; border:1.5px solid var(--terra); border-radius:3px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--terra); transform:rotate(2deg); background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(188,91,61,.06) 4px 8px); }
+  .stampbox .big { font-family:Lora,serif; font-size:20px; font-weight:600; }
+  .stampbox .sm { font-size:8px; letter-spacing:.15em; text-transform:uppercase; }
+  .photos { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 4px 0; }
+  .photo { border-radius:4px; padding:8px 8px 26px; background:#fff; box-shadow:0 2px 8px rgba(51,41,31,.14); position:relative; }
+  .photo .img { height:130px; border-radius:2px; position:relative; overflow:hidden; }
+  .photo .cap { position:absolute; bottom:5px; left:0; right:0; text-align:center; font-family:Caveat,cursive; font-size:16px; color:var(--soft); }
+  .photo.before { transform:rotate(-1.6deg); } .photo.after { transform:rotate(1.2deg); }
+  .note { margin:18px 8px 0; font-family:Caveat,cursive; font-size:21px; line-height:1.45; }
+  .flagline { margin:14px 8px 0; display:flex; gap:8px; align-items:baseline; border-top:1px dashed var(--rule); padding-top:12px; font-size:13px; }
+  .flagline .f { color:var(--terra); font-size:11px; text-transform:uppercase; letter-spacing:.15em; white-space:nowrap; }
+  .pc-foot { display:flex; justify-content:space-between; align-items:center; margin:16px 8px 0; font-size:12px; color:var(--soft); }
+  .reaction { background:#eef0e7; color:var(--moss); border-radius:999px; padding:5px 13px; font-weight:600; }
+  .nav { display:flex; justify-content:center; gap:14px; margin-top:20px; align-items:center; }
+  .nav button { border:1.5px solid var(--ink); background:transparent; border-radius:999px; width:40px; height:40px; font-size:16px; cursor:pointer; color:var(--ink); }
+  .nav button:hover { background:var(--ink); color:var(--card); }
+  .nav .count { font-size:12px; color:var(--soft); letter-spacing:.15em; }
+
+  /* reply */
+  .reply { max-width:640px; margin:26px auto 0; padding:0 20px; }
+  .reply .box { background:#fff; border:1px solid var(--rule); border-radius:14px; padding:20px; }
+  .reply h3 { font-family:Lora,serif; font-size:18px; font-weight:600; }
+  .reply p.s { color:var(--soft); font-size:13px; margin-top:4px; line-height:1.6; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .chip { border:1.5px solid var(--rule); background:var(--bg); border-radius:999px; padding:8px 15px; font-size:13px; cursor:pointer; }
+  .chip:hover { border-color:var(--moss); }
+  .chip.on { border-color:var(--moss); background:#eef0e7; color:var(--moss); font-weight:600; }
+  .chip.tip.on { border-color:var(--terra); background:#f9e9e2; color:var(--terra); }
+  .sent { display:none; margin-top:14px; background:#eef0e7; border-radius:10px; padding:13px 16px; color:var(--moss); font-size:13px; line-height:1.6; }
+  .sendbtn { margin-top:14px; background:var(--ink); color:var(--card); border:none; border-radius:999px; padding:11px 24px; font-size:13px; font-weight:600; cursor:pointer; }
+  .sendbtn:hover { background:var(--terra); }
+
+  .why { max-width:640px; margin:34px auto 0; padding:0 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:640px){ .why { grid-template-columns:1fr; } }
+  .why .w { background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:16px; font-size:13px; line-height:1.65; color:var(--soft); }
+  .why .w b { display:block; font-family:Lora,serif; font-size:15px; color:var(--ink); margin-bottom:6px; }
+  .cta { display:block; max-width:420px; margin:30px auto 60px; text-align:center; background:var(--terra); color:#fff; padding:15px; border-radius:999px; font-weight:600; text-decoration:none; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b3a78f;letter-spacing:.2em">EXPERIMENT 08 &middot; THE AFTER CARD</span>
+</header>
+<div class="hero">
+  <h1>Great work is invisible.<br>That's <em>the whole problem.</em></h1>
+  <p>You come home and can't tell if the pool chemistry is right or what got cleaned. Your pro did their best work for <b>an empty house</b> — nobody saw it, nobody said anything. And telling your housekeeper she missed a spot is so awkward that most people just quietly quit. So every job now ends with a card.</p>
+</div>
+
+<div class="deck">
+  <div class="postcard" id="pc"></div>
+  <div class="nav">
+    <button id="prev" aria-label="previous">&larr;</button>
+    <span class="count" id="count"></span>
+    <button id="next" aria-label="next">&rarr;</button>
+  </div>
+</div>
+
+<div class="reply">
+  <div class="box">
+    <h3>Your reply — two taps, zero awkwardness</h3>
+    <p class="s">Warmth is easy to send. And "one small thing" arrives as a note on the next visit's briefing — not a confrontation, not a public review.</p>
+    <div class="chips" id="warmth">
+      <button class="chip">Beautiful work</button>
+      <button class="chip">The house feels new</button>
+      <button class="chip">You're a keeper</button>
+      <button class="chip tip">Add $10 tip</button>
+      <button class="chip tip">Add $20 tip</button>
+    </div>
+    <div class="chips" id="small">
+      <button class="chip">One small thing: under the beds next time</button>
+      <button class="chip">One small thing: gate was left unlatched</button>
+    </div>
+    <button class="sendbtn" id="send">Send to <span id="sendname">your pro</span></button>
+    <div class="sent" id="sentmsg"></div>
+  </div>
+</div>
+
+<div class="why">
+  <div class="w"><b>For the pro</b>Every card joins a public portfolio of real work — craft you can point to, not a star average. Tips land while the pride is fresh. And "one small thing" reads as coaching, not a strike.</div>
+  <div class="w"><b>For the customer</b>You finally see what you paid for — including what you'd never notice, like "your filter is on its last season." The card is proof, receipt, and relationship in one.</div>
+</div>
+
+<a class="cta" href="/browse">Book work that shows its work</a>
+
+<script>
+const grad = (a,b) => 'linear-gradient(140deg,'+a+','+b+')';
+const CARDS = [
+  {
+    trade:'LAWN & GARDEN', proCat:'LAWN_GARDEN', fallback:'Tom Nguyen',
+    before:{ bg:grad('#8a8f6a','#6d7350'), cap:'before — 8:04 am' },
+    after:{ bg:grad('#7fa05c','#5c7a3f'), cap:'after — 10:52 am' },
+    note:'Edged the walk and took the hedge down a few inches so the roses get sun. Your hydrangeas are coming in — I trimmed around the new growth, they’ll thank us in June.',
+    flag:'Sprinkler head by the mailbox is cracked — cheap fix, happy to bring one Thursday.',
+    meta:'2h 45m on site', react:'"You’re an artist" + $15 tip',
+  },
+  {
+    trade:'HOUSEKEEPING', proCat:'HOUSEKEEPING', fallback:'Maria Santos',
+    before:{ bg:grad('#b3a48c','#8f7f66'), cap:'before' },
+    after:{ bg:grad('#e8ddc8','#cdbfa4'), cap:'after — smell it' },
+    note:'Deep-cleaned the kitchen and got the oven glass clear again. Found your missing measuring cup behind the fridge — it’s drying by the sink. Under every bed, as asked.',
+    flag:'Dryer vent is lint-heavy — worth a clean before winter.',
+    meta:'3h on site', react:'"The house feels new" + $20 tip',
+  },
+  {
+    trade:'POOL CARE', proCat:null, fallback:'Danny Alvarez',
+    before:{ bg:grad('#7e9b8f','#5d7a70'), cap:'before — cloudy, pH 7.9' },
+    after:{ bg:grad('#6fb5c9','#4a93ab'), cap:'after — 7.4, crystal' },
+    note:'Balanced the chemistry and brushed the walls — the cloudiness was a phosphate bloom, treated it at the source. Swim-ready by 4pm, I’d wait an hour after the sun hits it.',
+    flag:'Filter cartridge is on its last season. I’ll price a replacement before your next visit — no pressure.',
+    meta:'55m on site', react:'first "thank you" in 6 years of pool work',
+  },
+];
+let ci = 0;
+const $ = s => document.querySelector(s);
+let names = {};
+fetch('/api/providers').then(r=>r.json()).then(({providers}) => {
+  CARDS.forEach(c => {
+    if (!c.proCat) return;
+    const p = providers.find(x=>x.services.some(s=>s.category===c.proCat));
+    if (p) c.fallback = p.user.name;
+  });
+  render();
+}).catch(()=>{});
+
+function render() {
+  const c = CARDS[ci];
+  $('#pc').innerHTML =
+    '<div class="pc-top"><div class="pc-from">A card from your ' + c.trade.toLowerCase() + ' pro<b>' + c.fallback + '</b></div>' +
+    '<div class="stampbox"><span class="big">' + c.fallback.split(' ').map(w=>w[0]).slice(0,2).join('') + '</span><span class="sm">job done</span></div></div>' +
+    '<div class="photos">' +
+      '<div class="photo before"><div class="img" style="background:'+c.before.bg+'"></div><div class="cap">'+c.before.cap+'</div></div>' +
+      '<div class="photo after"><div class="img" style="background:'+c.after.bg+'"></div><div class="cap">'+c.after.cap+'</div></div>' +
+    '</div>' +
+    '<p class="note">“'+c.note+'”</p>' +
+    '<div class="flagline"><span class="f">Worth knowing</span><span>'+c.flag+'</span></div>' +
+    '<div class="pc-foot"><span>'+c.meta+'</span><span class="reaction">'+c.react+'</span></div>';
+  $('#count').textContent = (ci+1)+' / '+CARDS.length;
+  $('#sendname').textContent = c.fallback.split(' ')[0];
+  $('#pc').style.transform = 'rotate('+(ci%2? .5 : -.5)+'deg)';
+}
+$('#prev').onclick = () => { ci = (ci-1+CARDS.length)%CARDS.length; render(); };
+$('#next').onclick = () => { ci = (ci+1)%CARDS.length; render(); };
+
+document.querySelectorAll('#warmth .chip, #small .chip').forEach(b => b.onclick = () => b.classList.toggle('on'));
+$('#send').onclick = () => {
+  const picks = [...document.querySelectorAll('.chip.on')].map(b=>b.textContent);
+  const c = CARDS[ci];
+  const small = picks.find(p=>p.startsWith('One small thing'));
+  $('#sentmsg').style.display = 'block';
+  $('#sentmsg').innerHTML = 'Sent to '+c.fallback.split(' ')[0]+'. ' +
+    (picks.filter(p=>!p.startsWith('One small')).length ? 'The kind words land tonight. ' : '') +
+    (picks.some(p=>p.includes('tip')) ? 'Tip added to this job’s payout. ' : '') +
+    (small ? 'And the small thing? It quietly joins the next visit’s briefing — never a confrontation.' : '');
+};
+render();
+</script>
+</body>
+</html>

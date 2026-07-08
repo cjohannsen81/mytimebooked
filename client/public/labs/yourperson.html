@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Person — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Caveat:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f4efe6; --card:#fdfaf3; --ink:#33291f; --soft:#8a7c6a; --rule:#e2d8c4; --terra:#bc5b3d; --moss:#71805c; --gold:#c99b3f; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  .hand { font-family:Caveat,cursive; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:760px; margin:0 auto; text-align:center; padding:16px 24px 0; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .picker { max-width:520px; margin:22px auto 0; padding:0 20px; display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+  .picker label { font-size:12px; text-transform:uppercase; letter-spacing:.15em; color:var(--soft); }
+  .picker select { background:#fff; border:1.5px solid var(--rule); border-radius:999px; padding:9px 16px; font-size:14px; font-family:Lora,serif; color:var(--ink); }
+
+  .bond { max-width:560px; margin:24px auto 0; padding:0 20px; }
+  .bondcard { background:var(--card); border:1px solid var(--rule); border-radius:16px; padding:20px 22px; display:flex; gap:16px; align-items:center; box-shadow:0 3px 14px rgba(51,41,31,.07); }
+  .bondcard .av { width:60px; height:60px; border-radius:50%; background:var(--moss); color:#fff; display:flex; align-items:center; justify-content:center; font-family:Lora,serif; font-size:22px; font-weight:600; flex-shrink:0; }
+  .bondcard .nm { font-family:Lora,serif; font-size:20px; font-weight:600; }
+  .bondcard .sub { font-size:13px; color:var(--soft); margin-top:2px; }
+  .meter { margin-top:10px; }
+  .meter .bar { height:8px; border-radius:999px; background:var(--rule); overflow:hidden; }
+  .meter .fill { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--moss),var(--gold)); transition:width 1.1s cubic-bezier(.2,.8,.2,1); }
+  .meter .lab { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); margin-top:5px; letter-spacing:.08em; }
+  .meter .lab b { color:var(--moss); }
+
+  .tl { max-width:560px; margin:26px auto 0; padding:0 20px 10px; position:relative; }
+  .tl::before { content:''; position:absolute; left:calc(20px + 14px); top:0; bottom:0; width:2px; background:var(--rule); }
+  .ev { position:relative; padding:0 0 22px 44px; opacity:0; transform:translateY(14px); transition:.5s ease-out; }
+  .ev.seen { opacity:1; transform:none; }
+  .ev .dot { position:absolute; left:8px; top:4px; width:14px; height:14px; border-radius:50%; background:var(--card); border:3px solid var(--moss); }
+  .ev.first .dot { border-color:var(--terra); }
+  .ev.special .dot { border-color:var(--gold); }
+  .ev .when { font-size:11px; text-transform:uppercase; letter-spacing:.18em; color:var(--soft); }
+  .ev .what { background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:14px 16px; margin-top:6px; font-size:14px; line-height:1.65; }
+  .ev .what .hand { font-size:20px; line-height:1.3; display:block; }
+  .ev .what .say { color:var(--soft); font-size:13px; }
+  .ev.special .what { border-color:var(--gold); background:#fdf7e9; }
+  .ev.special .what b.tag { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.2em; color:var(--gold); margin-bottom:6px; }
+  .ev .what .duo { display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .ev .what .duo .a2 { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:Lora,serif; font-size:13px; font-weight:600; color:#fff; }
+  .ev .what .duo .arrow { color:var(--soft); font-size:13px; }
+
+  .why { max-width:560px; margin:26px auto 0; padding:0 20px; display:grid; gap:12px; }
+  .why .w { background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:15px 17px; font-size:13px; line-height:1.65; color:var(--soft); }
+  .why .w b { font-family:Lora,serif; font-size:15px; color:var(--ink); display:block; margin-bottom:5px; }
+  .ctas { max-width:560px; margin:26px auto 70px; padding:0 20px; display:grid; gap:10px; }
+  .ctas a { display:block; text-align:center; padding:15px; border-radius:999px; font-weight:600; text-decoration:none; font-size:14px; }
+  .ctas a.c { background:var(--terra); color:#fff; }
+  .ctas a.p { border:1.5px solid var(--ink); color:var(--ink); }
+  .ctas a.p:hover { background:var(--ink); color:var(--card); }
+  .fine { text-align:center; color:var(--soft); font-size:11px; margin-top:-56px; margin-bottom:60px; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b3a78f;letter-spacing:.2em">EXPERIMENT 09 &middot; YOUR PERSON</span>
+</header>
+<div class="hero">
+  <h1>Nobody wants "a cleaner."<br>You want <em>your</em> cleaner.</h1>
+  <p>Platforms treat every visit like a first date: a stranger, a reset, zero memory. But the whole value of home help is <b>familiarity</b> — the person who knows the sticky gate, the shy dog, how you like the kitchen. So we made the relationship itself the product. Not bookings. <b>Your person.</b></p>
+</div>
+
+<div class="picker">
+  <label>Meet</label>
+  <select id="who"></select>
+</div>
+
+<div class="bond">
+  <div class="bondcard">
+    <div class="av" id="av">MS</div>
+    <div style="flex:1">
+      <div class="nm" id="nm">—</div>
+      <div class="sub" id="sub">your housekeeper &middot; since March</div>
+      <div class="meter">
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <div class="lab"><span>knows your home</span><b id="pct">0%</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tl" id="tl"></div>
+
+<div class="why">
+  <div class="w"><b>Why pros stay</b>A book of regulars is the difference between gig work and a livelihood: predictable weeks, houses they know cold, customers who greet them by name — and a stand-in system so taking a vacation doesn't mean losing clients.</div>
+  <div class="w"><b>Why customers stay</b>The familiarity meter is real switching cost, in the best way: visit 20 with your person is simply better than visit 1 with anyone else. Continuity survives vacations, seasons, even a pro's retirement — the House Book and the hand-pick transfer.</div>
+</div>
+
+<div class="ctas">
+  <a class="c" href="/browse">Find your person</a>
+  <a class="p" href="/register?role=PROVIDER">Become someone's person — join as a pro</a>
+</div>
+<p class="fine">PROTOTYPE &middot; TIMELINE ILLUSTRATIVE &middot; PROS &amp; RATES ARE LIVE PLATFORM DATA</p>
+
+<script>
+const $ = s => document.querySelector(s);
+let pros = [], current = null;
+
+const TIMELINE = (n, alt, altInit) => [
+  { cls:'first', when:'March 3 · Visit 1', html:'<span class="hand">"Hi, I’m '+n.first+'."</span><span class="say">You did the house walkthrough once — the gate, the dog, the office that stays closed. It went straight into your House Book. You will never explain it again.</span>' },
+  { when:'March 17 · Visit 3', html:'<span class="say">No walkthrough, no texts. '+n.first+' came in, worked, locked up. The card said:</span><span class="hand">"Found the missing measuring cup behind the fridge — drying by the sink."</span>' },
+  { when:'April 28 · Visit 8', html:'<span class="say">'+n.first+' flagged the dryer vent before you’d have ever noticed. This is the part no app ever measured — <b>someone paying attention to your home</b>.</span>' },
+  { cls:'special', when:'July · Visit 15', html:'<b class="tag">Coverage without strangers</b><span class="say">'+n.first+' took two weeks off — and didn’t send you to the marketplace. '+n.first+' picked '+alt+', a pro trusted with '+n.first+'’s own clients, and handed over your House Book personally.</span>'+
+    '<div class="duo"><div class="a2" style="background:var(--moss)">'+n.init+'</div><span class="arrow">hands your home to</span><div class="a2" style="background:var(--terra)">'+altInit+'</div></div>' },
+  { when:'September · Visit 22', html:'<span class="hand">"Two years ago I had 40 one-time jobs a month. Now I have 14 homes I know by heart."</span><span class="say">— what regulars mean on the pro side: a livelihood, not a lottery.</span>' },
+  { cls:'special', when:'November', html:'<b class="tag">The season bridge</b><span class="say">Lawn pros lose winter; pools close in fall. When a season ends, your person offers what the season needs — gutters, leaf cleanup, a deep clean before the holidays — <b>so they stay your person all year</b>, and their income never falls off a cliff.</span>' },
+  { cls:'special', when:'March 3, next year · One year', html:'<b class="tag">The quiet raise</b><span class="say">On your anniversary we suggest a small rate bump for '+n.first+' — one tap. Great pros get raises without having to ask, which is exactly why they never leave you.</span>' },
+];
+
+// relative in production (nginx proxies /api); live API when previewing locally
+const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
+async function load() {
+  try {
+    const { providers } = await fetch(API + '/providers').then(r=>r.json());
+    pros = providers;
+  } catch(e) { pros = []; }
+  const sel = $('#who');
+  if (!pros.length) {
+    sel.outerHTML = '<b style="font-family:Lora,serif">Maria Santos</b>';
+    build({ user:{name:'Maria Santos'}, services:[{category:'HOUSEKEEPING'}] }, 'Ana Reyes');
+    return;
+  }
+  pros.forEach((p,i) => { const o=document.createElement('option'); o.value=i; o.textContent=p.user.name+' — '+headline(p); sel.appendChild(o); });
+  sel.onchange = () => pick(+sel.value);
+  pick(0);
+}
+const headline = p => ({HOUSEKEEPING:'housekeeper',BABYSITTING:'sitter',DOG_WALKING:'dog walker',PET_SITTING:'pet sitter',LAWN_GARDEN:'lawn & garden',HANDYMAN:'handyman',SENIOR_CARE:'senior care',TUTORING:'tutor'})[p.services?.[0]?.category] || 'pro';
+
+function pick(i) {
+  const p = pros[i];
+  const others = pros.filter(x=>x!==p);
+  const alt = others.length ? others[(i+3) % others.length].user.name : 'Ana Reyes';
+  build(p, alt);
+}
+function build(p, altName) {
+  const name = p.user.name;
+  const n = { first:name.split(' ')[0], init:name.split(' ').map(w=>w[0]).slice(0,2).join('') };
+  const altInit = altName.split(' ').map(w=>w[0]).slice(0,2).join('');
+  $('#av').textContent = n.init; $('#nm').textContent = name;
+  $('#sub').textContent = 'your ' + headline(p) + ' · since March';
+  $('#fill').style.width = '0'; $('#pct').textContent = '0%';
+  const tl = $('#tl'); tl.innerHTML = '';
+  TIMELINE(n, altName.split(' ')[0], altInit).forEach(ev => {
+    const d = document.createElement('div');
+    d.className = 'ev' + (ev.cls ? ' '+ev.cls : '');
+    d.innerHTML = '<div class="dot"></div><div class="when">'+ev.when+'</div><div class="what">'+ev.html+'</div>';
+    tl.appendChild(d);
+  });
+  observe();
+}
+
+// familiarity grows as the story scrolls
+function observe() {
+  const evs = [...document.querySelectorAll('.ev')];
+  let seen = 0;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !e.target.classList.contains('seen')) {
+        e.target.classList.add('seen');
+        seen++;
+        const pct = Math.min(96, Math.round(seen / evs.length * 96));
+        $('#fill').style.width = pct + '%';
+        $('#pct').textContent = pct + '%';
+      }
+    });
+  }, { threshold:.4 });
+  evs.forEach(e => io.observe(e));
+}
+load();
+</script>
+</body>
+</html>

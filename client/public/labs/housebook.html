@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The House Book — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f6f1e7; --page:#fbf8f1; --ink:#33291f; --soft:#8a7c6a; --rule:#e4dac8; --terra:#bc5b3d; --moss:#71805c; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  .hand { font-family:Caveat,cursive; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; align-items:center; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:760px; margin:0 auto; text-align:center; padding:20px 24px 8px; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.8vw,50px); font-weight:600; line-height:1.1; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:14px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .wrap { max-width:1020px; margin:26px auto 80px; padding:0 22px; display:grid; grid-template-columns:400px 1fr; gap:26px; align-items:start; }
+  @media (max-width:880px) { .wrap { grid-template-columns:1fr; } }
+
+  /* interview */
+  .interview { background:#fff; border:1px solid var(--rule); border-radius:14px; padding:22px; box-shadow:0 2px 10px rgba(51,41,31,.05); }
+  .qnum { font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--soft); }
+  .q { font-family:Lora,serif; font-size:20px; font-weight:600; margin-top:8px; line-height:1.35; }
+  .opts { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .opt { border:1.5px solid var(--rule); background:var(--page); border-radius:999px; padding:8px 16px; font-size:13px; cursor:pointer; transition:.15s; }
+  .opt:hover { border-color:var(--terra); }
+  .opt.on { border-color:var(--terra); background:#f9e9e2; color:var(--terra); font-weight:600; }
+  .free { width:100%; margin-top:12px; padding:11px 13px; border:1.5px solid var(--rule); border-radius:10px; font-family:Caveat,cursive; font-size:19px; color:var(--ink); background:var(--page); }
+  .free:focus { outline:none; border-color:var(--terra); }
+  .inav { display:flex; justify-content:space-between; align-items:center; margin-top:18px; }
+  .inav .skip { background:none; border:none; color:var(--soft); font-size:12px; cursor:pointer; text-decoration:underline dotted; }
+  .inav .next { background:var(--ink); color:var(--page); border:none; border-radius:999px; padding:10px 22px; font-size:13px; font-weight:600; cursor:pointer; }
+  .inav .next:hover { background:var(--terra); }
+  .dots { display:flex; gap:5px; margin-top:16px; }
+  .dots i { width:7px; height:7px; border-radius:50%; background:var(--rule); }
+  .dots i.on { background:var(--terra); }
+
+  /* the book */
+  .book { background:var(--page); border:1px solid var(--rule); border-radius:4px 14px 14px 4px; padding:30px 34px 34px 44px; position:relative; min-height:520px;
+    box-shadow:0 3px 16px rgba(51,41,31,.08); }
+  .book::before { content:''; position:absolute; left:14px; top:0; bottom:0; width:1px; background:var(--terra); opacity:.35; }
+  .book::after { content:''; position:absolute; left:17px; top:0; bottom:0; width:1px; background:var(--terra); opacity:.2; }
+  .bktitle { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--ink); padding-bottom:10px; }
+  .bktitle .t { font-family:Lora,serif; font-size:24px; font-weight:600; }
+  .bktitle .t .hand { color:var(--terra); font-size:28px; }
+  .bktitle .est { font-size:11px; color:var(--soft); letter-spacing:.1em; text-transform:uppercase; }
+  .sec { margin-top:22px; }
+  .sec h3 { font-family:Caveat,cursive; font-size:23px; color:var(--terra); font-weight:700; }
+  .sec h3.moss { color:var(--moss); }
+  .entry { display:flex; gap:10px; align-items:baseline; padding:8px 0; border-bottom:1px dashed var(--rule); font-size:14px; animation:inkin .5s ease-out both; }
+  @keyframes inkin { from { opacity:0; transform:translateY(6px); } }
+  .entry .k { color:var(--soft); font-size:12px; text-transform:uppercase; letter-spacing:.12em; min-width:110px; }
+  .entry .v { font-family:Caveat,cursive; font-size:20px; line-height:1.2; }
+  .placeholder { color:#c9bfae; font-style:italic; font-size:13px; padding:8px 0; }
+  .paw { margin-top:10px; background:#fff; border:1px solid var(--rule); border-radius:10px; padding:12px 14px; display:flex; gap:12px; align-items:center; animation:inkin .5s both; }
+  .paw .badge { width:46px; height:46px; border-radius:50%; background:var(--moss); color:#fff; display:flex; align-items:center; justify-content:center; font-family:Lora,serif; font-size:20px; font-weight:600; flex-shrink:0; }
+  .paw .n { font-family:Caveat,cursive; font-size:22px; }
+  .paw .d { font-size:13px; color:var(--soft); }
+
+  .flip { margin-top:18px; width:100%; padding:13px; border:1.5px solid var(--ink); background:transparent; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; color:var(--ink); }
+  .flip:hover { background:var(--ink); color:var(--page); }
+
+  /* pro card overlay */
+  #procard { position:fixed; inset:0; background:rgba(51,41,31,.45); display:none; z-index:50; }
+  #procard .card { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-.6deg); width:min(92vw,420px); background:var(--page); border-radius:14px; padding:24px; box-shadow:0 24px 70px rgba(51,41,31,.4); }
+  #procard .who { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:2px solid var(--ink); }
+  #procard .who .av { width:44px; height:44px; border-radius:50%; background:var(--terra); color:#fff; display:flex; align-items:center; justify-content:center; font-family:Lora,serif; font-weight:600; }
+  #procard .who .nm { font-family:Lora,serif; font-weight:600; }
+  #procard .who .sub { font-size:12px; color:var(--soft); }
+  #procard .brief { margin-top:14px; }
+  #procard .brief .b-item { display:flex; gap:10px; padding:9px 0; border-bottom:1px dashed var(--rule); font-size:14px; }
+  #procard .brief .tag { font-size:10px; text-transform:uppercase; letter-spacing:.15em; color:var(--terra); min-width:78px; padding-top:3px; }
+  #procard .brief .hand { font-size:19px; }
+  #procard .readrow { margin-top:16px; display:flex; align-items:center; justify-content:space-between; background:#eef0e7; border-radius:10px; padding:12px 14px; font-size:12px; color:var(--moss); font-weight:600; }
+  #procard .close { margin-top:14px; width:100%; padding:11px; border:1px solid var(--rule); background:#fff; border-radius:10px; cursor:pointer; font-size:13px; color:var(--soft); }
+  .cta { display:block; max-width:420px; margin:26px auto 0; text-align:center; background:var(--terra); color:#fff; padding:15px; border-radius:999px; font-weight:600; text-decoration:none; font-size:14px; }
+  .cta:hover { filter:brightness(1.06); }
+  .fine { text-align:center; color:var(--soft); font-size:11px; margin-top:12px; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b3a78f;letter-spacing:.2em">EXPERIMENT 07 &middot; THE HOUSE BOOK</span>
+</header>
+<div class="hero">
+  <h1>Stop re-texting the gate code.<br>Your home gets <em>a book.</em></h1>
+  <p>Every pro arrives at a strange house blind — <b>where's the key, which gate, what's the dog's name, what does "clean" mean here?</b> And you re-explain it to every new person. Write it once, in your own words. Every pro you ever book gets briefed before they ring the bell.</p>
+</div>
+
+<div class="wrap">
+  <div class="interview" id="interview"></div>
+  <div>
+    <div class="book">
+      <div class="bktitle">
+        <span class="t">The <span class="hand" id="bkname">Your</span> House Book</span>
+        <span class="est">Started today</span>
+      </div>
+      <div class="sec"><h3>Getting in</h3><div id="s-access"><p class="placeholder">— the key, the gate, the code…</p></div></div>
+      <div class="sec"><h3 class="moss">Who you'll meet</h3><div id="s-critters"><p class="placeholder">— pets, kids, grandma naps at 2…</p></div></div>
+      <div class="sec"><h3>House rules</h3><div id="s-rules"><p class="placeholder">— off-limits rooms, shoes off, the one thing everyone gets wrong…</p></div></div>
+      <div class="sec"><h3 class="moss">Where things live</h3><div id="s-things"><p class="placeholder">— vacuum, breaker box, pool skimmer, spare bags…</p></div></div>
+    </div>
+    <button class="flip" id="flip" style="display:none">See exactly what your pro sees &rarr;</button>
+  </div>
+</div>
+
+<a class="cta" href="/register">Start my House Book</a>
+<p class="fine">PROTOTYPE &middot; ONE BOOK PER HOME &middot; YOU CONTROL WHO READS WHAT &middot; ACCESS DETAILS UNLOCK ONLY ON BOOKING DAY</p>
+
+<div id="procard"><div class="card"></div></div>
+
+<script>
+const QS = [
+  { id:'name', sec:null, q:"What does everyone call your place?", opts:['The Millers’','Casa Verde','Our house'], free:'e.g. The Johannsen House', k:null },
+  { id:'access', sec:'s-access', q:"How do we let ourselves in?", opts:['Lockbox on the porch','Code on the garage','Key under the frog','Someone’s home, just knock'], free:'your way in…', k:'The way in' },
+  { id:'gate', sec:'s-access', q:"Anything tricky about finding or entering?", opts:['Side gate sticks — lift, then push','Park in the driveway, not the street','Alarm: disarm within 60s'], free:'the thing you always have to explain…', k:'Good to know' },
+  { id:'pet', sec:'s-critters', q:"Who greets people at the door?", opts:['A very loud, very harmless dog','A cat who will try to escape','Kids home after 3pm','Nobody — it’s quiet'], free:'name + the quirk, e.g. Rex — deaf, wave hello', k:null },
+  { id:'wrong', sec:'s-rules', q:"What does everyone always get wrong?", opts:['They ring the bell — baby’s asleep, please text','They bag the compost with the trash','They skip under the beds'], free:'go on, vent a little…', k:'Always goes wrong' },
+  { id:'offlimits', sec:'s-rules', q:"Anywhere we shouldn’t go?", opts:['The office stays closed','Nothing on the piano, ever','Garage is all yours — house is not'], free:'off-limits…', k:'Off limits' },
+  { id:'things', sec:'s-things', q:"Where do the tools of the trade live?", opts:['Vacuum — hall closet','Mower & fuel — shed, code 4411','Pool skimmer — behind the pump house'], free:'where things hide…', k:'Find it here' },
+];
+let qi = 0, answers = {};
+const $ = s => document.querySelector(s);
+
+function renderQ() {
+  const q = QS[qi];
+  $('#interview').innerHTML =
+    '<p class="qnum">Page '+(qi+1)+' of '+QS.length+'</p>' +
+    '<p class="q">'+q.q+'</p>' +
+    '<div class="opts">'+q.opts.map(o=>'<button class="opt">'+o+'</button>').join('')+'</div>' +
+    '<input class="free" placeholder="'+q.free+'">' +
+    '<div class="inav"><button class="skip">skip this page</button><button class="next">Write it in &rarr;</button></div>' +
+    '<div class="dots">'+QS.map((_,i)=>'<i class="'+(i<qi?'on':'')+'"></i>').join('')+'</div>';
+  document.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); $('.free').value = b.textContent;
+  });
+  $('.free').onkeydown = e => { if (e.key==='Enter') commit(); };
+  $('.next').onclick = commit;
+  $('.skip').onclick = () => advance();
+}
+function commit() {
+  const v = $('.free').value.trim();
+  if (v) { answers[QS[qi].id] = v; write(QS[qi], v); }
+  advance();
+}
+function advance() {
+  if (qi < QS.length-1) { qi++; renderQ(); }
+  else {
+    $('#interview').innerHTML =
+      '<p class="qnum">Done</p><p class="q">That’s the whole first chapter.</p>' +
+      '<p style="margin-top:12px;font-size:14px;color:var(--soft);line-height:1.7">Your book grows on its own from here — pros add what they learn (“water shutoff is behind the hedge”), and you never explain your house twice again.</p>';
+    $('#flip').style.display = 'block';
+  }
+}
+function write(q, v) {
+  if (q.id === 'name') { $('#bkname').textContent = v.replace(/\s*house\s*$/i,''); return; }
+  const sec = document.getElementById(q.sec);
+  const ph = sec.querySelector('.placeholder'); if (ph) ph.remove();
+  if (q.id === 'pet') {
+    const name = (v.split(/[—,-]/)[0]||v).trim();
+    sec.insertAdjacentHTML('beforeend',
+      '<div class="paw"><div class="badge">'+(name[0]||'?').toUpperCase()+'</div><div><div class="n">'+v+'</div><div class="d">Pros are told before they knock.</div></div></div>');
+    return;
+  }
+  sec.insertAdjacentHTML('beforeend',
+    '<div class="entry"><span class="k">'+q.k+'</span><span class="v">'+v+'</span></div>');
+}
+
+// pro view
+let proName = 'Maria S.';
+fetch('/api/providers').then(r=>r.json()).then(({providers}) => {
+  const p = providers.find(x=>x.services.some(s=>s.category==='HOUSEKEEPING')) || providers[0];
+  if (p) proName = p.user.name;
+}).catch(()=>{});
+
+$('#flip').onclick = () => {
+  const a = answers;
+  const item = (tag, v) => v ? '<div class="b-item"><span class="tag">'+tag+'</span><span class="hand">'+v+'</span></div>' : '';
+  $('#procard .card').innerHTML =
+    '<div class="who"><div class="av">'+proName.split(' ').map(w=>w[0]).slice(0,2).join('')+'</div>' +
+    '<div><div class="nm">'+proName+'</div><div class="sub">gets this briefing the morning of the visit</div></div></div>' +
+    '<div class="brief">' +
+    item('Way in', a.access) + item('Heads up', a.gate) + item('You’ll meet', a.pet) +
+    item('Never', a.wrong) + item('Off limits', a.offlimits) + item('Find it', a.things) +
+    (Object.keys(a).length<=1 ? '<p style="padding:12px 0;color:var(--soft);font-size:13px">Answer a few pages first — the briefing builds from your book.</p>' : '') +
+    '</div>' +
+    '<div class="readrow"><span>Read &amp; confirmed before arrival</span><span>'+proName.split(' ')[0]+' ✓ 7:42 AM</span></div>' +
+    '<button class="close">Back to my book</button>';
+  $('#procard').style.display = 'block';
+  $('#procard .close').onclick = () => $('#procard').style.display = 'none';
+};
+
+renderQ();
+</script>
+</body>
+</html>
