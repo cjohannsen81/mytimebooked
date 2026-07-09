@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The House Plan — MyTimeBooked Labs</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f4efe6; --card:#fdfbf5; --ink:#312a22; --soft:#8b8072; --rule:#e3dac7; --terra:#bc5b3d; --moss:#71805c; --gold:#c99b3f; --paper:#faf7ee; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; }
+  .hand { font-family:Caveat,cursive; }
+  header { padding:20px 26px; display:flex; justify-content:space-between; }
+  header a { color:var(--soft); text-decoration:none; font-size:12px; text-transform:uppercase; letter-spacing:.15em; }
+  header a:hover { color:var(--terra); }
+  .hero { max-width:780px; margin:0 auto; text-align:center; padding:12px 24px 0; }
+  .hero h1 { font-family:Lora,serif; font-size:clamp(30px,4.6vw,48px); font-weight:600; line-height:1.12; }
+  .hero h1 em { font-style:italic; color:var(--terra); }
+  .hero p { color:var(--soft); margin-top:13px; font-size:15px; line-height:1.7; }
+  .hero p b { color:var(--ink); font-weight:600; }
+
+  .wrap { max-width:1080px; margin:22px auto 70px; padding:0 20px; display:grid; grid-template-columns:1.15fr .85fr; gap:20px; align-items:start; }
+  @media (max-width:920px) { .wrap { grid-template-columns:1fr; } }
+
+  /* ---- the house ---- */
+  .housecard { background:var(--card); border:1px solid var(--rule); border-radius:18px; padding:14px; }
+  svg { display:block; width:100%; height:auto; }
+  .room { cursor:pointer; }
+  .room .fill { fill:#efe9da; stroke:#c9bda2; stroke-width:1.5; transition:fill .2s; }
+  .room:hover .fill { fill:#f6ecd9; }
+  .room.sel .fill { fill:#f6e3d8; stroke:var(--terra); stroke-width:2; }
+  .roomlab { font-family:Lora,serif; font-size:13px; fill:var(--ink); pointer-events:none; }
+  .roomsub { font-family:"IBM Plex Sans"; font-size:9px; fill:var(--soft); pointer-events:none; }
+  .dotN { fill:var(--terra); } .dotB { fill:var(--moss); } .dotM { fill:var(--gold); }
+  .legend { display:flex; gap:16px; justify-content:center; padding:10px 0 4px; font-size:11px; color:var(--soft); letter-spacing:.05em; }
+  .legend i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+
+  /* ---- room panel ---- */
+  .panel { background:var(--card); border:1px solid var(--rule); border-radius:18px; padding:20px 22px; }
+  .panel .rname { font-family:Lora,serif; font-size:22px; font-weight:600; }
+  .panel .rhint { font-size:12px; color:var(--soft); margin-top:2px; }
+  .seclab { font-size:10px; text-transform:uppercase; letter-spacing:.22em; margin:18px 0 8px; display:flex; align-items:center; gap:8px; }
+  .seclab.needs { color:var(--terra); } .seclab.book { color:var(--moss); } .seclab.mem { color:var(--gold); }
+  .seclab::after { content:''; flex:1; border-top:1px dashed var(--rule); }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { border:1.5px solid var(--rule); background:var(--paper); border-radius:999px; padding:7px 13px; font-size:12.5px; cursor:pointer; transition:.15s; }
+  .chip:hover { border-color:var(--terra); }
+  .chip.on { border-color:var(--terra); background:#f9ece5; color:var(--terra); font-weight:600; }
+  .chip .p { color:var(--soft); font-weight:400; }
+  .chip.on .p { color:var(--terra); opacity:.75; }
+  .notes .n { display:flex; gap:9px; align-items:baseline; padding:7px 0; border-bottom:1px dashed var(--rule); }
+  .notes .n .hand { font-size:19px; line-height:1.25; }
+  .notes .n .who { font-size:10px; color:var(--soft); white-space:nowrap; text-transform:uppercase; letter-spacing:.1em; }
+  .addnote { display:flex; gap:8px; margin-top:10px; }
+  .addnote input { flex:1; border:1.5px solid var(--rule); border-radius:10px; background:#fff; padding:9px 12px; font-family:Caveat,cursive; font-size:18px; color:var(--ink); }
+  .addnote input:focus { outline:none; border-color:var(--moss); }
+  .addnote button { border:1.5px solid var(--moss); color:var(--moss); background:transparent; border-radius:10px; padding:0 14px; cursor:pointer; font-size:13px; font-weight:600; }
+  .addnote button:hover { background:#eef0e7; }
+  .mems .m { display:flex; gap:9px; padding:7px 0; border-bottom:1px dashed var(--rule); font-size:12.5px; color:var(--soft); }
+  .mems .m b { color:var(--ink); font-weight:600; }
+  .mems .m .d { white-space:nowrap; font-size:10px; text-transform:uppercase; letter-spacing:.1em; padding-top:2px; }
+
+  /* ---- the slip ---- */
+  .slip { margin-top:16px; background:var(--paper); border:1.5px solid var(--ink); border-radius:6px; overflow:hidden; box-shadow:0 4px 16px rgba(49,42,34,.1); }
+  .slip .shead { display:flex; justify-content:space-between; padding:10px 16px; border-bottom:1.5px solid var(--ink); font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; }
+  .slip .shead .no { color:var(--terra); }
+  .slip .body { padding:6px 16px 10px; }
+  .slip .line { display:flex; justify-content:space-between; gap:10px; align-items:baseline; padding:8px 0; border-bottom:1px dotted var(--rule); font-size:13px; animation:inkin .4s both; }
+  @keyframes inkin { from { opacity:0; transform:translateY(5px); } }
+  .slip .line .z { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--soft); min-width:74px; }
+  .slip .line .w { flex:1; }
+  .slip .line .w small { display:block; color:var(--soft); font-size:11px; }
+  .slip .line .pr { font-family:"IBM Plex Mono",monospace; font-weight:600; white-space:nowrap; }
+  .slip .line .x { border:none; background:none; color:var(--soft); cursor:pointer; font-size:13px; }
+  .slip .line .x:hover { color:var(--terra); }
+  .slip .empty { padding:16px; font-size:13px; color:var(--soft); font-style:italic; text-align:center; }
+  .slip .stub { border-top:2px dashed var(--soft); padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:relative; }
+  .slip .stub::before, .slip .stub::after { content:''; position:absolute; top:-8px; width:14px; height:14px; border-radius:50%; background:var(--card); border:1.5px solid var(--ink); }
+  .slip .stub::before { left:-8px; } .slip .stub::after { right:-8px; }
+  .slip .stub .t { font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.2em; color:var(--soft); text-transform:uppercase; }
+  .slip .stub .tot { font-family:"IBM Plex Mono",monospace; font-size:17px; font-weight:600; }
+  .bookmeter { display:flex; justify-content:space-between; align-items:center; margin-top:12px; background:#eef0e7; border-radius:12px; padding:11px 15px; font-size:12.5px; color:#5a6a49; }
+  .bookmeter b { font-family:Lora,serif; }
+  .cta { display:block; margin-top:14px; text-align:center; background:var(--terra); color:#fff; padding:14px; border-radius:999px; font-weight:600; text-decoration:none; font-size:14px; }
+  .cta:hover { filter:brightness(1.07); }
+  .fine { text-align:center; color:var(--soft); font-size:11px; margin-top:10px; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/labs/">&larr; Labs</a>
+  <span style="font-size:11px;color:#b7ab92;letter-spacing:.2em">EXPERIMENT 13 &middot; THE HOUSE PLAN</span>
+</header>
+<div class="hero">
+  <h1>Your home is the interface.<br><em>Point at the room.</em></h1>
+  <p>The Walkthrough and the House Book, fused: every room holds <b>what needs doing</b> (tap it — it lands on a work order, priced, with a matched pro), <b>what pros must know</b> (your notes, in your hand), and <b>what's been done</b> (every visit and flag pins itself to its room). You stop describing your home to an app. You just point at it.</p>
+</div>
+
+<div class="wrap">
+  <div>
+    <div class="housecard">
+      <svg viewBox="0 0 620 430" id="house"></svg>
+      <div class="legend">
+        <span><i style="background:var(--terra)"></i>needs doing</span>
+        <span><i style="background:var(--moss)"></i>in the book</span>
+        <span><i style="background:var(--gold)"></i>memory</span>
+      </div>
+    </div>
+    <div class="slip">
+      <div class="shead"><span>Work order <span class="no">No. DRAFT</span></span><span>from your plan</span></div>
+      <div class="body" id="slipbody"><p class="empty">Tap a room, tap what needs doing — the slip writes itself.</p></div>
+      <div class="stub"><span class="t">One visit plan &middot; pay pros directly</span><span class="tot" id="tot">$0</span></div>
+    </div>
+    <div class="bookmeter"><span>Your House Book grows as you note things down</span><b id="bookcount">4 notes</b></div>
+    <a class="cta" href="/browse">File this work order</a>
+    <p class="fine">PROTOTYPE &middot; PROS &amp; RATES ARE LIVE PLATFORM DATA &middot; MEMORY ENTRIES ILLUSTRATIVE</p>
+  </div>
+
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
+
+const ROOMS = {
+  kitchen: { name:'Kitchen', hint:'the heart, and the grease',
+    needs:[ {t:'Deep clean · oven & fridge', cat:'HOUSEKEEPING', h:2}, {t:'Weekly clean add-on', cat:'HOUSEKEEPING', h:1}, {t:'Fix the dripping faucet', cat:'HANDYMAN', h:1} ],
+    notes:[ {v:'compost bin under the sink — not trash', who:'you'}, {v:'cast iron never goes in the dishwasher', who:'you'} ],
+    mem:[ {b:'Deep cleaned', s:'oven glass finally clear', d:'jun 12'}, {b:'Flag from Maria', s:'dishwasher door drops fast — hinge going', d:'jun 12'} ] },
+  living: { name:'Living room', hint:'where everyone actually lives',
+    needs:[ {t:'Standard clean & dust', cat:'HOUSEKEEPING', h:1}, {t:'Mount the new TV', cat:'HANDYMAN', h:1}, {t:'Homework help at the big table', cat:'TUTORING', h:1} ],
+    notes:[ {v:'nothing on the piano, ever', who:'you'} ],
+    mem:[ {b:'Cleaned', s:'weekly visit', d:'jul 2'} ] },
+  bed: { name:'Bedrooms', hint:'two kids, one grown-up mess',
+    needs:[ {t:'Clean · incl. under the beds', cat:'HOUSEKEEPING', h:1}, {t:'Evening babysitting', cat:'BABYSITTING', h:3} ],
+    notes:[ {v:'baby naps 1–3 — please, no vacuum upstairs', who:'you'}, {v:'kids’ room: LEGO stays as built', who:'you'} ],
+    mem:[ {b:'Sat for the kids', s:'bedtime went great, per Jasmine', d:'jun 27'} ] },
+  bath: { name:'Bathroom', hint:'small room, big job',
+    needs:[ {t:'Scrub & re-shine', cat:'HOUSEKEEPING', h:1}, {t:'Re-caulk the tub', cat:'HANDYMAN', h:1} ],
+    notes:[ {v:'the fan switch is the left one (everyone guesses wrong)', who:'you'} ],
+    mem:[ {b:'Flag from Ray', s:'tub caulk pulling at the corner', d:'may 30'} ] },
+  garage: { name:'Garage', hint:'where projects go to wait',
+    needs:[ {t:'The whole fix-it list', cat:'HANDYMAN', h:3}, {t:'Declutter & haul day', cat:'HOUSEKEEPING', h:3} ],
+    notes:[ {v:'mower fuel on the high shelf — code for side door is 4411', who:'you'} ],
+    mem:[ {b:'Fixed', s:'garage door track — no more stick', d:'apr 18'} ] },
+  yard: { name:'Yard', hint:'front, back, and the jungle behind the shed',
+    needs:[ {t:'Mow, edge & blow', cat:'LAWN_GARDEN', h:1}, {t:'Hedge & bed cleanup', cat:'LAWN_GARDEN', h:2}, {t:'Dog walk — daily loop', cat:'DOG_WALKING', h:1} ],
+    notes:[ {v:'side gate sticks — lift, then push', who:'you'}, {v:'Rex is deaf — wave, don’t call', who:'you'} ],
+    mem:[ {b:'Mowed & edged', s:'sprinkler head flagged by Tom', d:'jul 1'} ] },
+  porch: { name:'Front porch', hint:'first impressions, package pile',
+    needs:[ {t:'Porch & windows wash', cat:'HOUSEKEEPING', h:1}, {t:'Grandma’s afternoon visit', cat:'SENIOR_CARE', h:2} ],
+    notes:[ {v:'lockbox behind the planter — code on booking day', who:'you'} ],
+    mem:[] },
+};
+
+// ---- draw the cutaway house ----
+const S = $('house');
+const mk = (tag, attrs, parent=S) => { const el=document.createElementNS('http://www.w3.org/2000/svg',tag); for (const k in attrs) el.setAttribute(k,attrs[k]); parent.appendChild(el); return el; };
+// ground + sky hints
+mk('rect',{x:0,y:392,width:620,height:38,fill:'#cfc3a6'});
+// roof
+mk('path',{d:'M 96 148 L 300 40 L 504 148 Z', fill:'#8a7a63'});
+mk('path',{d:'M 96 148 L 300 40 L 504 148', fill:'none', stroke:'#6e614e','stroke-width':3});
+// chimney
+mk('rect',{x:420,y:62,width:26,height:56,fill:'#a08b72'});
+const ZONES = [
+  { k:'bed',    x:110, y:152, w:186, h:104, lx:14, sub:'sleep & chaos' },
+  { k:'bath',   x:300, y:152, w:88,  h:104, lx:10, sub:'shine me' },
+  { k:'living', x:110, y:260, w:186, h:128, lx:14, sub:'the hearth' },
+  { k:'kitchen',x:300, y:260, w:190, h:128, lx:14, sub:'grease & glory' },
+  { k:'bath2',  skip:true },
+  { k:'garage', x:392, y:152, w:98,  h:104, lx:10, sub:'the list lives here' },
+  { k:'porch',  x:24,  y:318, w:82,  h:70,  lx:8,  sub:'knock knock' },
+  { k:'yard',   x:498, y:280, w:112, h:108, lx:10, sub:'rex’s kingdom' },
+];
+const roomEls = {};
+ZONES.filter(z=>!z.skip).forEach(z => {
+  const g = mk('g',{class:'room','data-k':z.k});
+  mk('rect',{x:z.x,y:z.y,width:z.w,height:z.h,rx:5,class:'fill'},g);
+  const t = mk('text',{x:z.x+z.lx,y:z.y+24,class:'roomlab'},g); t.textContent = ROOMS[z.k].name;
+  const s = mk('text',{x:z.x+z.lx,y:z.y+38,class:'roomsub'},g); s.textContent = z.sub;
+  // dots row: needs / book / memory counts
+  g.dataset.dotx = z.x+z.lx; g.dataset.doty = z.y+z.h-14;
+  roomEls[z.k] = g;
+  g.addEventListener('click', () => select(z.k));
+});
+// yard tree + door details
+mk('circle',{cx:566,cy:270,r:26,fill:'#71805c',opacity:.85});
+mk('rect',{x:562,y:286,width:8,height:26,fill:'#6e614e'});
+mk('rect',{x:210,y:344,width:30,height:44,rx:2,fill:'#4f4636'});
+
+function paintDots() {
+  Object.entries(roomEls).forEach(([k,g]) => {
+    g.querySelectorAll('.dot').forEach(d=>d.remove());
+    const r = ROOMS[k];
+    const picks = order.filter(o=>o.room===k).length;
+    const counts = [ [picks,'dotN'], [r.notes.length,'dotB'], [r.mem.length,'dotM'] ];
+    let dx = +g.dataset.dotx;
+    counts.forEach(([n,cls]) => {
+      for (let i=0;i<Math.min(n,4);i++) { mk('circle',{cx:dx, cy:+g.dataset.doty, r:4, class:'dot '+cls},g); dx += 11; }
+      if (n) dx += 4;
+    });
+  });
+}
+
+// ---- data ----
+let pros = [], rates = {}, bestPro = {};
+fetch(API+'/providers').then(r=>r.json()).then(({providers}) => {
+  pros = providers;
+  const cats = ['HOUSEKEEPING','BABYSITTING','DOG_WALKING','PET_SITTING','LAWN_GARDEN','HANDYMAN','SENIOR_CARE','TUTORING'];
+  cats.forEach(c => {
+    const withCat = providers.filter(p=>p.services.some(s=>s.category===c));
+    const rs = withCat.flatMap(p=>p.services.filter(s=>s.category===c).map(s=>s.hourlyRateCents));
+    rates[c] = rs.length ? rs.reduce((a,b)=>a+b,0)/rs.length/100 : 45;
+    bestPro[c] = withCat.sort((a,b)=>(b.avgRating||0)-(a.avgRating||0))[0]?.user.name || 'a matched pro';
+  });
+  if (sel) select(sel);
+  paintSlip();
+}).catch(()=>{});
+const priceOf = need => Math.round((rates[need.cat]||45) * need.h);
+
+// ---- state ----
+let sel = null;
+let order = []; // {room, need}
+let extraNotes = 0;
+
+function select(k) {
+  sel = k;
+  Object.values(roomEls).forEach(g=>g.classList.remove('sel'));
+  roomEls[k].classList.add('sel');
+  const r = ROOMS[k];
+  let html = '<div class="rname">'+r.name+'</div><div class="rhint">'+r.hint+'</div>';
+
+  html += '<div class="seclab needs">Needs doing</div><div class="chips">';
+  r.needs.forEach((n,i) => {
+    const on = order.some(o=>o.room===k && o.need===n);
+    html += '<button class="chip'+(on?' on':'')+'" data-i="'+i+'">'+n.t+' <span class="p">· $'+priceOf(n)+'</span></button>';
+  });
+  html += '</div>';
+
+  html += '<div class="seclab book">The book — what pros must know</div><div class="notes">';
+  r.notes.forEach(n => {
+    html += '<div class="n"><span class="hand">“'+n.v+'”</span><span class="who">'+n.who+'</span></div>';
+  });
+  html += '</div><div class="addnote"><input placeholder="add a note in your own words…"><button>Write it in</button></div>';
+
+  html += '<div class="seclab mem">Memory — what this room has seen</div><div class="mems">';
+  if (!r.mem.length) html += '<div class="m"><span>Nothing yet — its story starts with the first visit.</span></div>';
+  r.mem.forEach(m => {
+    html += '<div class="m"><span><b>'+m.b+'</b> — '+m.s+'</span><span class="d">'+m.d+'</span></div>';
+  });
+  html += '</div>';
+
+  $('panel').innerHTML = html;
+  $('panel').querySelectorAll('.chip').forEach(ch => ch.onclick = () => {
+    const need = r.needs[+ch.dataset.i];
+    const idx = order.findIndex(o=>o.room===k && o.need===need);
+    if (idx>=0) order.splice(idx,1); else order.push({room:k, need});
+    select(k); paintSlip(); paintDots();
+  });
+  const inp = $('panel').querySelector('.addnote input');
+  const add = () => {
+    if (!inp.value.trim()) return;
+    r.notes.push({v:inp.value.trim(), who:'you'});
+    extraNotes++; select(k); paintBook(); paintDots();
+  };
+  $('panel').querySelector('.addnote button').onclick = add;
+  inp.onkeydown = e => { if (e.key==='Enter') add(); };
+}
+
+function paintSlip() {
+  const body = $('slipbody');
+  if (!order.length) {
+    body.innerHTML = '<p class="empty">Tap a room, tap what needs doing — the slip writes itself.</p>';
+    $('tot').textContent = '$0';
+    return;
+  }
+  body.innerHTML = order.map((o,i) =>
+    '<div class="line" style="animation-delay:'+(i*40)+'ms"><span class="z">'+ROOMS[o.room].name+'</span>' +
+    '<span class="w">'+o.need.t+'<small>'+(bestPro[o.need.cat]||'a matched pro')+' · '+o.need.h+'h</small></span>' +
+    '<span class="pr">$'+priceOf(o.need)+'</span><button class="x" data-i="'+i+'" aria-label="remove">✕</button></div>'
+  ).join('');
+  body.querySelectorAll('.x').forEach(b => b.onclick = () => {
+    order.splice(+b.dataset.i,1); paintSlip(); paintDots(); if (sel) select(sel);
+  });
+  $('tot').textContent = '$' + order.reduce((a,o)=>a+priceOf(o.need),0);
+}
+function paintBook() {
+  const n = Object.values(ROOMS).reduce((a,r)=>a+r.notes.length,0);
+  $('bookcount').textContent = n + ' notes';
+}
+
+paintDots(); paintBook(); select('yard');
+</script>
+</body>
+</html>
