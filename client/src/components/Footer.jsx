@@ -4,9 +4,7 @@ export default function Footer() {
   return (
     <footer className="mt-16 border-t border-paper-200 bg-paper-100/60">
       <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="font-bold tracking-tight text-ink-900">
-          MyTime<span className="text-sage-600">Booked</span>
-        </p>
+        <img src="/logo.svg" alt="MyTimeBooked" className="h-7 w-auto" />
         <p className="text-sm text-ink-500">
           Trusted local help for your home & family.
         </p>

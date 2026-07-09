@@ -4,16 +4,8 @@ import { useAuth } from '../lib/auth.jsx';
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2.5">
-      <span className="w-9 h-9 rounded-xl bg-sage-gradient flex items-center justify-center shadow-sm shadow-sage-500/30">
-        <svg viewBox="0 0 64 64" className="w-5 h-5">
-          <circle cx="32" cy="32" r="20" fill="none" stroke="#fbfaf6" strokeWidth="6" />
-          <path d="M32 20v12l8 6" fill="none" stroke="#fbfaf6" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </span>
-      <span className="font-bold text-lg tracking-tight text-ink-900">
-        MyTime<span className="text-sage-600">Booked</span>
-      </span>
+    <Link to="/" className="flex items-center">
+      <img src="/logo.svg" alt="MyTimeBooked" className="h-9 w-auto" />
     </Link>
   );
 }

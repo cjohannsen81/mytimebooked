@@ -22,21 +22,22 @@ export default {
           400: '#c2c2b6',
         },
         ink: {
-          950: '#1f2924',
-          900: '#2d3a34',   // headings, primary text (green slate)
-          700: '#46564e',   // body strong
-          500: '#6d7a72',   // muted body
-          400: '#98a19a',   // captions
+          950: '#152522',
+          900: '#22403b',   // headings, primary text (deep teal slate)
+          700: '#3f5a55',   // body strong
+          500: '#68807b',   // muted body
+          400: '#94a5a1',   // captions
         },
+        // brand teal, matched to the logo (#17877B → #0E5E56)
         sage: {
-          50:  '#f0f5f1',
-          100: '#e2ede6',
-          200: '#c8dcd0',
-          300: '#a5c5b3',
-          400: '#83ad96',
-          500: '#68967e',   // primary accent
-          600: '#54806a',   // hover / CTAs
-          700: '#446856',
+          50:  '#edf6f4',
+          100: '#d8ece9',
+          200: '#b2dbd5',
+          300: '#7fc2b9',
+          400: '#45a397',
+          500: '#17877b',   // primary accent (logo gradient top)
+          600: '#11726a',   // hover / CTAs
+          700: '#0e5e56',   // logo gradient bottom
         },
         // status hues (soft)
         stamp: {
@@ -53,7 +54,7 @@ export default {
         },
       },
       backgroundImage: {
-        'sage-gradient': 'linear-gradient(135deg, #68967e 0%, #54806a 100%)',
+        'sage-gradient': 'linear-gradient(135deg, #17877b 0%, #0e5e56 100%)',
         'cream-gradient': 'linear-gradient(180deg, #fdfdfc 0%, #f7f7f4 100%)',
       },
       boxShadow: {
