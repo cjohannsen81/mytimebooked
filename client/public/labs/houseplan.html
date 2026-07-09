@@ -36,10 +36,10 @@
   .plancard .phead { display:flex; justify-content:space-between; align-items:baseline; padding:2px 8px 12px; }
   .plancard .phead .t { font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); }
   .plancard .phead .a { font-size:12px; color:var(--mut); }
-  #stage { position:relative; border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#f2f3ee, #eceee7); cursor:grab; touch-action:none; }
+  #stage { position:relative; border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#f3efe4,#eae5d5); cursor:grab; touch-action:none; }
   #stage:active { cursor:grabbing; }
   #stage canvas { display:block; }
-  #tip { position:absolute; pointer-events:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:500; padding:6px 11px; border-radius:999px; transform:translate(-50%,-160%); opacity:0; transition:opacity .12s; white-space:nowrap; letter-spacing:.02em; }
+  #tip { position:absolute; pointer-events:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:500; padding:6px 11px; border-radius:999px; transform:translate(-50%,-160%); opacity:0; transition:opacity .12s; white-space:nowrap; }
   #hint { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); background:rgba(255,255,255,.8); backdrop-filter:blur(4px); padding:6px 14px; border-radius:999px; pointer-events:none; }
   .legend { display:flex; gap:20px; justify-content:center; padding:14px 0 8px; font-size:11px; color:var(--mut); border-top:1px solid var(--line); margin-top:14px; }
   .legend i { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
@@ -110,13 +110,13 @@
 </header>
 <div class="hero">
   <h1>Your home is the interface.<br><em>Everyone who lives there, too.</em></h1>
-  <p>Not a page — a little world. Orbit your home, then tap anything that needs care: the kitchen, the pool, <b>Rex in the yard, the kids on the lawn, grandma on the porch</b>. Rooms get cleaners and handymen; the living get walkers, sitters, nannies, and companions. Every tap lands on one visit plan, priced, with a matched pro.</p>
+  <p>Not a page — a little world. Orbit the ranch, then tap anything that needs care: the kitchen, the kidney pool, <b>Rex in the yard, the kids on the lawn, grandma on the patio</b>. Rooms get cleaners and handymen; the living get walkers, sitters, nannies, and companions. Every tap lands on one visit plan, priced, with a matched pro.</p>
 </div>
 
 <div class="wrap">
   <div>
     <div class="card plancard">
-      <div class="phead"><span class="t">Model of residence</span><span class="a">2114 Fernwood Ln</span></div>
+      <div class="phead"><span class="t">Model of residence &middot; c. 1962</span><span class="a">2114 Fernwood Ln</span></div>
       <div id="stage">
         <div id="tip"></div>
         <div id="hint">drag to orbit &middot; tap anything alive or dirty</div>
@@ -149,37 +149,37 @@ const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' :
 
 /* ================= data ================= */
 const ZONES = {
-  kitchen: { name:'Kitchen', hint:'The heart, and the grease.',
+  kitchen: { name:'Kitchen', hint:'Formica, chrome, and the grease.',
     needs:[ {t:'Deep clean — oven & fridge', cat:'HOUSEKEEPING', h:2}, {t:'Weekly clean add-on', cat:'HOUSEKEEPING', h:1}, {t:'Fix the dripping faucet', cat:'HANDYMAN', h:1} ],
     notes:[ {v:'Compost bin lives under the sink — not trash.', who:'you'} ],
     mem:[ {b:'Flag from Maria', s:'dishwasher hinge is going', d:'jun 12'} ] },
-  living: { name:'Living room', hint:'Where everyone actually lives.',
+  living: { name:'Living room', hint:'The glass wall. The good chairs.',
     needs:[ {t:'Standard clean & dust', cat:'HOUSEKEEPING', h:1}, {t:'Mount the new TV', cat:'HANDYMAN', h:1} ],
-    notes:[ {v:'Nothing on the piano, ever.', who:'you'} ],
+    notes:[ {v:'Nothing on the credenza, ever.', who:'you'} ],
     mem:[ {b:'Cleaned', s:'weekly visit', d:'jul 2'} ] },
-  bed: { name:'Bedrooms', hint:'Two kids, one grown-up mess.',
+  bed: { name:'Bedroom wing', hint:'Two kids, one grown-up mess.',
     needs:[ {t:'Clean, incl. under the beds', cat:'HOUSEKEEPING', h:1} ],
-    notes:[ {v:'Baby naps 1–3 — no vacuum upstairs.', who:'you'}, {v:'Kids’ room: LEGO stays as built.', who:'you'} ],
+    notes:[ {v:'Baby naps 1–3 — no vacuum in the wing.', who:'you'}, {v:'Kids’ room: LEGO stays as built.', who:'you'} ],
     mem:[] },
-  bath: { name:'Bath & laundry', hint:'Small rooms, big jobs.',
+  bath: { name:'Bath & laundry', hint:'Pink tile. It stays.',
     needs:[ {t:'Scrub & re-shine', cat:'HOUSEKEEPING', h:1}, {t:'Re-caulk the tub', cat:'HANDYMAN', h:1} ],
     notes:[ {v:'The fan switch is the left one.', who:'you'} ],
     mem:[ {b:'Flag from Ray', s:'tub caulk pulling at the corner', d:'may 30'} ] },
-  garage: { name:'Garage', hint:'Where projects go to wait.',
-    needs:[ {t:'The whole fix-it list', cat:'HANDYMAN', h:3}, {t:'Declutter & haul day', cat:'HOUSEKEEPING', h:3} ],
-    notes:[ {v:'Mower fuel on the high shelf. Door code arrives on booking day.', who:'you'} ],
-    mem:[ {b:'Fixed', s:'garage door track', d:'apr 18'} ] },
-  porch: { name:'Front porch', hint:'First impressions, package pile.',
-    needs:[ {t:'Porch & windows wash', cat:'HOUSEKEEPING', h:1} ],
+  garage: { name:'Carport', hint:'Open air, as the architect intended.',
+    needs:[ {t:'The whole fix-it list', cat:'HANDYMAN', h:3}, {t:'Declutter & sweep-out', cat:'HOUSEKEEPING', h:2} ],
+    notes:[ {v:'Mower fuel on the high shelf.', who:'you'} ],
+    mem:[ {b:'Fixed', s:'storage wall squared away', d:'apr 18'} ] },
+  porch: { name:'The patio', hint:'Terrazzo, a mustard door, evening drinks.',
+    needs:[ {t:'Terrazzo & windows wash', cat:'HOUSEKEEPING', h:1} ],
     notes:[ {v:'Lockbox behind the planter — code unlocks on booking day.', who:'you'} ],
     mem:[] },
-  yard: { name:'Yard', hint:'Front, back, and the jungle behind the shed.',
-    needs:[ {t:'Mow, edge & blow', cat:'LAWN_GARDEN', h:1}, {t:'Hedge & bed cleanup', cat:'LAWN_GARDEN', h:2} ],
+  yard: { name:'Yard', hint:'Gravel, sculpted shrubs, one proud tree.',
+    needs:[ {t:'Mow, edge & blow', cat:'LAWN_GARDEN', h:1}, {t:'Shrub sculpting & beds', cat:'LAWN_GARDEN', h:2} ],
     notes:[ {v:'Side gate sticks — lift, then push.', who:'you'} ],
     mem:[ {b:'Mowed & edged', s:'sprinkler head flagged by Tom', d:'jul 1'} ] },
-  pool: { name:'The pool', hint:'Crystal in June, swamp by August.',
+  pool: { name:'The kidney pool', hint:'Crystal in June, swamp by August.',
     needs:[ {t:'Weekly pool day', cat:'LAWN_GARDEN', h:1}, {t:'Open, brush & balance', cat:'LAWN_GARDEN', h:2} ],
-    notes:[ {v:'Skimmer and chemicals live behind the pump house.', who:'you'} ],
+    notes:[ {v:'Skimmer and chemicals live behind the pump screen.', who:'you'} ],
     mem:[ {b:'Balanced', s:'pH 7.4, filter on its last season', d:'jun 28'} ] },
   rex: { name:'Rex', hint:'Golden mix, nine years young. Deaf, endlessly cheerful.',
     needs:[ {t:'Daily walk — the long loop', cat:'DOG_WALKING', h:1}, {t:'Weekend sitting, drop-ins', cat:'PET_SITTING', h:3}, {t:'Overnight stay', cat:'PET_SITTING', h:8} ],
@@ -195,53 +195,57 @@ const ZONES = {
     mem:[ {b:'Visit from Grace', s:'crossword finished together', d:'jul 1'} ] },
 };
 
-/* ================= 3d scene ================= */
+/* ================= 3d scene — mid-century ranch ================= */
 const stage = $('stage');
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(38, 4/3, 0.1, 200);
-camera.position.set(13, 9.5, 14);
+const camera = new THREE.PerspectiveCamera(36, 4/3, 0.1, 200);
+camera.position.set(12.5, 7.5, 15);
 const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 1.15));
-const sun = new THREE.DirectionalLight(0xfff6e8, 2.0);
-sun.position.set(9, 16, 7);
+scene.add(new THREE.AmbientLight(0xfff8ec, 1.1));
+const sun = new THREE.DirectionalLight(0xffedd0, 2.2);
+sun.position.set(10, 14, 6);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -14; sun.shadow.camera.right = 14;
-sun.shadow.camera.top = 14; sun.shadow.camera.bottom = -14;
+sun.shadow.camera.left = -16; sun.shadow.camera.right = 16;
+sun.shadow.camera.top = 16; sun.shadow.camera.bottom = -16;
 scene.add(sun);
+const fill = new THREE.DirectionalLight(0xdfe8e6, .5); fill.position.set(-8, 6, -6); scene.add(fill);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 1.6, 0.6);
+controls.target.set(.4, 1.0, .8);
 controls.enableDamping = true; controls.dampingFactor = .06;
 controls.minDistance = 9; controls.maxDistance = 26;
-controls.maxPolarAngle = Math.PI * .46; controls.minPolarAngle = Math.PI * .16;
+controls.maxPolarAngle = Math.PI * .46; controls.minPolarAngle = Math.PI * .18;
 controls.enablePan = false;
-controls.autoRotate = true; controls.autoRotateSpeed = .5;
+controls.autoRotate = true; controls.autoRotateSpeed = .45;
 controls.addEventListener('start', () => { controls.autoRotate = false; $('hint').style.opacity = 0; });
 
-const C = { wall:0xffffff, wallHover:0xf0f4ee, wallSel:0xd9e9e0, edge:0xc9c9c0, edgeSel:0x1e5c46,
-  roof:0xefeee8, ground:0xe7e9e0, grass:0xcfdcc6, water:0x9fcbd8, deck:0xe9e6da,
-  wood:0xd8cdb8, fur:0xc89a6b, furDark:0xa87c50, skinA:0xe9c4a8, shirtA:0x88a89b, shirtB:0xd6a06a, dress:0x9b8fa8, hair:0xdedddb };
-const mat = (c, opts={}) => new THREE.MeshStandardMaterial({ color:c, roughness:.9, metalness:0, ...opts });
+/* mid-century palette */
+const C = {
+  cream:0xf5efe1, stucco:0xefe7d3, walnut:0x7d5433, teak:0x9a6b3e, fascia:0xfaf6ec,
+  stone:0xb5aa97, mustard:0xd9a13b, olive:0x8a8f5f, sage:0xb9c49b, burnt:0xc4652f,
+  glass:0xbcd8d2, water:0x6fc0c9, terrazzo:0xe9e2d0, gravel:0xe4ddca,
+  edge:0xcac3b2, edgeSel:0x1e5c46, hover:0xf3ecd9, selTint:0xdcebe0,
+  fur:0xc89a6b, furDark:0xa87c50, skin:0xe9c4a8, hair:0xdedddb,
+};
+const mat = (c, opts={}) => new THREE.MeshStandardMaterial({ color:c, roughness:.88, metalness:0, ...opts });
 
 const pickables = [];
-const zoneVisual = {}; // key -> {meshes:[{mesh,base}], edges:[], marker}
-
+const zoneVisual = {};
 function registerPick(mesh, key) { mesh.userData.zone = key; pickables.push(mesh); }
 function track(key, mesh, isEdge) {
   zoneVisual[key] = zoneVisual[key] || { meshes:[], edges:[] };
   if (isEdge) zoneVisual[key].edges.push(mesh);
   else zoneVisual[key].meshes.push({ mesh, base: mesh.material.color.getHex() });
 }
-
-function block(key, x1,x2, y1,y2, z1,z2, color=C.wall, { pick=true, edge=true, shadow=true } = {}) {
+function block(key, x1,x2, y1,y2, z1,z2, color=C.cream, { pick=true, edge=true, shadow=true, rough } = {}) {
   const g = new THREE.BoxGeometry(x2-x1, y2-y1, z2-z1);
-  const m = new THREE.Mesh(g, mat(color));
+  const m = new THREE.Mesh(g, mat(color, rough!==undefined?{roughness:rough}:{}));
   m.position.set((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
   m.castShadow = shadow; m.receiveShadow = true;
   scene.add(m);
@@ -253,78 +257,159 @@ function block(key, x1,x2, y1,y2, z1,z2, color=C.wall, { pick=true, edge=true, s
   return m;
 }
 
-/* ground */
-const ground = new THREE.Mesh(new THREE.CylinderGeometry(14.5, 14.5, .3, 64), mat(C.ground));
+/* plinth */
+const ground = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, .3, 72), mat(C.gravel));
 ground.position.y = -.15; ground.receiveShadow = true; scene.add(ground);
 
-/* house — massing model */
-block('living', -4,-.4, 0,2.2, -2.1,2.1);
-block('kitchen', -.4,4, 0,2.2, -2.1,2.1);
-block('bed', -4,.2, 2.2,4.4, -2.1,2.1);
-block('bath', .2,4, 2.2,4.4, -2.1,2.1);
-block('garage', 4.15,7, 0,2.0, -2.1,2.1);
-block(null, 4.15,7, 2.0,2.18, -2.25,2.25, C.roof); // garage roof slab
-block('porch', -3.6,-.8, 0,.26, 2.1,3.7, C.deck);
+/* ---- the ranch: one low storey, deep flat roof ---- */
+const H = 2.5;                       // wall height
+block('living', -6.2,-1.6, 0,H, -2.2,2.0, C.stucco);
+block('kitchen', -1.6,2.2, 0,H, -2.2,2.0, C.cream);
+block('bed', 2.2,6.4, 0,H, -2.2,-.1, C.walnut);   // walnut-clad wing
+block('bath', 2.2,6.4, 0,H, -.1,2.0, C.stucco);
 
-/* roof — triangular prism */
+/* glass wall on the living room front */
 {
-  const shape = new THREE.Shape();
-  shape.moveTo(-2.5, 0); shape.lineTo(2.5, 0); shape.lineTo(0, 1.9); shape.closePath();
-  const g = new THREE.ExtrudeGeometry(shape, { depth:8.5, bevelEnabled:false });
-  g.rotateY(Math.PI/2); g.translate(-4.25, 4.4, 0);
-  const roof = new THREE.Mesh(g, mat(C.roof)); roof.castShadow = true; scene.add(roof);
-  const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color:C.edge })); scene.add(e);
-  block(null, 2.2,2.9, 4.4,6.0, -.6,.1, C.wall); // chimney
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(4.2,H-.3,.08),
+    mat(C.glass, { transparent:true, opacity:.45, roughness:.15 }));
+  glass.position.set(-3.9, (H-.3)/2 + .15, 2.03); glass.castShadow = false;
+  scene.add(glass); track('living', glass, false); registerPick(glass, 'living');
+  for (let i=0;i<4;i++) {
+    const mull = new THREE.Mesh(new THREE.BoxGeometry(.07,H-.3,.1), mat(C.walnut));
+    mull.position.set(-5.8 + i*1.27, (H-.3)/2 + .15, 2.05); scene.add(mull);
+  }
+}
+/* mustard front door on the patio side */
+{
+  const d = new THREE.Mesh(new THREE.BoxGeometry(.9,1.9,.09), mat(C.mustard, { roughness:.6 }));
+  d.position.set(.4,.95,2.05); scene.add(d);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(d.geometry), new THREE.LineBasicMaterial({ color:C.teak })); e.position.copy(d.position); scene.add(e);
+}
+/* clerestory strip above kitchen */
+{
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(3.6,.34,.06), mat(C.glass,{ transparent:true, opacity:.5, roughness:.15 }));
+  strip.position.set(.3, H-.35, 2.02); scene.add(strip);
 }
 
-/* windows + door — green hairline accents */
-const winMat = mat(0xf4f6f2);
-const win = (x,y,z, w=.7,h=.8) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,.06), winMat); m.position.set(x,y,z); scene.add(m);
-  const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color:0x9fb5a9 })); e.position.copy(m.position); scene.add(e); };
-win(-2.9,1.3,2.13); win(-1.5,1.3,2.13); win(1.2,1.3,2.13); win(2.7,1.3,2.13);
-win(-2.9,3.5,2.13); win(-1.5,3.5,2.13); win(1.2,3.5,2.13); win(2.7,3.5,2.13);
-{ const d = new THREE.Mesh(new THREE.BoxGeometry(.8,1.6,.07), mat(0x1e5c46, { roughness:.7 })); d.position.set(-.1,.8,2.13); scene.add(d); }
-
-/* yard */
+/* the roof — one thin slab, deep eaves all round */
 {
-  const grass = new THREE.Mesh(new THREE.BoxGeometry(4.4,.08,4.6), mat(C.grass));
-  grass.position.set(6.4,.04,4.0); grass.receiveShadow = true; scene.add(grass);
-  track('yard', grass, false); registerPick(grass, 'yard');
-  // tree
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.14,.18,1.2,10), mat(0xa08b72)); trunk.position.set(7.6,.6,2.6); trunk.castShadow = true; scene.add(trunk);
-  const crown = new THREE.Mesh(new THREE.SphereGeometry(.95,20,16), mat(0x9db98a)); crown.position.set(7.6,1.8,2.6); crown.castShadow = true; scene.add(crown);
-  // doghouse
-  block(null, 4.6,5.6, .08,.85, 5.0,5.9, C.wood);
-  const s = new THREE.Shape(); s.moveTo(-.62,0); s.lineTo(.62,0); s.lineTo(0,.5); s.closePath();
-  const rg = new THREE.ExtrudeGeometry(s, { depth:1.0, bevelEnabled:false }); rg.rotateY(Math.PI/2); rg.translate(4.58,.93,5.45);
-  const r = new THREE.Mesh(rg, mat(0xcabfa8)); r.castShadow = true; scene.add(r);
+  const roof = block(null, -6.9,7.1, H,H+.22, -2.9,2.9, C.fascia, { pick:false });
+  roof.castShadow = true;
+  // fascia line in walnut
+  const trim = new THREE.LineSegments(new THREE.EdgesGeometry(roof.geometry), new THREE.LineBasicMaterial({ color:C.teak }));
+  trim.position.copy(roof.position); scene.add(trim);
+}
+/* stone chimney rising through the roof */
+block(null, -5.4,-4.5, 0,3.6, -.9,-.1, C.stone, { pick:false });
+
+/* ---- carport: flat roof on slim posts ---- */
+{
+  const roof = block('garage', 7.3,10.1, 2.1,2.28, -2.2,2.0, C.fascia);
+  roof.castShadow = true;
+  [[7.5,-2.0],[9.9,-2.0],[7.5,1.8],[9.9,1.8]].forEach(([x,z]) => {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,2.1,10), mat(C.walnut));
+    p.position.set(x,1.05,z); p.castShadow = true; scene.add(p);
+  });
+  // storage wall at the back of the carport
+  const w = block('garage', 9.9,10.1, 0,2.1, -2.2,2.0, C.walnut);
+  w.castShadow = true;
+  // the car — a low friendly wagon
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.1,.5,1.1), mat(C.burnt, { roughness:.5 }));
+  body.position.set(8.6,.44,0); body.castShadow = true; scene.add(body);
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.1,.42,1.0), mat(C.cream, { roughness:.4 }));
+  cab.position.set(8.45,.86,0); cab.castShadow = true; scene.add(cab);
+  [[7.9,-.56],[9.3,-.56],[7.9,.56],[9.3,.56]].forEach(([x,z]) => {
+    const t = new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.14,14), mat(0x3a3a35));
+    t.rotation.x = Math.PI/2; t.position.set(x,.19,z); scene.add(t);
+  });
 }
 
-/* pool */
+/* ---- patio: terrazzo slab, slat screen, bench ---- */
 {
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(3.6,.14,3.4), mat(C.deck));
-  deck.position.set(-6.2,.07,3.4); deck.receiveShadow = true; scene.add(deck);
+  const slab = block('porch', -1.4,2.4, 0,.14, 2.2,4.6, C.terrazzo);
+  slab.receiveShadow = true;
+  // vertical walnut slat screen on the right edge
+  for (let i=0;i<7;i++) {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(.09,1.7,.24), mat(C.walnut));
+    s.position.set(2.35,.85,2.5 + i*.32); s.castShadow = true; scene.add(s);
+  }
+  // bench
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(1.5,.09,.5), mat(C.teak)); seat.position.set(-.7,.5,3.7); seat.castShadow = true; scene.add(seat);
+  [[-1.3,3.5],[-.1,3.5],[-1.3,3.9],[-.1,3.9]].forEach(([x,z]) => {
+    const l = new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.5,8), mat(0x3a3a35)); l.position.set(x,.25,z); scene.add(l);
+  });
+  // planter with a snake plant
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(.26,.2,.4,14), mat(C.burnt)); pot.position.set(1.9,.34,4.2); pot.castShadow = true; scene.add(pot);
+  for (let i=0;i<5;i++) {
+    const leaf = new THREE.Mesh(new THREE.ConeGeometry(.05,.7,6), mat(C.olive));
+    leaf.position.set(1.9 + Math.cos(i*1.3)*.09, .85, 4.2 + Math.sin(i*1.3)*.09);
+    leaf.rotation.z = Math.cos(i*2.1)*.16; leaf.rotation.x = Math.sin(i*1.7)*.16; scene.add(leaf);
+  }
+}
+
+/* ---- the kidney pool + deck ---- */
+function kidney(scale) {
+  const s = new THREE.Shape();
+  s.moveTo(-1.2*scale, 0);
+  s.bezierCurveTo(-1.25*scale, .85*scale, -.45*scale, 1.3*scale, .25*scale, 1.05*scale);
+  s.bezierCurveTo(.95*scale, .82*scale, 1.45*scale, .55*scale, 1.4*scale, -.15*scale);
+  s.bezierCurveTo(1.35*scale, -.9*scale, .55*scale, -1.3*scale, -.15*scale, -1.05*scale);
+  s.bezierCurveTo(-.85*scale, -.82*scale, -1.15*scale, -.6*scale, -1.2*scale, 0);
+  return s;
+}
+{
+  const deckG = new THREE.ExtrudeGeometry(kidney(1.75), { depth:.12, bevelEnabled:false });
+  deckG.rotateX(-Math.PI/2);
+  const deck = new THREE.Mesh(deckG, mat(C.terrazzo));
+  deck.position.set(-4.6,.12,4.4); deck.receiveShadow = true; scene.add(deck);
   track('pool', deck, false); registerPick(deck, 'pool');
-  const water = new THREE.Mesh(new THREE.BoxGeometry(2.9,.14,2.7), mat(C.water, { roughness:.25 }));
-  water.position.set(-6.2,.16,3.4); scene.add(water);
+  const waterG = new THREE.ExtrudeGeometry(kidney(1.42), { depth:.1, bevelEnabled:false });
+  waterG.rotateX(-Math.PI/2);
+  const water = new THREE.Mesh(waterG, mat(C.water, { roughness:.2 }));
+  water.position.set(-4.6,.2,4.4); scene.add(water);
   track('pool', water, false); registerPick(water, 'pool');
-  const e = new THREE.LineSegments(new THREE.EdgesGeometry(water.geometry), new THREE.LineBasicMaterial({ color:0x7fb2c2 })); e.position.copy(water.position); scene.add(e);
+  // diving board
+  const board = new THREE.Mesh(new THREE.BoxGeometry(.9,.06,.28), mat(C.fascia));
+  board.position.set(-6.4,.42,3.4); board.castShadow = true; scene.add(board);
+  const leg = new THREE.Mesh(new THREE.BoxGeometry(.1,.3,.24), mat(C.teak)); leg.position.set(-6.7,.26,3.4); scene.add(leg);
 }
 
-/* ---- the living: rex, kids, grandma ---- */
+/* ---- yard: sage lawn, sputnik tree, sculpted shrubs, doghouse ---- */
+{
+  const lawnG = new THREE.CylinderGeometry(2.5, 2.5, .1, 48);
+  const lawn = new THREE.Mesh(lawnG, mat(C.sage));
+  lawn.scale.x = 1.35; lawn.position.set(6.3,.05,4.6); lawn.receiveShadow = true; scene.add(lawn);
+  track('yard', lawn, false); registerPick(lawn, 'yard');
+  // tree: slim trunk, stacked olive discs
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,2.1,10), mat(C.teak));
+  trunk.position.set(8.3,1.05,5.4); trunk.castShadow = true; scene.add(trunk);
+  [[2.1,.85],[2.55,.62],[2.95,.38]].forEach(([y,r]) => {
+    const disc = new THREE.Mesh(new THREE.SphereGeometry(r,18,12), mat(C.olive));
+    disc.scale.y = .45; disc.position.set(8.3,y,5.4); disc.castShadow = true; scene.add(disc);
+  });
+  // sculpted shrubs
+  [[4.6,3.4,.42],[5.4,3.0,.3],[7.6,3.2,.36]].forEach(([x,z,r]) => {
+    const b = new THREE.Mesh(new THREE.SphereGeometry(r,16,12), mat(C.sage));
+    b.scale.y = .8; b.position.set(x,r*.8,z); b.castShadow = true; scene.add(b);
+  });
+  // flat-roof doghouse, walnut with cream slab
+  block(null, 5.2,6.2, .1,.8, 5.6,6.4, C.walnut, { pick:false });
+  block(null, 5.05,6.35, .8,.92, 5.45,6.55, C.fascia, { pick:false });
+}
+
+/* ---- the living ---- */
 function figure(x, z, height, shirt, opts={}) {
   const g = new THREE.Group();
-  const legs = new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,height*.42,10), mat(0x5b5b53)); legs.position.y = height*.21; g.add(legs);
+  const legs = new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,height*.42,10), mat(0x4a4a42)); legs.position.y = height*.21; g.add(legs);
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(.22, height*.34, 4, 10), mat(shirt)); body.position.y = height*.6; g.add(body);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(.19, 16, 12), mat(opts.skin || C.skinA)); head.position.y = height*.93; g.add(head);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.19, 16, 12), mat(opts.skin || C.skin)); head.position.y = height*.93; g.add(head);
   if (opts.hair) { const h = new THREE.Mesh(new THREE.SphereGeometry(.2, 16, 10, 0, Math.PI*2, 0, Math.PI*.55), mat(opts.hair)); h.position.y = height*.96; g.add(h); }
   if (opts.bun) { const b = new THREE.Mesh(new THREE.SphereGeometry(.09,10,8), mat(opts.hair||C.hair)); b.position.set(0, height*1.05, -.12); g.add(b); }
   g.position.set(x, 0, z);
-  g.traverse(o => { if (o.isMesh) { o.castShadow = true; } });
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
   scene.add(g);
   return g;
 }
-// Rex — golden mix
 const rex = new THREE.Group();
 {
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(.26,.6,4,10), mat(C.fur)); body.rotation.z = Math.PI/2; body.position.y = .48; rex.add(body);
@@ -337,26 +422,25 @@ const rex = new THREE.Group();
   }));
   const tail = new THREE.Mesh(new THREE.CapsuleGeometry(.05,.3,4,8), mat(C.fur));
   tail.position.set(-.5,.68,0); tail.rotation.z = .9; rex.add(tail); rex.userData.tail = tail;
-  rex.position.set(5.9,.08,3.6); rex.rotation.y = -.5;
+  rex.position.set(6.0,.12,4.4); rex.rotation.y = -.6;
   rex.traverse(o => { if (o.isMesh) o.castShadow = true; });
   scene.add(rex);
 }
-const kidA = figure(-1.9, 4.6, 1.05, C.shirtA, { hair:0x6b5642 });
-const kidB = figure(-1.2, 4.9, .85, C.shirtB, { hair:0x3f3a33 });
-{ const ball = new THREE.Mesh(new THREE.SphereGeometry(.16,14,10), mat(0xc96f4a)); ball.position.set(-1.55,.16,5.3); ball.castShadow = true; scene.add(ball); }
-const grandma = figure(-2.2, 2.9, 1.15, C.dress, { hair:C.hair, bun:true });
-grandma.position.y = .26;
+const kidA = figure(2.0, 5.6, 1.05, C.mustard, { hair:0x6b5642 });
+const kidB = figure(2.8, 6.0, .85, C.burnt, { hair:0x3f3a33 });
+{ const ball = new THREE.Mesh(new THREE.SphereGeometry(.16,14,10), mat(C.water)); ball.position.set(2.4,.16,6.5); ball.castShadow = true; scene.add(ball); }
+const grandma = figure(-.7, 3.7, 1.15, C.olive, { hair:C.hair, bun:true });
+grandma.position.y = .14;
 
-/* invisible pick volumes for the living */
 function pickVolume(key, x, z, r, h, y=0) {
   const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 10), new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }));
   m.position.set(x, y + h/2, z); scene.add(m); registerPick(m, key);
 }
-pickVolume('rex', 5.9, 3.6, .95, 1.4);
-pickVolume('kids', -1.55, 4.75, 1.15, 1.5);
-pickVolume('grandma', -2.2, 2.9, .8, 1.7, .26);
+pickVolume('rex', 6.0, 4.4, .95, 1.4);
+pickVolume('kids', 2.4, 5.9, 1.15, 1.5);
+pickVolume('grandma', -.7, 3.7, .75, 1.7, .14);
 
-/* markers — small bobbing dots above every tappable thing */
+/* markers */
 const markerTex = (() => {
   const c = document.createElement('canvas'); c.width = c.height = 64;
   const x = c.getContext('2d');
@@ -366,9 +450,9 @@ const markerTex = (() => {
 })();
 const markers = [];
 const MARKER_AT = {
-  living:[-2.2,2.7,0], kitchen:[1.8,2.7,0], bed:[-1.9,4.9,0], bath:[2.1,4.9,0],
-  garage:[5.5,2.5,0], porch:[-3.2,1.0,3.0], yard:[6.9,1.0,4.9], pool:[-6.2,.9,3.4],
-  rex:[5.9,1.5,3.6], kids:[-1.55,1.8,4.75], grandma:[-2.2,2.0,2.9],
+  living:[-3.9,3.2,0], kitchen:[.3,3.2,0], bed:[4.3,3.2,-1.1], bath:[4.3,3.2,1.0],
+  garage:[8.6,2.9,0], porch:[.5,1.4,3.6], yard:[7.2,1.2,3.6], pool:[-4.6,1.0,4.4],
+  rex:[6.0,1.5,4.4], kids:[2.4,1.8,5.9], grandma:[-.7,2.0,3.7],
 };
 Object.entries(MARKER_AT).forEach(([k,[x,y,z]]) => {
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:markerTex, depthTest:false, opacity:.92 }));
@@ -395,10 +479,10 @@ function zoneAt(e) {
   const hit = ray.intersectObjects(pickables, false)[0];
   return hit ? hit.object.userData.zone : null;
 }
-function tintZone(key, mode) { // mode: 0 base, 1 hover, 2 selected
+function tintZone(key, mode) {
   const v = zoneVisual[key]; if (!v) return;
   v.meshes.forEach(({mesh, base}) => {
-    mesh.material.color.setHex(mode===2 ? C.wallSel : mode===1 ? C.wallHover : base);
+    mesh.material.color.setHex(mode===2 ? C.selTint : mode===1 ? C.hover : base);
   });
   v.edges.forEach(e => e.material.color.setHex(mode===2 ? C.edgeSel : C.edge));
 }
@@ -434,7 +518,7 @@ function animate() {
   const t = clock.getElapsedTime();
   controls.update();
   if (rex.userData.tail) rex.userData.tail.rotation.x = Math.sin(t*7)*.5;
-  rex.position.y = .08 + Math.abs(Math.sin(t*3.2))*.04;
+  rex.position.y = .12 + Math.abs(Math.sin(t*3.2))*.04;
   kidA.position.y = Math.abs(Math.sin(t*2.6))*.06;
   kidB.position.y = Math.abs(Math.sin(t*2.6+1.2))*.08;
   grandma.rotation.x = Math.sin(t*1.6)*.03;
@@ -443,7 +527,7 @@ function animate() {
 }
 animate();
 
-/* ================= panel + visit plan (same engine as before) ================= */
+/* ================= panel + visit plan ================= */
 let rates = {}, bestPro = {};
 fetch(API+'/providers').then(r=>r.json()).then(({providers}) => {
   ['HOUSEKEEPING','BABYSITTING','DOG_WALKING','PET_SITTING','LAWN_GARDEN','HANDYMAN','SENIOR_CARE','TUTORING'].forEach(c => {
