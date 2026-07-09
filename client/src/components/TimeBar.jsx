@@ -1,6 +1,6 @@
 import { fmtTime } from '../lib/format.js';
 
-// The window as a strip of the day; the chosen block is inked in.
+// The provider's window as a strip of the day; the chosen block is filled in.
 export default function TimeBar({ windowStart, windowEnd, blockStart, blockEnd }) {
   const ws = new Date(windowStart).getTime();
   const we = new Date(windowEnd).getTime();
@@ -13,19 +13,16 @@ export default function TimeBar({ windowStart, windowEnd, blockStart, blockEnd }
 
   return (
     <div>
-      <div className="relative h-4 border-2 border-ink-900 rounded-[3px] bg-paper-50 overflow-hidden"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(90deg, transparent 0, transparent 14px, rgba(36,43,35,0.18) 14px, rgba(36,43,35,0.18) 15px)',
-        }}>
+      <div className="relative h-3 rounded-full bg-paper-100 border border-paper-200 overflow-hidden">
         {width > 0 && (
-          <div className="absolute top-0 bottom-0 bg-ink-900" style={{ left: `${left}%`, width: `${width}%` }} />
+          <div className="absolute top-0 bottom-0 bg-sage-gradient rounded-full transition-all duration-300"
+            style={{ left: `${left}%`, width: `${width}%` }} />
         )}
       </div>
-      <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider text-ink-400 mt-1">
+      <div className="flex justify-between text-[11px] text-ink-400 mt-1">
         <span>{fmtTime(windowStart)}</span>
         {blockStart && blockEnd && (
-          <span className="text-ink-900 font-bold">▓ {fmtTime(blockStart)}–{fmtTime(blockEnd)}</span>
+          <span className="text-sage-700 font-semibold">{fmtTime(blockStart)}–{fmtTime(blockEnd)}</span>
         )}
         <span>{fmtTime(windowEnd)}</span>
       </div>

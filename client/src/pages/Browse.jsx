@@ -39,35 +39,32 @@ export default function Browse() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <p className="section-tag">The file drawer</p>
-      <h1 className="mt-2 text-4xl font-bold text-ink-900">Find a pro</h1>
+      <h1 className="text-3xl font-bold text-ink-900">Find help</h1>
 
-      <form onSubmit={submitSearch} className="mt-6 max-w-md">
-        <label className="label">Look up</label>
-        <div className="flex gap-2">
-          <input className="input" placeholder="name, service, or city…"
-            value={search} onChange={e => setSearch(e.target.value)} />
-          <button className="btn-primary shrink-0">Search</button>
-        </div>
+      <form onSubmit={submitSearch} className="mt-5 flex gap-2 max-w-md">
+        <input className="input !rounded-full !px-5" placeholder="Search by name, service, or city…"
+          value={search} onChange={e => setSearch(e.target.value)} />
+        <button className="btn-primary shrink-0">Search</button>
       </form>
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         {CATEGORIES.map(c => (
           <button key={c.key} onClick={() => setCategory(c.key)}
             className={`chip ${category === c.key
-              ? 'bg-ink-900 border-ink-900 text-paper-50'
-              : 'bg-paper-50 border-ink-900 text-ink-900 hover:bg-carbon-canary'}`}>
+              ? 'bg-sage-600 border-sage-600 text-white shadow-sm shadow-sage-500/25'
+              : 'bg-white border-paper-200 text-ink-700 hover:border-sage-300 hover:text-sage-700'}`}>
             {c.icon} {c.label}
           </button>
         ))}
       </div>
 
-      {error && <p className="mt-8 font-mono text-sm text-stamp-red">{error}</p>}
-      {!providers && !error && <p className="mt-8 font-mono text-sm text-ink-500 animate-pulse">Riffling the drawer…</p>}
+      {error && <p className="mt-8 text-red-600">{error}</p>}
+      {!providers && !error && <p className="mt-8 text-ink-500">Loading pros…</p>}
       {providers && providers.length === 0 && (
-        <div className="slip p-8 mt-8 max-w-md text-center">
-          <span className="stamp-void">NO MATCH</span>
-          <p className="mt-4 font-mono text-sm text-ink-500">Nothing filed under that yet — try another category.</p>
+        <div className="card p-10 mt-8 max-w-md text-center">
+          <span className="text-4xl">🔍</span>
+          <p className="mt-3 font-semibold text-lg">No pros match that search yet</p>
+          <p className="text-ink-500 mt-1 text-sm">Try a different category or a broader search.</p>
         </div>
       )}
       {providers && providers.length > 0 && (

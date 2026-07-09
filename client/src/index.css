@@ -8,111 +8,93 @@
     -moz-osx-font-smoothing: grayscale;
   }
   body {
-    @apply bg-paper-100 text-ink-900 font-sans;
-    /* Faint paper grain */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.17 0 0 0 0 0.14 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    @apply bg-paper-50 text-ink-900 font-sans;
+    background-image: linear-gradient(180deg, #fbfaf6 0%, #f4f1ea 100%);
+    background-attachment: fixed;
   }
   h1, h2, h3, h4 {
-    @apply font-display;
+    @apply font-sans font-semibold tracking-tight;
   }
 }
 
 @layer components {
-  /* ---------- Buttons: letterpress blocks with mono labels ---------- */
+  /* ---------- Buttons: soft pills ---------- */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-mono font-semibold
-           uppercase tracking-wider text-xs rounded-[4px] border-2 border-ink-900
-           transition-all duration-100 disabled:opacity-40 disabled:pointer-events-none
-           active:translate-x-[3px] active:translate-y-[3px] active:shadow-none;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-semibold rounded-full
+           text-sm transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply btn bg-ink-900 text-paper-50 shadow-press hover:bg-ink-700;
+    @apply btn bg-sage-gradient text-white shadow-md shadow-sage-500/25
+           hover:shadow-lg hover:-translate-y-0.5;
   }
   .btn-accent {
-    @apply btn bg-carbon-canary text-ink-900 shadow-press hover:bg-paper-50;
+    @apply btn bg-sage-600 text-white shadow-md shadow-sage-500/25
+           hover:bg-sage-700 hover:-translate-y-0.5 hover:shadow-lg;
   }
   .btn-ghost {
-    @apply btn bg-paper-50 text-ink-900 shadow-press-sm hover:bg-paper-100;
+    @apply btn border border-paper-200 bg-white text-ink-900 hover:bg-paper-100 hover:border-paper-300;
   }
   .btn-danger {
-    @apply btn bg-paper-50 border-stamp-red text-stamp-red hover:bg-carbon-rose;
-    box-shadow: 2px 2px 0 0 #b23a2a;
+    @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50;
   }
-  .btn-danger:active { box-shadow: none; }
+  /* legacy slip-era action names → clean pills */
+  .btn-stamp { @apply btn text-xs !px-4 !py-2; }
+  .btn-stamp-green { @apply btn-stamp bg-sage-600 text-white hover:bg-sage-700 shadow-sm; }
+  .btn-stamp-red   { @apply btn-stamp border border-red-200 bg-white text-red-600 hover:bg-red-50; }
+  .btn-stamp-blue  { @apply btn-stamp bg-ink-900 text-white hover:bg-ink-700 shadow-sm; }
 
-  /* ---------- The slip: paper card ---------- */
-  .slip {
-    @apply relative bg-paper-50 border-2 border-ink-900 rounded-[6px] shadow-sheet;
+  /* ---------- Cards ---------- */
+  .card, .slip {
+    @apply bg-white rounded-3xl border border-paper-200 shadow-sheet
+           transition-shadow duration-300;
   }
-  /* Perforated tear-off edge (use on a bottom section of a slip) */
   .perf-top {
-    @apply border-t-2 border-dashed border-ink-400 relative;
+    @apply border-t border-paper-200;
   }
-  .perf-top::before, .perf-top::after {
-    content: '';
-    @apply absolute w-4 h-4 rounded-full bg-paper-100 border-2 border-ink-900 top-0;
-    transform: translateY(-50%);
-  }
-  .perf-top::before { left: -0.65rem; }
-  .perf-top::after { right: -0.65rem; }
 
-  /* ---------- Form-line fields: MONO LABEL ...... value ---------- */
+  /* ---------- Form fields ---------- */
   .field-row {
     @apply flex items-baseline gap-3 py-1.5;
   }
   .field-label {
-    @apply font-mono text-[11px] font-semibold uppercase tracking-widest text-ink-500 shrink-0 w-24;
+    @apply text-[11px] font-semibold uppercase tracking-widest text-ink-400 shrink-0 w-24;
   }
   .field-value {
-    @apply flex-1 border-b-2 border-dotted border-paper-300 font-mono text-sm text-ink-900 pb-0.5 min-w-0;
+    @apply flex-1 text-sm text-ink-900 min-w-0;
   }
 
-  /* ---------- Rubber stamps ---------- */
+  /* ---------- Status pills (legacy stamp names) ---------- */
   .stamp {
-    @apply inline-block font-mono font-bold uppercase tracking-[0.18em] text-xs
-           border-[3px] rounded-[4px] px-2.5 py-1 -rotate-3 select-none animate-stamp;
-    box-shadow: inset 0 0 0 1.5px currentColor;
-    mix-blend-mode: multiply;
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold animate-fade-in;
   }
-  .stamp-pending   { @apply stamp text-stamp-amber border-stamp-amber bg-carbon-canary/40; }
-  .stamp-confirmed { @apply stamp text-stamp-green border-stamp-green bg-carbon-mint/40; }
-  .stamp-completed { @apply stamp text-stamp-blue border-stamp-blue bg-carbon-sky/40; }
-  .stamp-void      { @apply stamp text-stamp-red border-stamp-red bg-carbon-rose/40; }
+  .stamp-pending   { @apply stamp bg-carbon-canary text-stamp-amber; }
+  .stamp-confirmed { @apply stamp bg-carbon-mint text-sage-700; }
+  .stamp-completed { @apply stamp bg-carbon-sky text-stamp-blue; }
+  .stamp-void      { @apply stamp bg-carbon-rose text-stamp-red; }
 
-  /* Big stamp-shaped action button (pros "stamp" their slips) */
-  .btn-stamp {
-    @apply inline-flex items-center justify-center font-mono font-bold uppercase tracking-[0.15em]
-           text-xs border-[3px] rounded-[4px] px-4 py-1.5 -rotate-2 transition-transform
-           hover:rotate-0 hover:scale-105 active:scale-95 disabled:opacity-40;
-    box-shadow: inset 0 0 0 1.5px currentColor;
-  }
-  .btn-stamp-green { @apply btn-stamp text-stamp-green border-stamp-green bg-paper-50 hover:bg-carbon-mint/50; }
-  .btn-stamp-red   { @apply btn-stamp text-stamp-red border-stamp-red bg-paper-50 hover:bg-carbon-rose/50; }
-  .btn-stamp-blue  { @apply btn-stamp text-stamp-blue border-stamp-blue bg-paper-50 hover:bg-carbon-sky/50; }
-
-  /* ---------- Inputs: typed-onto-the-form ---------- */
+  /* ---------- Inputs ---------- */
   .input {
-    @apply w-full px-3 py-2.5 rounded-[4px] border-2 border-ink-900 bg-white font-mono text-sm
-           placeholder:text-ink-400 placeholder:italic
-           focus:outline-none focus:shadow-press-sm transition-shadow;
+    @apply w-full px-4 py-3 rounded-xl border border-paper-200 bg-white text-sm
+           placeholder:text-ink-400
+           focus:outline-none focus:border-sage-400 focus:ring-2 focus:ring-sage-100 transition;
   }
   .label {
-    @apply block font-mono text-[11px] font-semibold uppercase tracking-widest text-ink-500 mb-1.5;
+    @apply block text-[11px] font-semibold uppercase tracking-widest text-ink-500 mb-1.5;
   }
 
   /* ---------- Small bits ---------- */
   .badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] font-mono text-[11px]
-           font-semibold uppercase tracking-wider border border-ink-900/60 bg-paper-50;
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-paper-100 text-ink-700;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] font-mono text-xs
-           font-semibold uppercase tracking-wider border-2 cursor-pointer select-none transition;
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium
+           border cursor-pointer select-none transition-all duration-150;
   }
   .rule-double {
-    @apply border-b-4 border-double border-ink-900;
+    @apply border-b border-paper-200;
   }
   .section-tag {
-    @apply font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-ink-500;
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-400;
   }
 }

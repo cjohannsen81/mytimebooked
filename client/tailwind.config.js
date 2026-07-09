@@ -4,61 +4,81 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Zilla Slab"', 'Georgia', 'serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
-        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // mono kept as a token name from the Service Slip era; it now
+        // resolves to the same clean sans so old markup stays smooth.
+        mono: ['Inter', 'system-ui', 'sans-serif'],
       },
-      // "Service Slip" palette — an old carbon-copy work-order pad:
-      // aged paper surfaces, green-black ink, rubber-stamp accents,
-      // and triplicate-form carbon tints for statuses.
+      // Token names kept from the Service Slip design so existing markup
+      // keeps working, but the values now resolve to the clean & smooth
+      // palette: warm cream surfaces, soft sage accents, green-slate text.
       colors: {
         paper: {
-          50:  '#fcfaf2',   // top sheet
-          100: '#f4efdf',   // page background
-          200: '#e7dfc6',   // borders, dividers
-          300: '#d5c9a6',   // strong border
-          400: '#b8a97e',   // aged edge
+          50:  '#fbfaf6',   // page background (warm cream)
+          100: '#f4f1ea',   // card backdrop / hover
+          200: '#e8e3d7',   // borders, dividers
+          300: '#d7d1c0',   // strong border
+          400: '#b9b2a0',
         },
         ink: {
-          950: '#181d18',
-          900: '#242b23',   // primary ink
-          700: '#3e4739',
-          500: '#68705f',   // faded ink
-          400: '#8d9184',   // pencil
+          950: '#1f2924',
+          900: '#2d3a34',   // headings, primary text (green slate)
+          700: '#46564e',   // body strong
+          500: '#6d7a72',   // muted body
+          400: '#98a19a',   // captions
         },
+        sage: {
+          50:  '#f0f5f1',
+          100: '#e2ede6',
+          200: '#c8dcd0',
+          300: '#a5c5b3',
+          400: '#83ad96',
+          500: '#68967e',   // primary accent
+          600: '#54806a',   // hover / CTAs
+          700: '#446856',
+        },
+        // status hues (soft)
         stamp: {
-          red:   '#b23a2a',
-          green: '#2f7d4e',
-          amber: '#a86f0f',
-          blue:  '#2b5f9e',
+          red:   '#c96f5f',
+          green: '#54806a',
+          amber: '#b3873d',
+          blue:  '#6f8fa8',
         },
         carbon: {
-          canary: '#f7ecc2', // pending copy
-          mint:   '#dcead4', // confirmed copy
-          sky:    '#d9e5ef', // completed copy
-          rose:   '#f3d8d0', // void copy
+          canary: '#f6eedb',   // pending
+          mint:   '#e2ede6',   // confirmed
+          sky:    '#e4ecf1',   // completed
+          rose:   '#f5e4df',   // cancelled
         },
+      },
+      backgroundImage: {
+        'sage-gradient': 'linear-gradient(135deg, #68967e 0%, #54806a 100%)',
+        'cream-gradient': 'linear-gradient(180deg, #fbfaf6 0%, #f4f1ea 100%)',
       },
       boxShadow: {
-        // Letterpress offset — buttons and slips sit ON the paper.
-        press: '3px 3px 0 0 #242b23',
-        'press-sm': '2px 2px 0 0 #242b23',
-        sheet: '0 1px 2px rgba(36,43,35,0.08), 0 6px 16px -8px rgba(36,43,35,0.25)',
+        press: '0 12px 32px -14px rgba(45,58,52,.28)',
+        'press-sm': '0 4px 14px -6px rgba(45,58,52,.18)',
+        sheet: '0 1px 2px rgba(45,58,52,.05), 0 8px 24px -14px rgba(45,58,52,.14)',
+      },
+      borderRadius: {
+        '4xl': '2rem',
       },
       keyframes: {
-        stampIn: {
-          '0%':   { opacity: 0, transform: 'scale(1.9) rotate(-14deg)' },
-          '55%':  { opacity: 1, transform: 'scale(0.92) rotate(-3deg)' },
-          '100%': { opacity: 1, transform: 'scale(1) rotate(-4deg)' },
-        },
         rise: {
-          '0%': { opacity: 0, transform: 'translateY(14px)' },
+          '0%': { opacity: 0, transform: 'translateY(16px)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
         },
       },
       animation: {
-        stamp: 'stampIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both',
-        rise: 'rise 0.4s ease-out both',
+        rise: 'rise 0.5s ease-out both',
+        'fade-in': 'fadeIn 0.6s ease-out both',
+        // legacy name from the slip era — now a gentle rise
+        stamp: 'rise 0.4s ease-out both',
       },
     },
   },
