@@ -6,7 +6,7 @@
 <title>MyTimeBooked Labs — three experiments in booking</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&family=Lora:wght@600&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&family=Lora:wght@600&family=Caveat:wght@700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
   * { box-sizing:border-box; margin:0; }
   body { background:#0d0e12; color:#e8e8ee; font-family:Sora,system-ui,sans-serif; min-height:100vh; }
@@ -59,6 +59,15 @@
   .card.human:hover { box-shadow:0 18px 50px -18px rgba(188,91,61,.5); border-color:#bc5b3d; }
   .card.human h2 { color:#33291f; font-family:Lora,serif; }
   .card.human .go { color:#bc5b3d; }
+  /* the mix: modern, airy, one green accent */
+  .card.plan { background:#f7f7f4; border-color:#e7e7e0; color:#171715; }
+  .card.plan .num { color:#a4a49a; opacity:1; }
+  .card.plan h2 { color:#171715; font-family:"Instrument Serif",Lora,serif; font-weight:400; }
+  .card.plan .beh { color:#1e5c46; opacity:1; }
+  .card.plan p { color:#77776e; opacity:1; }
+  .card.plan .art.plan-art { font-family:"IBM Plex Mono",monospace; font-size:13px; letter-spacing:.04em; color:#1e5c46; border:1px solid #d9d9d0; border-radius:999px; padding:9px 16px; display:inline-block; background:#fff; }
+  .card.plan:hover { box-shadow:0 18px 50px -18px rgba(30,92,70,.45); border-color:#1e5c46; }
+  .card.plan .go { color:#1e5c46; }
   footer { text-align:center; padding:0 28px 50px; color:#585b66; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; line-height:1.8; }
   footer a { color:#9a9dab; }
 </style>
@@ -190,12 +199,12 @@
   <hr><span>The mix — where the experiments converge</span><hr>
 </div>
 <div class="grid" style="grid-template-columns:minmax(280px,640px); justify-content:center">
-  <a class="card human" href="/labs/houseplan.html">
+  <a class="card plan" href="/labs/houseplan.html">
     <span class="num">EXPERIMENT — 13 · WALKTHROUGH × HOUSE BOOK × WORK ORDER</span>
     <h2>The House Plan</h2>
     <p class="beh">Your home is the interface · point at the room</p>
-    <div class="art script">"tap the yard. Rex is deaf — wave, don't call."</div>
-    <p>A cutaway of your home where every room holds three layers: what needs doing (tap it — priced, matched, on the work order), what pros must know (your notes, in your hand), and what's been done (every visit and flag pins to its room). You stop describing your home to an app — you point at it.</p>
+    <div class="art plan-art">Yard — needs attention · in the book · history</div>
+    <p>An architectural plan of your home where every room holds three layers: what needs doing (tap it — priced, matched, on a visit plan), what pros must know (your notes, verbatim), and what's been done (every visit and flag pins to its room). You stop describing your home to an app — you point at it.</p>
     <span class="go">OPEN THE PLAN →</span>
   </a>
 </div>
