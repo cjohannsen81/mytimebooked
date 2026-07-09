@@ -11,43 +11,37 @@
   :root {
     --bg:#f7f7f4; --surface:#ffffff; --line:#e7e7e0; --line2:#d9d9d0;
     --ink:#171715; --mut:#77776e; --faint:#a4a49a;
-    --green:#1e5c46; --green-soft:#eaf2ee; --green-line:#c3d8cd;
-    --amber:#b9862f; --amber-soft:#f6efdf;
+    --green:#1e5c46; --green-soft:#eaf2ee;
+    --amber:#b9862f;
   }
   * { box-sizing:border-box; margin:0; }
-  html { scroll-behavior:smooth; }
   body { background:var(--bg); color:var(--ink); font-family:Inter,system-ui,sans-serif; font-size:14px; -webkit-font-smoothing:antialiased; }
-  .serif { font-family:"Instrument Serif",serif; font-weight:400; }
   header { padding:22px 32px; display:flex; justify-content:space-between; align-items:center; }
-  header a { color:var(--mut); text-decoration:none; font-size:12px; letter-spacing:.02em; }
+  header a { color:var(--mut); text-decoration:none; font-size:12px; }
   header a:hover { color:var(--ink); }
   header .tag { font-size:11px; color:var(--faint); letter-spacing:.14em; text-transform:uppercase; }
 
-  .hero { max-width:820px; margin:0 auto; text-align:center; padding:26px 24px 8px; }
+  .hero { max-width:840px; margin:0 auto; text-align:center; padding:22px 24px 8px; }
   .hero h1 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(38px,5.6vw,64px); line-height:1.02; letter-spacing:-.01em; }
   .hero h1 em { font-style:italic; color:var(--green); }
-  .hero p { color:var(--mut); margin:18px auto 0; font-size:15px; line-height:1.75; max-width:640px; }
+  .hero p { color:var(--mut); margin:18px auto 0; font-size:15px; line-height:1.75; max-width:660px; }
   .hero p b { color:var(--ink); font-weight:500; }
 
-  .wrap { max-width:1120px; margin:34px auto 80px; padding:0 24px; display:grid; grid-template-columns:1.15fr .85fr; gap:22px; align-items:start; }
-  @media (max-width:940px) { .wrap { grid-template-columns:1fr; } }
-
+  .wrap { max-width:1180px; margin:30px auto 80px; padding:0 24px; display:grid; grid-template-columns:1.2fr .8fr; gap:22px; align-items:start; }
+  @media (max-width:960px) { .wrap { grid-template-columns:1fr; } }
   .card { background:var(--surface); border:1px solid var(--line); border-radius:20px; }
 
-  /* ---- the plan ---- */
-  .plancard { padding:22px 22px 12px; }
-  .plancard .phead { display:flex; justify-content:space-between; align-items:baseline; padding:0 6px 14px; }
+  /* ---- the model ---- */
+  .plancard { padding:18px 18px 10px; }
+  .plancard .phead { display:flex; justify-content:space-between; align-items:baseline; padding:2px 8px 12px; }
   .plancard .phead .t { font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); }
   .plancard .phead .a { font-size:12px; color:var(--mut); }
-  svg { display:block; width:100%; height:auto; }
-  .room { cursor:pointer; }
-  .room .fill { fill:var(--surface); stroke:var(--line2); stroke-width:1.2; transition:fill .18s, stroke .18s; }
-  .room:hover .fill { fill:#f4f6f3; }
-  .room.sel .fill { fill:var(--green-soft); stroke:var(--green); stroke-width:1.6; }
-  .roomlab { font-family:Inter; font-size:12.5px; font-weight:600; fill:var(--ink); pointer-events:none; letter-spacing:-.01em; }
-  .roomsub { font-family:Inter; font-size:9px; fill:var(--faint); pointer-events:none; letter-spacing:.06em; text-transform:uppercase; }
-  .dotN { fill:var(--green); } .dotB { fill:var(--line2); } .dotM { fill:var(--amber); }
-  .legend { display:flex; gap:20px; justify-content:center; padding:14px 0 8px; font-size:11px; color:var(--mut); letter-spacing:.04em; border-top:1px solid var(--line); margin-top:14px; }
+  #stage { position:relative; border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#f2f3ee, #eceee7); cursor:grab; touch-action:none; }
+  #stage:active { cursor:grabbing; }
+  #stage canvas { display:block; }
+  #tip { position:absolute; pointer-events:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:500; padding:6px 11px; border-radius:999px; transform:translate(-50%,-160%); opacity:0; transition:opacity .12s; white-space:nowrap; letter-spacing:.02em; }
+  #hint { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); background:rgba(255,255,255,.8); backdrop-filter:blur(4px); padding:6px 14px; border-radius:999px; pointer-events:none; }
+  .legend { display:flex; gap:20px; justify-content:center; padding:14px 0 8px; font-size:11px; color:var(--mut); border-top:1px solid var(--line); margin-top:14px; }
   .legend i { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
 
   /* ---- visit plan ---- */
@@ -72,11 +66,9 @@
   .vtotal .v { font-family:"Instrument Serif",serif; font-size:28px; font-variant-numeric:tabular-nums; }
   .cta { display:block; margin:0 22px 18px; text-align:center; background:var(--ink); color:#fff; padding:15px; border-radius:14px; font-weight:500; text-decoration:none; font-size:14px; transition:.15s; }
   .cta:hover { background:var(--green); }
-  .bookrow { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding:14px 20px; border:1px solid var(--line); border-radius:16px; background:var(--surface); font-size:12.5px; color:var(--mut); }
-  .bookrow b { color:var(--green); font-weight:600; }
   .fine { text-align:center; color:var(--faint); font-size:10.5px; margin-top:12px; letter-spacing:.1em; text-transform:uppercase; }
 
-  /* ---- room panel ---- */
+  /* ---- panel ---- */
   .panel { padding:26px 26px 22px; position:sticky; top:20px; }
   .panel .rname { font-family:"Instrument Serif",serif; font-size:32px; line-height:1.05; }
   .panel .rhint { font-size:13px; color:var(--mut); margin-top:5px; }
@@ -91,19 +83,25 @@
   .chip.on .p { color:rgba(255,255,255,.72); }
   .notes .n { display:flex; gap:12px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--line); }
   .notes .n:last-of-type { border-bottom:none; }
-  .notes .n .q { font-family:"Instrument Serif",serif; font-style:italic; font-size:17.5px; line-height:1.35; color:var(--ink); }
+  .notes .n .q { font-family:"Instrument Serif",serif; font-style:italic; font-size:17.5px; line-height:1.35; }
   .notes .n .who { font-size:9.5px; color:var(--faint); white-space:nowrap; text-transform:uppercase; letter-spacing:.14em; }
   .addnote { display:flex; gap:8px; margin-top:12px; }
   .addnote input { flex:1; border:1px solid var(--line2); border-radius:12px; background:var(--surface); padding:11px 14px; font-family:Inter; font-size:13px; color:var(--ink); }
   .addnote input::placeholder { color:var(--faint); }
   .addnote input:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft); }
-  .addnote button { border:1px solid var(--line2); color:var(--ink); background:var(--surface); border-radius:12px; padding:0 16px; cursor:pointer; font-size:12.5px; font-weight:500; transition:.15s; }
+  .addnote button { border:1px solid var(--line2); color:var(--ink); background:var(--surface); border-radius:12px; padding:0 16px; cursor:pointer; font-size:12.5px; font-weight:500; }
   .addnote button:hover { border-color:var(--green); color:var(--green); }
   .mems .m { display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13px; color:var(--mut); line-height:1.55; }
   .mems .m:last-child { border-bottom:none; }
   .mems .m b { color:var(--ink); font-weight:500; }
   .mems .m .d { white-space:nowrap; font-size:10px; color:var(--faint); letter-spacing:.12em; text-transform:uppercase; padding-top:3px; }
 </style>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+} }
+</script>
 </head>
 <body>
 <header>
@@ -111,15 +109,18 @@
   <span class="tag">Experiment 13 &middot; The House Plan</span>
 </header>
 <div class="hero">
-  <h1>Your home is the interface.<br><em>Point at the room.</em></h1>
-  <p>The Walkthrough and the House Book, fused. Every room holds <b>what needs doing</b> — tap it and it lands on a visit plan, priced, with a matched pro — <b>what pros must know</b>, in your own words, and <b>what's been done</b>, pinned to the room it happened in. You stop describing your home to an app. You point at it.</p>
+  <h1>Your home is the interface.<br><em>Everyone who lives there, too.</em></h1>
+  <p>Not a page — a little world. Orbit your home, then tap anything that needs care: the kitchen, the pool, <b>Rex in the yard, the kids on the lawn, grandma on the porch</b>. Rooms get cleaners and handymen; the living get walkers, sitters, nannies, and companions. Every tap lands on one visit plan, priced, with a matched pro.</p>
 </div>
 
 <div class="wrap">
   <div>
     <div class="card plancard">
-      <div class="phead"><span class="t">Plan of residence</span><span class="a">2114 Fernwood Ln</span></div>
-      <svg viewBox="0 0 620 430" id="house"></svg>
+      <div class="phead"><span class="t">Model of residence</span><span class="a">2114 Fernwood Ln</span></div>
+      <div id="stage">
+        <div id="tip"></div>
+        <div id="hint">drag to orbit &middot; tap anything alive or dirty</div>
+      </div>
       <div class="legend">
         <span><i style="background:var(--green)"></i>needs attention</span>
         <span><i style="background:var(--line2)"></i>in the book</span>
@@ -129,108 +130,323 @@
 
     <div class="card visit">
       <div class="vhead"><span class="t">Visit plan</span><span class="c" id="vcount">nothing yet</span></div>
-      <div class="vbody" id="vbody"><p class="vempty">Tap a room, tap what needs doing — the plan assembles itself.</p></div>
+      <div class="vbody" id="vbody"><p class="vempty">Tap a room — or Rex — and the plan assembles itself.</p></div>
       <div class="vtotal"><span class="k">One visit &middot; pay pros directly</span><span class="v" id="tot">$0</span></div>
       <a class="cta" href="/browse">File this visit plan</a>
     </div>
-
-    <div class="bookrow"><span>Your House Book grows as you note things down</span><b id="bookcount">— notes</b></div>
-    <p class="fine">Prototype &middot; pros &amp; rates are live platform data &middot; history entries illustrative</p>
+    <p class="fine">Prototype &middot; pros &amp; rates are live platform data &middot; built with three.js</p>
   </div>
 
   <div class="card panel" id="panel"></div>
 </div>
 
-<script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 const $ = id => document.getElementById(id);
 const API = location.hostname === 'localhost' ? 'https://mytimebooked.com/api' : '/api';
 
-const ROOMS = {
+/* ================= data ================= */
+const ZONES = {
   kitchen: { name:'Kitchen', hint:'The heart, and the grease.',
     needs:[ {t:'Deep clean — oven & fridge', cat:'HOUSEKEEPING', h:2}, {t:'Weekly clean add-on', cat:'HOUSEKEEPING', h:1}, {t:'Fix the dripping faucet', cat:'HANDYMAN', h:1} ],
-    notes:[ {v:'Compost bin lives under the sink — not trash.', who:'you'}, {v:'Cast iron never goes in the dishwasher.', who:'you'} ],
-    mem:[ {b:'Deep cleaned', s:'oven glass finally clear', d:'jun 12'}, {b:'Flag from Maria', s:'dishwasher door drops fast — hinge going', d:'jun 12'} ] },
+    notes:[ {v:'Compost bin lives under the sink — not trash.', who:'you'} ],
+    mem:[ {b:'Flag from Maria', s:'dishwasher hinge is going', d:'jun 12'} ] },
   living: { name:'Living room', hint:'Where everyone actually lives.',
-    needs:[ {t:'Standard clean & dust', cat:'HOUSEKEEPING', h:1}, {t:'Mount the new TV', cat:'HANDYMAN', h:1}, {t:'Homework help at the big table', cat:'TUTORING', h:1} ],
+    needs:[ {t:'Standard clean & dust', cat:'HOUSEKEEPING', h:1}, {t:'Mount the new TV', cat:'HANDYMAN', h:1} ],
     notes:[ {v:'Nothing on the piano, ever.', who:'you'} ],
     mem:[ {b:'Cleaned', s:'weekly visit', d:'jul 2'} ] },
   bed: { name:'Bedrooms', hint:'Two kids, one grown-up mess.',
-    needs:[ {t:'Clean, incl. under the beds', cat:'HOUSEKEEPING', h:1}, {t:'Evening babysitting', cat:'BABYSITTING', h:3} ],
-    notes:[ {v:'Baby naps 1–3, please — no vacuum upstairs.', who:'you'}, {v:'Kids’ room: LEGO stays as built.', who:'you'} ],
-    mem:[ {b:'Sat for the kids', s:'bedtime went great, per Jasmine', d:'jun 27'} ] },
-  bath: { name:'Bathroom', hint:'Small room, big job.',
+    needs:[ {t:'Clean, incl. under the beds', cat:'HOUSEKEEPING', h:1} ],
+    notes:[ {v:'Baby naps 1–3 — no vacuum upstairs.', who:'you'}, {v:'Kids’ room: LEGO stays as built.', who:'you'} ],
+    mem:[] },
+  bath: { name:'Bath & laundry', hint:'Small rooms, big jobs.',
     needs:[ {t:'Scrub & re-shine', cat:'HOUSEKEEPING', h:1}, {t:'Re-caulk the tub', cat:'HANDYMAN', h:1} ],
-    notes:[ {v:'The fan switch is the left one — everyone guesses wrong.', who:'you'} ],
+    notes:[ {v:'The fan switch is the left one.', who:'you'} ],
     mem:[ {b:'Flag from Ray', s:'tub caulk pulling at the corner', d:'may 30'} ] },
   garage: { name:'Garage', hint:'Where projects go to wait.',
     needs:[ {t:'The whole fix-it list', cat:'HANDYMAN', h:3}, {t:'Declutter & haul day', cat:'HOUSEKEEPING', h:3} ],
-    notes:[ {v:'Mower fuel on the high shelf. Side door code arrives on booking day.', who:'you'} ],
-    mem:[ {b:'Fixed', s:'garage door track — no more stick', d:'apr 18'} ] },
-  yard: { name:'Yard', hint:'Front, back, and the jungle behind the shed.',
-    needs:[ {t:'Mow, edge & blow', cat:'LAWN_GARDEN', h:1}, {t:'Hedge & bed cleanup', cat:'LAWN_GARDEN', h:2}, {t:'Dog walk — daily loop', cat:'DOG_WALKING', h:1} ],
-    notes:[ {v:'Side gate sticks — lift, then push.', who:'you'}, {v:'Rex is deaf. Wave, don’t call.', who:'you'} ],
-    mem:[ {b:'Mowed & edged', s:'sprinkler head flagged by Tom', d:'jul 1'} ] },
+    notes:[ {v:'Mower fuel on the high shelf. Door code arrives on booking day.', who:'you'} ],
+    mem:[ {b:'Fixed', s:'garage door track', d:'apr 18'} ] },
   porch: { name:'Front porch', hint:'First impressions, package pile.',
-    needs:[ {t:'Porch & windows wash', cat:'HOUSEKEEPING', h:1}, {t:'Grandma’s afternoon visit', cat:'SENIOR_CARE', h:2} ],
+    needs:[ {t:'Porch & windows wash', cat:'HOUSEKEEPING', h:1} ],
     notes:[ {v:'Lockbox behind the planter — code unlocks on booking day.', who:'you'} ],
     mem:[] },
+  yard: { name:'Yard', hint:'Front, back, and the jungle behind the shed.',
+    needs:[ {t:'Mow, edge & blow', cat:'LAWN_GARDEN', h:1}, {t:'Hedge & bed cleanup', cat:'LAWN_GARDEN', h:2} ],
+    notes:[ {v:'Side gate sticks — lift, then push.', who:'you'} ],
+    mem:[ {b:'Mowed & edged', s:'sprinkler head flagged by Tom', d:'jul 1'} ] },
+  pool: { name:'The pool', hint:'Crystal in June, swamp by August.',
+    needs:[ {t:'Weekly pool day', cat:'LAWN_GARDEN', h:1}, {t:'Open, brush & balance', cat:'LAWN_GARDEN', h:2} ],
+    notes:[ {v:'Skimmer and chemicals live behind the pump house.', who:'you'} ],
+    mem:[ {b:'Balanced', s:'pH 7.4, filter on its last season', d:'jun 28'} ] },
+  rex: { name:'Rex', hint:'Golden mix, nine years young. Deaf, endlessly cheerful.',
+    needs:[ {t:'Daily walk — the long loop', cat:'DOG_WALKING', h:1}, {t:'Weekend sitting, drop-ins', cat:'PET_SITTING', h:3}, {t:'Overnight stay', cat:'PET_SITTING', h:8} ],
+    notes:[ {v:'He’s deaf — wave, don’t call.', who:'you'}, {v:'Pill hidden in cheese, evenings.', who:'you'} ],
+    mem:[ {b:'Walked', s:'photo updates from Diego, tail at full speed', d:'jul 7'} ] },
+  kids: { name:'The kids', hint:'Two of them. After school is the witching hour.',
+    needs:[ {t:'Evening babysitting', cat:'BABYSITTING', h:3}, {t:'After-school nanny — 3 afternoons', cat:'BABYSITTING', h:9}, {t:'Homework help at the big table', cat:'TUTORING', h:1} ],
+    notes:[ {v:'No screens after dinner. They will negotiate. Hold the line.', who:'you'} ],
+    mem:[ {b:'Sat by Jasmine', s:'bedtime by 8:30, zero drama', d:'jun 27'} ] },
+  grandma: { name:'Grandma', hint:'Visits Tuesdays. Sharp as a tack, hates asking.',
+    needs:[ {t:'Companion afternoon', cat:'SENIOR_CARE', h:2}, {t:'Errands & appointments', cat:'SENIOR_CARE', h:3} ],
+    notes:[ {v:'Takes her tea black, her news at 5, and no fussing.', who:'you'} ],
+    mem:[ {b:'Visit from Grace', s:'crossword finished together', d:'jul 1'} ] },
 };
 
-// ---- draw the plan: architectural line work, one accent ----
-const S = $('house');
-const mk = (tag, attrs, parent=S) => { const el=document.createElementNS('http://www.w3.org/2000/svg',tag); for (const k in attrs) el.setAttribute(k,attrs[k]); parent.appendChild(el); return el; };
-// ground line
-mk('line',{x1:12,y1:392,x2:608,y2:392,stroke:'#d9d9d0','stroke-width':1.5});
-mk('line',{x1:12,y1:397,x2:608,y2:397,stroke:'#e7e7e0','stroke-width':1});
-// roof — outline only
-mk('path',{d:'M 96 148 L 300 40 L 504 148', fill:'#fcfcfa', stroke:'#b9b9ae','stroke-width':1.6,'stroke-linejoin':'round'});
-mk('line',{x1:96,y1:148,x2:504,y2:148,stroke:'#d9d9d0','stroke-width':1.2});
-// chimney
-mk('path',{d:'M 420 118 L 420 66 L 446 66 L 446 132', fill:'none', stroke:'#b9b9ae','stroke-width':1.6});
-const ZONES = [
-  { k:'bed',    x:110, y:152, w:186, h:104, lx:16, sub:'sleep & chaos' },
-  { k:'bath',   x:300, y:152, w:88,  h:104, lx:12, sub:'shine me' },
-  { k:'living', x:110, y:260, w:186, h:128, lx:16, sub:'the hearth' },
-  { k:'kitchen',x:300, y:260, w:190, h:128, lx:16, sub:'grease & glory' },
-  { k:'garage', x:392, y:152, w:98,  h:104, lx:12, sub:'the list' },
-  { k:'porch',  x:24,  y:318, w:82,  h:70,  lx:10, sub:'knock knock' },
-  { k:'yard',   x:498, y:280, w:112, h:108, lx:12, sub:'rex’s kingdom' },
-];
-const roomEls = {};
-ZONES.forEach(z => {
-  const g = mk('g',{class:'room','data-k':z.k});
-  mk('rect',{x:z.x,y:z.y,width:z.w,height:z.h,rx:8,class:'fill'},g);
-  const t = mk('text',{x:z.x+z.lx,y:z.y+26,class:'roomlab'},g); t.textContent = ROOMS[z.k].name;
-  const s = mk('text',{x:z.x+z.lx,y:z.y+40,class:'roomsub'},g); s.textContent = z.sub;
-  g.dataset.dotx = z.x+z.lx; g.dataset.doty = z.y+z.h-15;
-  roomEls[z.k] = g;
-  g.addEventListener('click', () => select(z.k));
-});
-// tree — line art
-mk('circle',{cx:566,cy:266,r:24,fill:'none',stroke:'#1e5c46','stroke-width':1.4,opacity:.6});
-mk('line',{x1:566,y1:290,x2:566,y2:314,stroke:'#b9b9ae','stroke-width':1.6});
-// door
-mk('rect',{x:212,y:346,width:28,height:42,rx:2,fill:'none',stroke:'#b9b9ae','stroke-width':1.4});
+/* ================= 3d scene ================= */
+const stage = $('stage');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 4/3, 0.1, 200);
+camera.position.set(13, 9.5, 14);
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
 
-function paintDots() {
-  Object.entries(roomEls).forEach(([k,g]) => {
-    g.querySelectorAll('.dot').forEach(d=>d.remove());
-    const r = ROOMS[k];
-    const picks = order.filter(o=>o.room===k).length;
-    const counts = [ [picks,'dotN'], [r.notes.length,'dotB'], [r.mem.length,'dotM'] ];
-    let dx = +g.dataset.dotx + 3;
-    counts.forEach(([n,cls]) => {
-      for (let i=0;i<Math.min(n,4);i++) { mk('circle',{cx:dx, cy:+g.dataset.doty, r:3.2, class:'dot '+cls},g); dx += 10; }
-      if (n) dx += 5;
-    });
-  });
+scene.add(new THREE.AmbientLight(0xffffff, 1.15));
+const sun = new THREE.DirectionalLight(0xfff6e8, 2.0);
+sun.position.set(9, 16, 7);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -14; sun.shadow.camera.right = 14;
+sun.shadow.camera.top = 14; sun.shadow.camera.bottom = -14;
+scene.add(sun);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.6, 0.6);
+controls.enableDamping = true; controls.dampingFactor = .06;
+controls.minDistance = 9; controls.maxDistance = 26;
+controls.maxPolarAngle = Math.PI * .46; controls.minPolarAngle = Math.PI * .16;
+controls.enablePan = false;
+controls.autoRotate = true; controls.autoRotateSpeed = .5;
+controls.addEventListener('start', () => { controls.autoRotate = false; $('hint').style.opacity = 0; });
+
+const C = { wall:0xffffff, wallHover:0xf0f4ee, wallSel:0xd9e9e0, edge:0xc9c9c0, edgeSel:0x1e5c46,
+  roof:0xefeee8, ground:0xe7e9e0, grass:0xcfdcc6, water:0x9fcbd8, deck:0xe9e6da,
+  wood:0xd8cdb8, fur:0xc89a6b, furDark:0xa87c50, skinA:0xe9c4a8, shirtA:0x88a89b, shirtB:0xd6a06a, dress:0x9b8fa8, hair:0xdedddb };
+const mat = (c, opts={}) => new THREE.MeshStandardMaterial({ color:c, roughness:.9, metalness:0, ...opts });
+
+const pickables = [];
+const zoneVisual = {}; // key -> {meshes:[{mesh,base}], edges:[], marker}
+
+function registerPick(mesh, key) { mesh.userData.zone = key; pickables.push(mesh); }
+function track(key, mesh, isEdge) {
+  zoneVisual[key] = zoneVisual[key] || { meshes:[], edges:[] };
+  if (isEdge) zoneVisual[key].edges.push(mesh);
+  else zoneVisual[key].meshes.push({ mesh, base: mesh.material.color.getHex() });
 }
 
-// ---- data ----
+function block(key, x1,x2, y1,y2, z1,z2, color=C.wall, { pick=true, edge=true, shadow=true } = {}) {
+  const g = new THREE.BoxGeometry(x2-x1, y2-y1, z2-z1);
+  const m = new THREE.Mesh(g, mat(color));
+  m.position.set((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+  m.castShadow = shadow; m.receiveShadow = true;
+  scene.add(m);
+  if (edge) {
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color:C.edge }));
+    e.position.copy(m.position); scene.add(e); if (key) track(key, e, true);
+  }
+  if (key) { track(key, m, false); if (pick) registerPick(m, key); }
+  return m;
+}
+
+/* ground */
+const ground = new THREE.Mesh(new THREE.CylinderGeometry(14.5, 14.5, .3, 64), mat(C.ground));
+ground.position.y = -.15; ground.receiveShadow = true; scene.add(ground);
+
+/* house — massing model */
+block('living', -4,-.4, 0,2.2, -2.1,2.1);
+block('kitchen', -.4,4, 0,2.2, -2.1,2.1);
+block('bed', -4,.2, 2.2,4.4, -2.1,2.1);
+block('bath', .2,4, 2.2,4.4, -2.1,2.1);
+block('garage', 4.15,7, 0,2.0, -2.1,2.1);
+block(null, 4.15,7, 2.0,2.18, -2.25,2.25, C.roof); // garage roof slab
+block('porch', -3.6,-.8, 0,.26, 2.1,3.7, C.deck);
+
+/* roof — triangular prism */
+{
+  const shape = new THREE.Shape();
+  shape.moveTo(-2.5, 0); shape.lineTo(2.5, 0); shape.lineTo(0, 1.9); shape.closePath();
+  const g = new THREE.ExtrudeGeometry(shape, { depth:8.5, bevelEnabled:false });
+  g.rotateY(Math.PI/2); g.translate(-4.25, 4.4, 0);
+  const roof = new THREE.Mesh(g, mat(C.roof)); roof.castShadow = true; scene.add(roof);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color:C.edge })); scene.add(e);
+  block(null, 2.2,2.9, 4.4,6.0, -.6,.1, C.wall); // chimney
+}
+
+/* windows + door — green hairline accents */
+const winMat = mat(0xf4f6f2);
+const win = (x,y,z, w=.7,h=.8) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,.06), winMat); m.position.set(x,y,z); scene.add(m);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color:0x9fb5a9 })); e.position.copy(m.position); scene.add(e); };
+win(-2.9,1.3,2.13); win(-1.5,1.3,2.13); win(1.2,1.3,2.13); win(2.7,1.3,2.13);
+win(-2.9,3.5,2.13); win(-1.5,3.5,2.13); win(1.2,3.5,2.13); win(2.7,3.5,2.13);
+{ const d = new THREE.Mesh(new THREE.BoxGeometry(.8,1.6,.07), mat(0x1e5c46, { roughness:.7 })); d.position.set(-.1,.8,2.13); scene.add(d); }
+
+/* yard */
+{
+  const grass = new THREE.Mesh(new THREE.BoxGeometry(4.4,.08,4.6), mat(C.grass));
+  grass.position.set(6.4,.04,4.0); grass.receiveShadow = true; scene.add(grass);
+  track('yard', grass, false); registerPick(grass, 'yard');
+  // tree
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.14,.18,1.2,10), mat(0xa08b72)); trunk.position.set(7.6,.6,2.6); trunk.castShadow = true; scene.add(trunk);
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(.95,20,16), mat(0x9db98a)); crown.position.set(7.6,1.8,2.6); crown.castShadow = true; scene.add(crown);
+  // doghouse
+  block(null, 4.6,5.6, .08,.85, 5.0,5.9, C.wood);
+  const s = new THREE.Shape(); s.moveTo(-.62,0); s.lineTo(.62,0); s.lineTo(0,.5); s.closePath();
+  const rg = new THREE.ExtrudeGeometry(s, { depth:1.0, bevelEnabled:false }); rg.rotateY(Math.PI/2); rg.translate(4.58,.93,5.45);
+  const r = new THREE.Mesh(rg, mat(0xcabfa8)); r.castShadow = true; scene.add(r);
+}
+
+/* pool */
+{
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(3.6,.14,3.4), mat(C.deck));
+  deck.position.set(-6.2,.07,3.4); deck.receiveShadow = true; scene.add(deck);
+  track('pool', deck, false); registerPick(deck, 'pool');
+  const water = new THREE.Mesh(new THREE.BoxGeometry(2.9,.14,2.7), mat(C.water, { roughness:.25 }));
+  water.position.set(-6.2,.16,3.4); scene.add(water);
+  track('pool', water, false); registerPick(water, 'pool');
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(water.geometry), new THREE.LineBasicMaterial({ color:0x7fb2c2 })); e.position.copy(water.position); scene.add(e);
+}
+
+/* ---- the living: rex, kids, grandma ---- */
+function figure(x, z, height, shirt, opts={}) {
+  const g = new THREE.Group();
+  const legs = new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,height*.42,10), mat(0x5b5b53)); legs.position.y = height*.21; g.add(legs);
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(.22, height*.34, 4, 10), mat(shirt)); body.position.y = height*.6; g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.19, 16, 12), mat(opts.skin || C.skinA)); head.position.y = height*.93; g.add(head);
+  if (opts.hair) { const h = new THREE.Mesh(new THREE.SphereGeometry(.2, 16, 10, 0, Math.PI*2, 0, Math.PI*.55), mat(opts.hair)); h.position.y = height*.96; g.add(h); }
+  if (opts.bun) { const b = new THREE.Mesh(new THREE.SphereGeometry(.09,10,8), mat(opts.hair||C.hair)); b.position.set(0, height*1.05, -.12); g.add(b); }
+  g.position.set(x, 0, z);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; } });
+  scene.add(g);
+  return g;
+}
+// Rex — golden mix
+const rex = new THREE.Group();
+{
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(.26,.6,4,10), mat(C.fur)); body.rotation.z = Math.PI/2; body.position.y = .48; rex.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.22,16,12), mat(C.fur)); head.position.set(.52,.72,0); rex.add(head);
+  const snout = new THREE.Mesh(new THREE.CapsuleGeometry(.09,.12,4,8), mat(C.furDark)); snout.rotation.z = Math.PI/2; snout.position.set(.72,.66,0); rex.add(snout);
+  const earG = new THREE.ConeGeometry(.07,.18,8);
+  [-.1,.1].forEach(dz => { const e = new THREE.Mesh(earG, mat(C.furDark)); e.position.set(.46,.92,dz); e.rotation.x = dz*2.4; rex.add(e); });
+  [-.22,.22].forEach(dx => [-.14,.14].forEach(dz => {
+    const l = new THREE.Mesh(new THREE.CylinderGeometry(.055,.05,.4,8), mat(C.fur)); l.position.set(dx,.2,dz); rex.add(l);
+  }));
+  const tail = new THREE.Mesh(new THREE.CapsuleGeometry(.05,.3,4,8), mat(C.fur));
+  tail.position.set(-.5,.68,0); tail.rotation.z = .9; rex.add(tail); rex.userData.tail = tail;
+  rex.position.set(5.9,.08,3.6); rex.rotation.y = -.5;
+  rex.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  scene.add(rex);
+}
+const kidA = figure(-1.9, 4.6, 1.05, C.shirtA, { hair:0x6b5642 });
+const kidB = figure(-1.2, 4.9, .85, C.shirtB, { hair:0x3f3a33 });
+{ const ball = new THREE.Mesh(new THREE.SphereGeometry(.16,14,10), mat(0xc96f4a)); ball.position.set(-1.55,.16,5.3); ball.castShadow = true; scene.add(ball); }
+const grandma = figure(-2.2, 2.9, 1.15, C.dress, { hair:C.hair, bun:true });
+grandma.position.y = .26;
+
+/* invisible pick volumes for the living */
+function pickVolume(key, x, z, r, h, y=0) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 10), new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }));
+  m.position.set(x, y + h/2, z); scene.add(m); registerPick(m, key);
+}
+pickVolume('rex', 5.9, 3.6, .95, 1.4);
+pickVolume('kids', -1.55, 4.75, 1.15, 1.5);
+pickVolume('grandma', -2.2, 2.9, .8, 1.7, .26);
+
+/* markers — small bobbing dots above every tappable thing */
+const markerTex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const x = c.getContext('2d');
+  x.beginPath(); x.arc(32,32,13,0,7); x.fillStyle = '#1e5c46'; x.fill();
+  x.lineWidth = 5; x.strokeStyle = 'rgba(255,255,255,.95)'; x.beginPath(); x.arc(32,32,19,0,7); x.stroke();
+  return new THREE.CanvasTexture(c);
+})();
+const markers = [];
+const MARKER_AT = {
+  living:[-2.2,2.7,0], kitchen:[1.8,2.7,0], bed:[-1.9,4.9,0], bath:[2.1,4.9,0],
+  garage:[5.5,2.5,0], porch:[-3.2,1.0,3.0], yard:[6.9,1.0,4.9], pool:[-6.2,.9,3.4],
+  rex:[5.9,1.5,3.6], kids:[-1.55,1.8,4.75], grandma:[-2.2,2.0,2.9],
+};
+Object.entries(MARKER_AT).forEach(([k,[x,y,z]]) => {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:markerTex, depthTest:false, opacity:.92 }));
+  s.scale.set(.34,.34,1); s.position.set(x, y, z); s.userData = { baseY:y, phase:Math.random()*6 };
+  scene.add(s); markers.push(s);
+});
+
+/* resize */
+function resize() {
+  const w = stage.clientWidth, h = Math.max(360, Math.round(w * .68));
+  renderer.setSize(w, h); camera.aspect = w/h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+/* hover + click */
+const ray = new THREE.Raycaster(); const ptr = new THREE.Vector2();
+let hovered = null, downAt = null;
+function zoneAt(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.x = ((e.clientX - r.left)/r.width)*2 - 1;
+  ptr.y = -((e.clientY - r.top)/r.height)*2 + 1;
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickables, false)[0];
+  return hit ? hit.object.userData.zone : null;
+}
+function tintZone(key, mode) { // mode: 0 base, 1 hover, 2 selected
+  const v = zoneVisual[key]; if (!v) return;
+  v.meshes.forEach(({mesh, base}) => {
+    mesh.material.color.setHex(mode===2 ? C.wallSel : mode===1 ? C.wallHover : base);
+  });
+  v.edges.forEach(e => e.material.color.setHex(mode===2 ? C.edgeSel : C.edge));
+}
+function repaintTints() {
+  Object.keys(zoneVisual).forEach(k => tintZone(k, k===sel ? 2 : k===hovered ? 1 : 0));
+}
+stage.addEventListener('pointermove', e => {
+  const k = zoneAt(e);
+  stage.style.cursor = k ? 'pointer' : 'grab';
+  const tip = $('tip');
+  if (k) {
+    tip.textContent = ZONES[k].name;
+    const r = stage.getBoundingClientRect();
+    tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px';
+    tip.style.opacity = 1;
+  } else tip.style.opacity = 0;
+  if (k !== hovered) { hovered = k; repaintTints(); }
+});
+stage.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+stage.addEventListener('pointerup', e => {
+  if (!downAt) return;
+  const moved = Math.hypot(e.clientX-downAt[0], e.clientY-downAt[1]);
+  downAt = null;
+  if (moved > 6) return;
+  const k = zoneAt(e);
+  if (k) select(k);
+});
+
+/* animate */
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  controls.update();
+  if (rex.userData.tail) rex.userData.tail.rotation.x = Math.sin(t*7)*.5;
+  rex.position.y = .08 + Math.abs(Math.sin(t*3.2))*.04;
+  kidA.position.y = Math.abs(Math.sin(t*2.6))*.06;
+  kidB.position.y = Math.abs(Math.sin(t*2.6+1.2))*.08;
+  grandma.rotation.x = Math.sin(t*1.6)*.03;
+  markers.forEach(m => { m.position.y = m.userData.baseY + Math.sin(t*2 + m.userData.phase)*.08; });
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ================= panel + visit plan (same engine as before) ================= */
 let rates = {}, bestPro = {};
 fetch(API+'/providers').then(r=>r.json()).then(({providers}) => {
-  const cats = ['HOUSEKEEPING','BABYSITTING','DOG_WALKING','PET_SITTING','LAWN_GARDEN','HANDYMAN','SENIOR_CARE','TUTORING'];
-  cats.forEach(c => {
+  ['HOUSEKEEPING','BABYSITTING','DOG_WALKING','PET_SITTING','LAWN_GARDEN','HANDYMAN','SENIOR_CARE','TUTORING'].forEach(c => {
     const withCat = providers.filter(p=>p.services.some(s=>s.category===c));
     const rs = withCat.flatMap(p=>p.services.filter(s=>s.category===c).map(s=>s.hourlyRateCents));
     rates[c] = rs.length ? rs.reduce((a,b)=>a+b,0)/rs.length/100 : 45;
@@ -241,78 +457,57 @@ fetch(API+'/providers').then(r=>r.json()).then(({providers}) => {
 }).catch(()=>{});
 const priceOf = need => Math.round((rates[need.cat]||45) * need.h);
 
-// ---- state ----
-let sel = null;
-let order = [];
-
+let sel = null, order = [];
 function select(k) {
-  sel = k;
-  Object.values(roomEls).forEach(g=>g.classList.remove('sel'));
-  roomEls[k].classList.add('sel');
-  const r = ROOMS[k];
+  sel = k; repaintTints();
+  const r = ZONES[k];
   let html = '<div class="rname">'+r.name+'</div><div class="rhint">'+r.hint+'</div>';
-
   html += '<div class="seclab"><span class="dot" style="background:var(--green)"></span>Needs attention</div><div class="chips">';
   r.needs.forEach((n,i) => {
-    const on = order.some(o=>o.room===k && o.need===n);
+    const on = order.some(o=>o.zone===k && o.need===n);
     html += '<button class="chip'+(on?' on':'')+'" data-i="'+i+'">'+n.t+' <span class="p">$'+priceOf(n)+'</span></button>';
   });
   html += '</div>';
-
   html += '<div class="seclab"><span class="dot" style="background:var(--line2)"></span>The book — what pros must know</div><div class="notes">';
-  r.notes.forEach(n => {
-    html += '<div class="n"><span class="q">“'+n.v+'”</span><span class="who">'+n.who+'</span></div>';
-  });
+  r.notes.forEach(n => { html += '<div class="n"><span class="q">“'+n.v+'”</span><span class="who">'+n.who+'</span></div>'; });
   html += '</div><div class="addnote"><input placeholder="Add a note in your own words…"><button>Save</button></div>';
-
-  html += '<div class="seclab"><span class="dot" style="background:var(--amber)"></span>History — what this room has seen</div><div class="mems">';
-  if (!r.mem.length) html += '<div class="m"><span>Nothing yet — its story starts with the first visit.</span></div>';
-  r.mem.forEach(m => {
-    html += '<div class="m"><span><b>'+m.b+'</b> — '+m.s+'</span><span class="d">'+m.d+'</span></div>';
-  });
+  html += '<div class="seclab"><span class="dot" style="background:var(--amber)"></span>History</div><div class="mems">';
+  if (!r.mem.length) html += '<div class="m"><span>Nothing yet — the story starts with the first visit.</span></div>';
+  r.mem.forEach(m => { html += '<div class="m"><span><b>'+m.b+'</b> — '+m.s+'</span><span class="d">'+m.d+'</span></div>'; });
   html += '</div>';
-
   $('panel').innerHTML = html;
   $('panel').querySelectorAll('.chip').forEach(ch => ch.onclick = () => {
     const need = r.needs[+ch.dataset.i];
-    const idx = order.findIndex(o=>o.room===k && o.need===need);
-    if (idx>=0) order.splice(idx,1); else order.push({room:k, need});
-    select(k); paintVisit(); paintDots();
+    const idx = order.findIndex(o=>o.zone===k && o.need===need);
+    if (idx>=0) order.splice(idx,1); else order.push({zone:k, need});
+    select(k); paintVisit();
   });
   const inp = $('panel').querySelector('.addnote input');
-  const add = () => {
-    if (!inp.value.trim()) return;
-    r.notes.push({v:inp.value.trim(), who:'you'});
-    select(k); paintBook(); paintDots();
-  };
+  const add = () => { if (!inp.value.trim()) return; r.notes.push({v:inp.value.trim(), who:'you'}); select(k); };
   $('panel').querySelector('.addnote button').onclick = add;
   inp.onkeydown = e => { if (e.key==='Enter') add(); };
 }
 
 function paintVisit() {
   const body = $('vbody');
-  $('vcount').textContent = order.length ? order.length + ' task' + (order.length>1?'s':'') + ' · ' + new Set(order.map(o=>o.need.cat)).size + ' pro' + (new Set(order.map(o=>o.need.cat)).size>1?'s':'') : 'nothing yet';
+  const proCount = new Set(order.map(o=>o.need.cat)).size;
+  $('vcount').textContent = order.length ? order.length+' task'+(order.length>1?'s':'')+' · '+proCount+' pro'+(proCount>1?'s':'') : 'nothing yet';
   if (!order.length) {
-    body.innerHTML = '<p class="vempty">Tap a room, tap what needs doing — the plan assembles itself.</p>';
-    $('tot').textContent = '$0';
-    return;
+    body.innerHTML = '<p class="vempty">Tap a room — or Rex — and the plan assembles itself.</p>';
+    $('tot').textContent = '$0'; return;
   }
   body.innerHTML = order.map((o,i) =>
-    '<div class="vline" style="animation-delay:'+(i*35)+'ms"><span class="z">'+ROOMS[o.room].name+'</span>' +
+    '<div class="vline" style="animation-delay:'+(i*35)+'ms"><span class="z">'+ZONES[o.zone].name+'</span>' +
     '<span class="w"><span class="t1">'+o.need.t+'</span><span class="t2">'+(bestPro[o.need.cat]||'a matched pro')+' · '+o.need.h+'h</span></span>' +
     '<span class="pr">$'+priceOf(o.need)+'</span><button class="x" data-i="'+i+'" aria-label="remove">×</button></div>'
   ).join('');
   body.querySelectorAll('.x').forEach(b => b.onclick = () => {
-    order.splice(+b.dataset.i,1); paintVisit(); paintDots(); if (sel) select(sel);
+    order.splice(+b.dataset.i,1); paintVisit(); if (sel) select(sel);
   });
   $('tot').textContent = '$' + order.reduce((a,o)=>a+priceOf(o.need),0);
 }
-function paintBook() {
-  const n = Object.values(ROOMS).reduce((a,r)=>a+r.notes.length,0);
-  $('bookcount').textContent = n + ' notes';
-}
 
-paintDots(); paintBook(); select('yard');
+select('rex');
 </script>
 </body>
 </html>
