@@ -76,8 +76,7 @@ export default function CustomerDashboard() {
 
       {bookings && bookings.length === 0 && (
         <div className="card p-10 mt-6 text-center">
-          <span className="text-4xl">🗓️</span>
-          <p className="mt-3 font-semibold text-lg">Nothing booked yet</p>
+          <p className="font-semibold text-lg">Nothing booked yet</p>
           <p className="text-ink-500 mt-1">Find a trusted pro and get that first job off your list.</p>
           <Link to="/browse" className="btn-primary mt-5">Browse pros</Link>
         </div>

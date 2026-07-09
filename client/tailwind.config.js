@@ -15,11 +15,11 @@ export default {
       // palette: warm cream surfaces, soft sage accents, green-slate text.
       colors: {
         paper: {
-          50:  '#fbfaf6',   // page background (warm cream)
-          100: '#f4f1ea',   // card backdrop / hover
-          200: '#e8e3d7',   // borders, dividers
-          300: '#d7d1c0',   // strong border
-          400: '#b9b2a0',
+          50:  '#fdfdfc',   // page background (near white)
+          100: '#f7f7f4',   // card backdrop / hover
+          200: '#ebebe5',   // borders, dividers
+          300: '#dcdcd3',   // strong border
+          400: '#c2c2b6',
         },
         ink: {
           950: '#1f2924',
@@ -54,7 +54,7 @@ export default {
       },
       backgroundImage: {
         'sage-gradient': 'linear-gradient(135deg, #68967e 0%, #54806a 100%)',
-        'cream-gradient': 'linear-gradient(180deg, #fbfaf6 0%, #f4f1ea 100%)',
+        'cream-gradient': 'linear-gradient(180deg, #fdfdfc 0%, #f7f7f4 100%)',
       },
       boxShadow: {
         press: '0 12px 32px -14px rgba(45,58,52,.28)',

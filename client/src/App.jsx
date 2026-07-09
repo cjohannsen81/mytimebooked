@@ -9,6 +9,7 @@ import ProviderDetail from './pages/ProviderDetail.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import CustomerDashboard from './pages/CustomerDashboard.jsx';
+import WeekPlan from './pages/WeekPlan.jsx';
 import ProviderDashboard from './pages/ProviderDashboard.jsx';
 import ProviderProfileEdit from './pages/ProviderProfileEdit.jsx';
 import ProviderAvailability from './pages/ProviderAvailability.jsx';
@@ -37,6 +38,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/browse" element={<Browse />} />
+          <Route path="/plan" element={<WeekPlan />} />
           <Route path="/providers/:id" element={<ProviderDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

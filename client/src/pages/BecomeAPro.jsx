@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../lib/categories.js';
+import CategoryIcon from '../components/CategoryIcon.jsx';
 
 const PERKS = [
-  { icon: '💰', title: 'Set your own rates', text: 'You decide what your time is worth and keep what you earn — customers pay you directly.' },
-  { icon: '🗓️', title: 'Work when you want', text: 'Publish availability windows. Customers can only book times you\'ve opened up.' },
-  { icon: '⭐', title: 'Build your reputation', text: 'Reviews from completed jobs help you stand out and charge what you deserve.' },
+  { title: 'Keep every dollar of your rate', text: 'You set the price and customers pay you directly — the platform takes nothing in v1.' },
+  { title: 'Offer everything you\'re good at', text: 'List as many services as you have skills — cleaning and organizing, lawn and handyman work. More services means more booked hours from the same profile.' },
+  { title: 'Win regulars, not one-offs', text: 'Customers build weekly plans — the same families, the same slots, every week. Your face and reviews are what they choose.' },
 ];
 
 export default function BecomeAPro() {
@@ -27,9 +28,10 @@ export default function BecomeAPro() {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
-        {PERKS.map(p => (
+        {PERKS.map((p, i) => (
           <div key={p.title} className="card p-6">
-            <span className="text-3xl">{p.icon}</span>
+            <span className="w-10 h-10 rounded-full bg-sage-gradient text-white font-bold
+                             flex items-center justify-center text-lg shadow-sm shadow-sage-500/30">{i + 1}</span>
             <h3 className="mt-3 font-semibold text-lg text-ink-900">{p.title}</h3>
             <p className="mt-2 text-sm text-ink-500 leading-relaxed">{p.text}</p>
           </div>
@@ -41,7 +43,7 @@ export default function BecomeAPro() {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           {CATEGORIES.map(c => (
             <span key={c.key} className="chip bg-white border-paper-200 text-ink-700 !cursor-default">
-              {c.icon} {c.label}
+              <CategoryIcon k={c.key} className="w-4 h-4 text-sage-600" /> {c.label}
             </span>
           ))}
         </div>

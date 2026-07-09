@@ -4,12 +4,10 @@ import { api } from '../lib/api.js';
 import { useAuth } from '../lib/auth.jsx';
 import Stars from '../components/Stars.jsx';
 import TimeBar from '../components/TimeBar.jsx';
-import { categoryIcon, categoryLabel } from '../lib/categories.js';
+import Avatar from '../components/Avatar.jsx';
+import CategoryIcon from '../components/CategoryIcon.jsx';
+import { categoryLabel } from '../lib/categories.js';
 import { money, fmtDate, fmtTime, fmtDateTime } from '../lib/format.js';
-
-function initials(name) {
-  return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-}
 
 const overlaps = (aStart, aEnd, bStart, bEnd) => aStart < bEnd && aEnd > bStart;
 
@@ -101,10 +99,7 @@ export default function ProviderDetail() {
       {/* Left: profile */}
       <div className="animate-fade-in">
         <div className="flex items-start gap-4">
-          <div className="w-20 h-20 rounded-full bg-sage-100 text-sage-700 font-bold
-                          flex items-center justify-center text-2xl shrink-0">
-            {initials(provider.user.name)}
-          </div>
+          <Avatar name={provider.user.name} src={provider.photoUrl} className="w-24 h-24" textSize="text-3xl" />
           <div>
             <h1 className="text-3xl font-bold text-ink-900">{provider.user.name}</h1>
             <p className="text-ink-500">{provider.headline}</p>
@@ -132,7 +127,9 @@ export default function ProviderDetail() {
             {provider.services.map(s => (
               <div key={s.id} className="py-3 flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-medium text-ink-900">{categoryIcon(s.category)} {s.title}</p>
+                  <p className="font-medium text-ink-900 flex items-center gap-1.5">
+                    <CategoryIcon k={s.category} className="w-4 h-4 text-sage-600" /> {s.title}
+                  </p>
                   <p className="text-sm text-ink-500 mt-0.5">{s.description}</p>
                   <p className="text-xs text-ink-400 mt-1">{categoryLabel(s.category)} · {s.minHours}h minimum</p>
                 </div>
@@ -168,7 +165,9 @@ export default function ProviderDetail() {
       <div className="card p-6 lg:sticky lg:top-24">
         {booked ? (
           <div className="text-center py-6 animate-rise">
-            <span className="text-4xl">🎉</span>
+            <span className="mx-auto w-12 h-12 rounded-full bg-sage-100 text-sage-600 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            </span>
             <h2 className="mt-3 font-bold text-xl text-ink-900">Request sent!</h2>
             <p className="mt-2 text-sm text-ink-500 leading-relaxed">
               {provider.user.name.split(' ')[0]} has your request for{' '}

@@ -9,7 +9,7 @@
   }
   body {
     @apply bg-paper-50 text-ink-900 font-sans;
-    background-image: linear-gradient(180deg, #fbfaf6 0%, #f4f1ea 100%);
+    background-image: linear-gradient(180deg, #fdfdfc 0%, #f7f7f4 100%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4 {

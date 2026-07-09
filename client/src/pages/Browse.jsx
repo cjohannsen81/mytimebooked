@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { CATEGORIES } from '../lib/categories.js';
+import CategoryIcon from '../components/CategoryIcon.jsx';
 import ProviderCard from '../components/ProviderCard.jsx';
 
 export default function Browse() {
@@ -53,7 +54,7 @@ export default function Browse() {
             className={`chip ${category === c.key
               ? 'bg-sage-600 border-sage-600 text-white shadow-sm shadow-sage-500/25'
               : 'bg-white border-paper-200 text-ink-700 hover:border-sage-300 hover:text-sage-700'}`}>
-            {c.icon} {c.label}
+            <CategoryIcon k={c.key} className="w-4 h-4" /> {c.label}
           </button>
         ))}
       </div>
@@ -62,8 +63,7 @@ export default function Browse() {
       {!providers && !error && <p className="mt-8 text-ink-500">Loading pros…</p>}
       {providers && providers.length === 0 && (
         <div className="card p-10 mt-8 max-w-md text-center">
-          <span className="text-4xl">🔍</span>
-          <p className="mt-3 font-semibold text-lg">No pros match that search yet</p>
+          <p className="font-semibold text-lg">No pros match that search yet</p>
           <p className="text-ink-500 mt-1 text-sm">Try a different category or a broader search.</p>
         </div>
       )}

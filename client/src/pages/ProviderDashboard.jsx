@@ -27,9 +27,8 @@ export default function ProviderDashboard() {
   if (profile === null) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center animate-rise">
-        <span className="text-4xl">🧰</span>
-        <h1 className="mt-4 text-2xl font-bold text-ink-900">Finish setting up your pro profile</h1>
-        <p className="mt-2 text-ink-500">Add your headline, bio, and services so customers can find and book you.</p>
+        <h1 className="text-2xl font-bold text-ink-900">Finish setting up your pro profile</h1>
+        <p className="mt-2 text-ink-500">Add your photo, headline, and services so customers can find and book you.</p>
         <Link to="/pro/profile" className="btn-primary mt-6">Set up my profile</Link>
       </div>
     );
@@ -64,8 +63,7 @@ export default function ProviderDashboard() {
 
       {bookings && bookings.length === 0 && (
         <div className="card p-10 mt-6 text-center">
-          <span className="text-4xl">📭</span>
-          <p className="mt-3 font-semibold text-lg">No booking requests yet</p>
+          <p className="font-semibold text-lg">No booking requests yet</p>
           <p className="text-ink-500 mt-1">
             Make sure your <Link to="/pro/availability" className="text-sage-700 font-semibold hover:underline">availability</Link> is
             up to date so customers can find open times.

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api.js';
-import { CATEGORIES, categoryIcon } from '../lib/categories.js';
+import { CATEGORIES } from '../lib/categories.js';
+import CategoryIcon from '../components/CategoryIcon.jsx';
+import Avatar from '../components/Avatar.jsx';
 import { money } from '../lib/format.js';
 
 const EMPTY_SERVICE = { category: 'HOUSEKEEPING', title: '', description: '', hourlyRate: '', minHours: 1 };
@@ -16,7 +18,7 @@ function ServiceForm({ initial = EMPTY_SERVICE, onSave, onCancel, busy }) {
         <div>
           <label className="label">Category</label>
           <select className="input" value={form.category} onChange={e => set('category', e.target.value)}>
-            {CATEGORIES.map(c => <option key={c.key} value={c.key}>{c.icon} {c.label}</option>)}
+            {CATEGORIES.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
           </select>
         </div>
         <div>
@@ -52,7 +54,7 @@ function ServiceForm({ initial = EMPTY_SERVICE, onSave, onCancel, busy }) {
 
 export default function ProviderProfileEdit() {
   const [profile, setProfile] = useState(undefined);
-  const [form, setForm] = useState({ headline: '', bio: '', city: '', zip: '', yearsExperience: 0 });
+  const [form, setForm] = useState({ headline: '', bio: '', city: '', zip: '', yearsExperience: 0, photoUrl: '' });
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -68,6 +70,7 @@ export default function ProviderProfileEdit() {
           city: profile.city,
           zip: profile.zip,
           yearsExperience: profile.yearsExperience,
+          photoUrl: profile.photoUrl || '',
         });
       }
     }).catch(e => setError(e.message));
@@ -139,6 +142,14 @@ export default function ProviderProfileEdit() {
       )}
 
       <form onSubmit={saveProfile} className="card p-6 mt-6 space-y-4">
+        <div className="flex items-center gap-4">
+          <Avatar name={form.headline ? 'Your Photo' : 'You'} src={form.photoUrl} className="w-16 h-16" />
+          <div className="flex-1">
+            <label className="label">Your photo (URL)</label>
+            <input className="input" type="url" placeholder="https://… — a friendly face gets booked more"
+              value={form.photoUrl} onChange={e => set('photoUrl', e.target.value)} />
+          </div>
+        </div>
         <div>
           <label className="label">Headline</label>
           <input className="input" placeholder="e.g. Meticulous housekeeping with a personal touch"
@@ -174,9 +185,17 @@ export default function ProviderProfileEdit() {
       {profile && (
         <div className="card p-6 mt-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-lg text-ink-900">Services</h2>
+            <div>
+              <h2 className="font-semibold text-lg text-ink-900">Services</h2>
+              <p className="text-xs text-ink-400 mt-0.5">
+                Every extra skill you list is extra booked hours — cleaning pros who add organizing or
+                errands fill more of their week.
+              </p>
+            </div>
             {editing !== 'new' && (
-              <button onClick={() => setEditing('new')} className="btn-accent !py-2">+ Add service</button>
+              <button onClick={() => setEditing('new')} className="btn-accent !py-2 shrink-0">
+                + Add {profile.services.length ? 'another' : 'a'} service
+              </button>
             )}
           </div>
 
@@ -203,7 +222,9 @@ export default function ProviderProfileEdit() {
               ) : (
                 <div key={s.id} className="flex items-start justify-between gap-3 rounded-2xl border border-paper-200 p-4">
                   <div>
-                    <p className="font-medium text-ink-900">{categoryIcon(s.category)} {s.title}</p>
+                    <p className="font-medium text-ink-900 flex items-center gap-1.5">
+                      <CategoryIcon k={s.category} className="w-4 h-4 text-sage-600" /> {s.title}
+                    </p>
                     <p className="text-sm text-ink-500 mt-0.5">{s.description}</p>
                     <p className="text-sm text-sage-700 font-semibold mt-1">
                       {money(s.hourlyRateCents)}/hr · {s.minHours}h min

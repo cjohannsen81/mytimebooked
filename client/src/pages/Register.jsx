@@ -35,8 +35,8 @@ export default function Register() {
       <form onSubmit={submit} className="card p-6 mt-6 space-y-4">
         <div className="grid grid-cols-2 gap-2">
           {[
-            { key: 'CUSTOMER', label: 'I need help', icon: '🏡' },
-            { key: 'PROVIDER', label: "I'm a pro", icon: '🧰' },
+            { key: 'CUSTOMER', label: 'I need help', d: 'M4 11l8-7 8 7v8a1 1 0 01-1 1H5a1 1 0 01-1-1v-8z M10 20v-5h4v5' },
+            { key: 'PROVIDER', label: "I'm a pro", d: 'M14.8 6.2a4.4 4.4 0 00-5.9 5.6L3.5 17.2V20.5h3.3l5.4-5.4a4.4 4.4 0 005.6-5.9L14.6 12.4l-3-3 3.2-3.2z' },
           ].map(r => (
             <button type="button" key={r.key} onClick={() => setRole(r.key)}
               className={`rounded-2xl border-2 px-4 py-3 text-sm font-semibold transition ${
@@ -44,7 +44,10 @@ export default function Register() {
                   ? 'border-sage-500 bg-sage-50 text-sage-700'
                   : 'border-paper-200 text-ink-500 hover:border-paper-300'
               }`}>
-              <span className="text-xl block mb-1">{r.icon}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"
+                strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto mb-1.5">
+                <path d={r.d} />
+              </svg>
               {r.label}
             </button>
           ))}

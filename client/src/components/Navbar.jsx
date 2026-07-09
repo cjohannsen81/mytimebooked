@@ -38,10 +38,12 @@ export default function Navbar() {
     : user
       ? [
           { to: '/browse', label: 'Find help' },
+          { to: '/plan', label: 'Plan my week' },
           { to: '/dashboard', label: 'My bookings' },
         ]
       : [
           { to: '/browse', label: 'Find help' },
+          { to: '/plan', label: 'Plan my week' },
           { to: '/become-a-pro', label: 'Become a pro' },
         ];
 
