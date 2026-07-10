@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "ProviderProfile" ADD COLUMN     "lat" DOUBLE PRECISION,
+ADD COLUMN     "lng" DOUBLE PRECISION,
+ADD COLUMN     "serviceRadiusMiles" INTEGER NOT NULL DEFAULT 15;

@@ -54,7 +54,8 @@ function ServiceForm({ initial = EMPTY_SERVICE, onSave, onCancel, busy }) {
 
 export default function ProviderProfileEdit() {
   const [profile, setProfile] = useState(undefined);
-  const [form, setForm] = useState({ headline: '', bio: '', city: '', zip: '', yearsExperience: 0, photoUrl: '' });
+  const [form, setForm] = useState({ headline: '', bio: '', city: '', zip: '', yearsExperience: 0, photoUrl: '', serviceRadiusMiles: 15 });
+  const [zipInfo, setZipInfo] = useState(null); // { city, state } | 'unknown' | null
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -71,6 +72,7 @@ export default function ProviderProfileEdit() {
           zip: profile.zip,
           yearsExperience: profile.yearsExperience,
           photoUrl: profile.photoUrl || '',
+          serviceRadiusMiles: profile.serviceRadiusMiles || 15,
         });
       }
     }).catch(e => setError(e.message));
@@ -78,6 +80,17 @@ export default function ProviderProfileEdit() {
   useEffect(load, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Resolve the ZIP to a real place as they type — instant feedback.
+  useEffect(() => {
+    const zip = String(form.zip || '').trim();
+    if (zip.length !== 5) { setZipInfo(null); return; }
+    let dead = false;
+    api(`/geo/${zip}`)
+      .then(hit => { if (!dead) setZipInfo(hit); })
+      .catch(() => { if (!dead) setZipInfo('unknown'); });
+    return () => { dead = true; };
+  }, [form.zip]);
 
   const saveProfile = async (e) => {
     e.preventDefault();
@@ -167,8 +180,26 @@ export default function ProviderProfileEdit() {
           </div>
           <div>
             <label className="label">ZIP</label>
-            <input className="input" value={form.zip} onChange={e => set('zip', e.target.value)} required />
+            <input className="input" value={form.zip} maxLength={5} inputMode="numeric"
+              onChange={e => set('zip', e.target.value.replace(/\D/g, ''))} required />
           </div>
+        </div>
+        {zipInfo === 'unknown' && <p className="text-xs text-red-600 -mt-2">We don't recognize that ZIP.</p>}
+        {zipInfo && zipInfo !== 'unknown' && (
+          <p className="text-xs text-sage-700 -mt-2">✓ {zipInfo.city}, {zipInfo.state}</p>
+        )}
+        <div>
+          <div className="flex items-baseline justify-between">
+            <label className="label !mb-0">Service area</label>
+            <span className="text-sm font-semibold text-sage-700">{form.serviceRadiusMiles} miles</span>
+          </div>
+          <input type="range" min="2" max="50" step="1" value={form.serviceRadiusMiles}
+            onChange={e => set('serviceRadiusMiles', +e.target.value)}
+            className="w-full mt-2 accent-sage-600" />
+          <p className="text-xs text-ink-400 mt-1">
+            Customers within {form.serviceRadiusMiles} miles of {zipInfo && zipInfo !== 'unknown' ? `${zipInfo.city} (${form.zip})` : 'your ZIP'} will
+            find you. Wider area, more requests — but more driving.
+          </p>
         </div>
         <div>
           <label className="label">Years of experience</label>

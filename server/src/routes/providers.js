@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../index.js';
 import { requireAuth, requireRole, asyncHandler } from '../middleware/auth.js';
+import { lookupZip, distanceMiles } from '../lib/geo.js';
 
 const router = Router();
 
@@ -18,9 +19,12 @@ function withRating(profile) {
   return { ...rest, avgRating, reviewCount: ratings.length };
 }
 
-// List / search providers
+// List / search providers.
+// ?zip=78704 — compute each pro's distance to that point, mark whether their
+// service radius covers it, keep only covering pros, and sort by distance.
+// ?zip=78704&all=1 — annotate but don't filter.
 router.get('/', asyncHandler(async (req, res) => {
-  const { category, q } = req.query;
+  const { category, q, zip, all } = req.query;
   const where = {
     services: { some: category && CATEGORIES.includes(category) ? { category } : {} },
   };
@@ -41,7 +45,19 @@ router.get('/', asyncHandler(async (req, res) => {
     },
     orderBy: { createdAt: 'asc' },
   });
-  res.json({ providers: profiles.map(withRating) });
+  let providers = profiles.map(withRating);
+
+  const here = zip ? lookupZip(zip) : null;
+  if (here) {
+    providers = providers.map(p => {
+      if (p.lat == null || p.lng == null) return { ...p, distanceMiles: null, servesYou: null };
+      const d = distanceMiles(here.lat, here.lng, p.lat, p.lng);
+      return { ...p, distanceMiles: Math.round(d * 10) / 10, servesYou: d <= p.serviceRadiusMiles };
+    });
+    if (!all) providers = providers.filter(p => p.servesYou !== false);
+    providers.sort((a, b) => (a.distanceMiles ?? 1e9) - (b.distanceMiles ?? 1e9));
+  }
+  res.json({ providers, location: here });
 }));
 
 // Own provider profile (must come before /:id)
@@ -55,15 +71,21 @@ router.get('/me', requireAuth, requireRole('PROVIDER'), asyncHandler(async (req,
 
 // Create or update own provider profile
 router.put('/me', requireAuth, requireRole('PROVIDER'), asyncHandler(async (req, res) => {
-  const { headline, bio, city, zip, yearsExperience, photoUrl } = req.body || {};
+  const { headline, bio, city, zip, yearsExperience, photoUrl, serviceRadiusMiles } = req.body || {};
   if (!headline || !bio || !city || !zip) {
     return res.status(400).json({ error: 'headline, bio, city and zip are required' });
   }
+  const geo = lookupZip(zip);
+  if (!geo) return res.status(400).json({ error: `We don't recognize ZIP ${zip} — double-check it?` });
+  const radius = Math.min(100, Math.max(2, parseInt(serviceRadiusMiles, 10) || 15));
   const data = {
     headline,
     bio,
     city,
-    zip,
+    zip: geo.zip,
+    lat: geo.lat,
+    lng: geo.lng,
+    serviceRadiusMiles: radius,
     photoUrl: photoUrl || null,
     yearsExperience: Math.max(0, parseInt(yearsExperience, 10) || 0),
   };
@@ -173,7 +195,23 @@ router.get('/:id', asyncHandler(async (req, res) => {
     select: { start: true, end: true },
   });
 
-  res.json({ provider: { ...profile, avgRating, reviewCount: ratings.length }, busy: bookings });
+  // Distance & coverage relative to the caller's ZIP, if given.
+  let distance = {};
+  const here = req.query.zip ? lookupZip(req.query.zip) : null;
+  if (here && profile.lat != null && profile.lng != null) {
+    const d = distanceMiles(here.lat, here.lng, profile.lat, profile.lng);
+    distance = { distanceMiles: Math.round(d * 10) / 10, servesYou: d <= profile.serviceRadiusMiles };
+  }
+
+  res.json({ provider: { ...profile, avgRating, reviewCount: ratings.length, ...distance }, busy: bookings });
 }));
+
+export const geoRouter = Router();
+// Validate a ZIP and return its label — used by location pickers.
+geoRouter.get('/:zip', (req, res) => {
+  const hit = lookupZip(req.params.zip);
+  if (!hit) return res.status(404).json({ error: 'Unknown ZIP code' });
+  res.json(hit);
+});
 
 export default router;

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { lookupZip } from '../src/lib/geo.js';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ const PASSWORD = 'password123';
 
 const PROVIDERS = [
   {
-    email: 'maria.santos@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/women/65.jpg', name: 'Maria Santos',
+    email: 'maria.santos@mytimebooked.com', radius: 12, photo: 'https://randomuser.me/api/portraits/women/65.jpg', name: 'Maria Santos',
     headline: 'Meticulous housekeeping with a personal touch',
     bio: 'I have run my own cleaning business for 8 years and treat every home like my own. Deep cleans, move-outs, and recurring visits. I bring my own eco-friendly supplies.',
     city: 'Austin', zip: '78704', yearsExperience: 8, backgroundChecked: true,
@@ -18,7 +19,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'jasmine.lee@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/women/44.jpg', name: 'Jasmine Lee',
+    email: 'jasmine.lee@mytimebooked.com', radius: 10, photo: 'https://randomuser.me/api/portraits/women/44.jpg', name: 'Jasmine Lee',
     headline: 'CPR-certified babysitter, great with toddlers',
     bio: 'Early-childhood education student and babysitter of 5 years. CPR and first-aid certified. I plan age-appropriate activities so screens stay off and kids stay happy.',
     city: 'Austin', zip: '78745', yearsExperience: 5, backgroundChecked: true,
@@ -27,7 +28,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'diego.ramirez@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/men/32.jpg', name: 'Diego Ramirez',
+    email: 'diego.ramirez@mytimebooked.com', radius: 8, photo: 'https://randomuser.me/api/portraits/men/32.jpg', name: 'Diego Ramirez',
     headline: 'Daily dog walks & adventure hikes',
     bio: 'Your dog\'s new best friend. I walk small packs (max 3) and send photo updates every visit. Comfortable with reactive dogs and puppies.',
     city: 'Austin', zip: '78702', yearsExperience: 4, backgroundChecked: true,
@@ -37,7 +38,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'hannah.brooks@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/women/22.jpg', name: 'Hannah Brooks',
+    email: 'hannah.brooks@mytimebooked.com', radius: 20, photo: 'https://randomuser.me/api/portraits/women/22.jpg', name: 'Hannah Brooks',
     headline: 'Overnight pet sitting in your home',
     bio: 'Vet tech by day, pet sitter by night. Cats, dogs, birds, reptiles — I handle meds, injections, and anxious pets with calm confidence.',
     city: 'Round Rock', zip: '78664', yearsExperience: 6, backgroundChecked: false,
@@ -46,7 +47,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'tom.nguyen@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/men/75.jpg', name: 'Tom Nguyen',
+    email: 'tom.nguyen@mytimebooked.com', radius: 18, photo: 'https://randomuser.me/api/portraits/men/75.jpg', name: 'Tom Nguyen',
     headline: 'Lawn care, hedges, and seasonal cleanups',
     bio: 'Second-generation landscaper. Mowing, edging, hedge trimming, mulch, and leaf cleanups. I bring all equipment and haul away green waste.',
     city: 'Austin', zip: '78748', yearsExperience: 10, backgroundChecked: true,
@@ -56,7 +57,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'ray.thompson@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/men/52.jpg', name: 'Ray Thompson',
+    email: 'ray.thompson@mytimebooked.com', radius: 25, photo: 'https://randomuser.me/api/portraits/men/52.jpg', name: 'Ray Thompson',
     headline: 'Handyman for the jobs on your list',
     bio: '25 years in residential maintenance. TV mounts, ceiling fans, drywall patches, faucet swaps, furniture assembly — if it\'s on your list, I can probably knock it out.',
     city: 'Pflugerville', zip: '78660', yearsExperience: 25, backgroundChecked: true,
@@ -65,7 +66,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'grace.okafor@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/women/90.jpg', name: 'Grace Okafor',
+    email: 'grace.okafor@mytimebooked.com', radius: 15, photo: 'https://randomuser.me/api/portraits/women/90.jpg', name: 'Grace Okafor',
     headline: 'Compassionate senior companion care',
     bio: 'Certified nursing assistant with a decade of in-home senior care. Companionship, meal prep, light housekeeping, appointments, and medication reminders.',
     city: 'Austin', zip: '78723', yearsExperience: 11, backgroundChecked: true,
@@ -74,7 +75,7 @@ const PROVIDERS = [
     ],
   },
   {
-    email: 'ethan.walker@mytimebooked.com', photo: 'https://randomuser.me/api/portraits/men/22.jpg', name: 'Ethan Walker',
+    email: 'ethan.walker@mytimebooked.com', radius: 12, photo: 'https://randomuser.me/api/portraits/men/22.jpg', name: 'Ethan Walker',
     headline: 'Math & science tutoring, grades 5–12',
     bio: 'UT Austin engineering grad. I tutor algebra through AP Calculus and physics, focusing on building confidence before test days. Online or at your kitchen table.',
     city: 'Austin', zip: '78751', yearsExperience: 6, backgroundChecked: false,
@@ -137,6 +138,9 @@ async function main() {
         zip: p.zip,
         yearsExperience: p.yearsExperience,
         photoUrl: p.photo || null,
+        lat: lookupZip(p.zip)?.lat ?? null,
+        lng: lookupZip(p.zip)?.lng ?? null,
+        serviceRadiusMiles: p.radius || 15,
         backgroundChecked: p.backgroundChecked,
         services: { create: p.services },
       },

@@ -4,7 +4,7 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 
 import authRoutes from './routes/auth.js';
-import providerRoutes from './routes/providers.js';
+import providerRoutes, { geoRouter } from './routes/providers.js';
 import availabilityRoutes from './routes/availability.js';
 import bookingRoutes from './routes/bookings.js';
 import reviewRoutes from './routes/reviews.js';
@@ -41,6 +41,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);
+app.use('/api/geo', geoRouter);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);

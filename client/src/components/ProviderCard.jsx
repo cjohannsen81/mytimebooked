@@ -24,6 +24,9 @@ export default function ProviderCard({ provider }) {
         <Stars rating={provider.avgRating} count={provider.reviewCount} />
         <span>·</span>
         <span>{provider.city}</span>
+        {provider.distanceMiles != null && (
+          <span className="badge !bg-sage-50 !text-sage-700">{provider.distanceMiles} mi away</span>
+        )}
         {provider.backgroundChecked && (
           <span className="badge !bg-sage-100 !text-sage-700">✓ Background checked</span>
         )}

@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../lib/auth.jsx';
+import AreaPicker from './AreaPicker.jsx';
 
 function Logo() {
   return (
@@ -44,6 +45,7 @@ export default function Navbar() {
       <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Logo />
         <div className="hidden md:flex items-center gap-1">
+          {user?.role !== 'PROVIDER' && <AreaPicker />}
           {links.map(l => (
             <NavLink
               key={l.to}
@@ -79,6 +81,7 @@ export default function Navbar() {
       </nav>
       {open && (
         <div className="md:hidden border-t border-paper-200 bg-white px-4 py-3 space-y-1">
+          {user?.role !== 'PROVIDER' && <div className="px-1 pb-2"><AreaPicker /></div>}
           {links.map(l => (
             <NavLink key={l.to} to={l.to} onClick={() => setOpen(false)}
               className="block px-3 py-2.5 rounded-xl text-sm font-medium text-ink-700 hover:bg-paper-100">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { useAuth } from '../lib/auth.jsx';
+import { useArea } from '../lib/area.jsx';
 import Stars from '../components/Stars.jsx';
 import TimeBar from '../components/TimeBar.jsx';
 import Avatar from '../components/Avatar.jsx';
@@ -15,6 +16,7 @@ export default function ProviderDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { area } = useArea();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
@@ -30,10 +32,10 @@ export default function ProviderDetail() {
   const [booked, setBooked] = useState(null);
 
   useEffect(() => {
-    api(`/providers/${id}`)
+    api(`/providers/${id}${area?.zip ? `?zip=${area.zip}` : ''}`)
       .then(setData)
       .catch(e => setError(e.message));
-  }, [id]);
+  }, [id, area?.zip]);
 
   const provider = data?.provider;
   const busy = useMemo(() => (data?.busy || []).map(b => ({ start: new Date(b.start), end: new Date(b.end) })), [data]);
@@ -113,6 +115,14 @@ export default function ProviderDetail() {
                 <span className="badge !bg-sage-100 !text-sage-700">✓ Background checked</span>
               )}
             </div>
+            <p className="mt-2 text-sm text-ink-500">
+              Serves within <span className="font-semibold text-ink-700">{provider.serviceRadiusMiles} miles</span> of {provider.city}
+              {provider.distanceMiles != null && (
+                provider.servesYou
+                  ? <span className="text-sage-700 font-medium"> — covers you ({provider.distanceMiles} mi away)</span>
+                  : <span className="text-red-600 font-medium"> — {provider.distanceMiles} mi from you, outside their area</span>
+              )}
+            </p>
           </div>
         </div>
 
@@ -178,6 +188,12 @@ export default function ProviderDetail() {
         ) : (
           <>
             <h2 className="font-bold text-xl text-ink-900">Book {provider.user.name.split(' ')[0]}</h2>
+            {provider.servesYou === false && (
+              <p className="mt-3 text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2.5">
+                Heads up: {area?.label} is outside {provider.user.name.split(' ')[0]}'s service area
+                ({provider.serviceRadiusMiles} mi around {provider.city}). You can still request — they may decline.
+              </p>
+            )}
             {!canBook && (
               <p className="mt-3 text-sm text-ink-500">
                 You're signed in as a pro — switch to a customer account to book.

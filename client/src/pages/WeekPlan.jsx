@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { useAuth } from '../lib/auth.jsx';
+import { useArea } from '../lib/area.jsx';
 import { CATEGORIES, categoryLabel } from '../lib/categories.js';
 import CategoryIcon from '../components/CategoryIcon.jsx';
 import Avatar from '../components/Avatar.jsx';
@@ -12,6 +13,7 @@ const overlaps = (aStart, aEnd, bStart, bEnd) => aStart < bEnd && aEnd > bStart;
 
 export default function WeekPlan() {
   const { user } = useAuth();
+  const { area } = useArea();
   const navigate = useNavigate();
 
   const [providers, setProviders] = useState([]);
@@ -30,8 +32,10 @@ export default function WeekPlan() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api('/providers').then(({ providers }) => setProviders(providers)).catch(e => setError(e.message));
-  }, []);
+    api(`/providers${area?.zip ? `?zip=${area.zip}` : ''}`)
+      .then(({ providers }) => setProviders(providers))
+      .catch(e => setError(e.message));
+  }, [area?.zip]);
 
   const candidates = useMemo(
     () => providers.filter(p => cat && p.services.some(s => s.category === cat))
@@ -165,6 +169,11 @@ export default function WeekPlan() {
         Combine different services, pros, and times into one weekly plan — a cleaner Monday,
         dog walks midweek, a sitter Friday night. Book it all at once.
       </p>
+      <p className="mt-1.5 text-sm">
+        {area
+          ? <span className="text-sage-700">Suggesting pros who serve {area.label} ({area.zip}).</span>
+          : <span className="text-ink-400">Tip: set your location in the top bar so we only suggest pros who cover your address.</span>}
+      </p>
 
       <div className="mt-8 grid lg:grid-cols-[420px,1fr] gap-6 items-start">
         {/* Builder */}
@@ -197,7 +206,10 @@ export default function WeekPlan() {
                       <Avatar name={p.user.name} src={p.photoUrl} className="w-10 h-10" textSize="text-sm" />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-ink-900 truncate">{p.user.name}</p>
-                        <Stars rating={p.avgRating} count={p.reviewCount} size="text-xs" />
+                        <div className="flex items-center gap-1.5">
+                          <Stars rating={p.avgRating} count={p.reviewCount} size="text-xs" />
+                          {p.distanceMiles != null && <span className="text-[11px] text-ink-400">· {p.distanceMiles} mi</span>}
+                        </div>
                       </div>
                       <span className="text-sm font-bold text-ink-900 whitespace-nowrap">{money(svc.hourlyRateCents)}<span className="text-xs text-ink-400 font-normal">/hr</span></span>
                     </button>
