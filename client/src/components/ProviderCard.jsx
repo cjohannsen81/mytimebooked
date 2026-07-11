@@ -27,6 +27,9 @@ export default function ProviderCard({ provider }) {
         {provider.distanceMiles != null && (
           <span className="badge !bg-sage-50 !text-sage-700">{provider.distanceMiles} mi away</span>
         )}
+        {provider.servesEverywhere && provider.servesYou && (
+          <span className="badge !bg-sage-50 !text-sage-700">Serves your area</span>
+        )}
         {provider.backgroundChecked && (
           <span className="badge !bg-sage-100 !text-sage-700">✓ Background checked</span>
         )}

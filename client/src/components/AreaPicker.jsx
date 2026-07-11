@@ -31,7 +31,7 @@ export default function AreaPicker() {
       await setAreaZip(zip);
       setOpen(false); setZip('');
     } catch {
-      setError('Hmm, we don\'t know that ZIP.');
+      setError('Hmm, we don\'t know that code.');
     } finally {
       setBusy(false);
     }
@@ -48,16 +48,16 @@ export default function AreaPicker() {
       {open && (
         <form onSubmit={save}
           className="absolute right-0 top-11 z-50 w-64 card !rounded-2xl p-4 shadow-press animate-fade-in">
-          <label className="label">Your ZIP code</label>
+          <label className="label">Your ZIP / postal code</label>
           <div className="flex gap-2">
-            <input className="input !py-2" placeholder="e.g. 78704" value={zip} autoFocus
-              inputMode="numeric" maxLength={5} onChange={e => setZip(e.target.value.replace(/\D/g, ''))} />
-            <button className="btn-primary !py-2 !px-4 shrink-0" disabled={busy || zip.length !== 5}>
+            <input className="input !py-2" placeholder="78704 or V5S 0A9" value={zip} autoFocus
+              maxLength={7} onChange={e => setZip(e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))} />
+            <button className="btn-primary !py-2 !px-4 shrink-0" disabled={busy || zip.trim().length < 3}>
               {busy ? '…' : 'Set'}
             </button>
           </div>
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
-          <p className="mt-2 text-xs text-ink-400">We only show pros whose service area covers you.</p>
+          <p className="mt-2 text-xs text-ink-400">US & Canada. We only show pros whose service area covers you.</p>
         </form>
       )}
     </div>

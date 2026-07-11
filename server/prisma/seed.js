@@ -141,6 +141,7 @@ async function main() {
         lat: lookupZip(p.zip)?.lat ?? null,
         lng: lookupZip(p.zip)?.lng ?? null,
         serviceRadiusMiles: p.radius || 15,
+        servesEverywhere: false,
         backgroundChecked: p.backgroundChecked,
         services: { create: p.services },
       },
@@ -190,6 +191,10 @@ async function main() {
     }
     console.log(`✓ Seeded provider ${p.name}`);
   }
+
+  // Everywhere demo pros keep the experience good for any location.
+  const { execSync } = await import('child_process');
+  execSync('node scripts/add-demo-pros.mjs', { stdio: 'inherit' });
 
   console.log('\nSeed complete.');
   console.log(`  Customer: demo@mytimebooked.com / ${PASSWORD}`);

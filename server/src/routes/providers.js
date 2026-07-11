@@ -50,12 +50,16 @@ router.get('/', asyncHandler(async (req, res) => {
   const here = zip ? lookupZip(zip) : null;
   if (here) {
     providers = providers.map(p => {
+      if (p.servesEverywhere) return { ...p, distanceMiles: null, servesYou: true };
       if (p.lat == null || p.lng == null) return { ...p, distanceMiles: null, servesYou: null };
       const d = distanceMiles(here.lat, here.lng, p.lat, p.lng);
       return { ...p, distanceMiles: Math.round(d * 10) / 10, servesYou: d <= p.serviceRadiusMiles };
     });
     if (!all) providers = providers.filter(p => p.servesYou !== false);
-    providers.sort((a, b) => (a.distanceMiles ?? 1e9) - (b.distanceMiles ?? 1e9));
+    // Nearby pros first; everywhere/unknown pros after, so locals always lead.
+    providers.sort((a, b) =>
+      (a.distanceMiles ?? (a.servesEverywhere ? 9000 : 1e9)) -
+      (b.distanceMiles ?? (b.servesEverywhere ? 9000 : 1e9)));
   }
   res.json({ providers, location: here });
 }));
@@ -198,7 +202,9 @@ router.get('/:id', asyncHandler(async (req, res) => {
   // Distance & coverage relative to the caller's ZIP, if given.
   let distance = {};
   const here = req.query.zip ? lookupZip(req.query.zip) : null;
-  if (here && profile.lat != null && profile.lng != null) {
+  if (profile.servesEverywhere) {
+    distance = { servesYou: true };
+  } else if (here && profile.lat != null && profile.lng != null) {
     const d = distanceMiles(here.lat, here.lng, profile.lat, profile.lng);
     distance = { distanceMiles: Math.round(d * 10) / 10, servesYou: d <= profile.serviceRadiusMiles };
   }

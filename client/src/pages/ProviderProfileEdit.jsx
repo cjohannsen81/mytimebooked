@@ -81,10 +81,10 @@ export default function ProviderProfileEdit() {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  // Resolve the ZIP to a real place as they type — instant feedback.
+  // Resolve the ZIP/postal code to a real place as they type — instant feedback.
   useEffect(() => {
     const zip = String(form.zip || '').trim();
-    if (zip.length !== 5) { setZipInfo(null); return; }
+    if (zip.length < 3) { setZipInfo(null); return; }
     let dead = false;
     api(`/geo/${zip}`)
       .then(hit => { if (!dead) setZipInfo(hit); })
@@ -179,9 +179,9 @@ export default function ProviderProfileEdit() {
             <input className="input" value={form.city} onChange={e => set('city', e.target.value)} required />
           </div>
           <div>
-            <label className="label">ZIP</label>
-            <input className="input" value={form.zip} maxLength={5} inputMode="numeric"
-              onChange={e => set('zip', e.target.value.replace(/\D/g, ''))} required />
+            <label className="label">ZIP / postal</label>
+            <input className="input" value={form.zip} maxLength={7}
+              onChange={e => set('zip', e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''))} required />
           </div>
         </div>
         {zipInfo === 'unknown' && <p className="text-xs text-red-600 -mt-2">We don't recognize that ZIP.</p>}

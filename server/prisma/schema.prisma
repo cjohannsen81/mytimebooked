@@ -55,6 +55,7 @@ model ProviderProfile {
   lat               Float?
   lng               Float?
   serviceRadiusMiles Int               @default(15)
+  servesEverywhere  Boolean            @default(false)
   photoUrl          String?
   yearsExperience   Int                @default(0)
   backgroundChecked Boolean            @default(false)

@@ -116,11 +116,17 @@ export default function ProviderDetail() {
               )}
             </div>
             <p className="mt-2 text-sm text-ink-500">
-              Serves within <span className="font-semibold text-ink-700">{provider.serviceRadiusMiles} miles</span> of {provider.city}
-              {provider.distanceMiles != null && (
-                provider.servesYou
-                  ? <span className="text-sage-700 font-medium"> — covers you ({provider.distanceMiles} mi away)</span>
-                  : <span className="text-red-600 font-medium"> — {provider.distanceMiles} mi from you, outside their area</span>
+              {provider.servesEverywhere ? (
+                <>Available in <span className="font-semibold text-sage-700">every area</span></>
+              ) : (
+                <>
+                  Serves within <span className="font-semibold text-ink-700">{provider.serviceRadiusMiles} miles</span> of {provider.city}
+                  {provider.distanceMiles != null && (
+                    provider.servesYou
+                      ? <span className="text-sage-700 font-medium"> — covers you ({provider.distanceMiles} mi away)</span>
+                      : <span className="text-red-600 font-medium"> — {provider.distanceMiles} mi from you, outside their area</span>
+                  )}
+                </>
               )}
             </p>
           </div>
